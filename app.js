@@ -1208,12 +1208,17 @@
     const annotations = currentAnnotations();
     el.minimapList.innerHTML = "";
 
-    const groupBuckets = new Map();
+    // Bucket annotations by group
+    var groupBuckets = new Map();
     groupBuckets.set("", []);
-    for (const group of state.groups) groupBuckets.set(group.id, []);
-    for (const annotation of annotations) {
-      const groupId = state.groups.some((group) => group.id === annotation.groupId) ? annotation.groupId : "";
-      groupBuckets.get(groupId).push(annotation);
+    for (var i = 0; i < state.groups.length; i++) {
+      groupBuckets.set(state.groups[i].id, []);
+    }
+    for (var i = 0; i < annotations.length; i++) {
+      var gid = annotations[i].groupId || "";
+      if (gid && !state.groups.some(function(g) { return g.id === gid; })) gid = "";
+      if (groupBuckets.has(gid)) groupBuckets.get(gid).push(annotations[i]);
+      else groupBuckets.set(gid, [annotations[i]]);
     }
 
     if (annotations.length === 0 && state.groups.length === 0) {
