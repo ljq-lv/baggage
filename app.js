@@ -1316,9 +1316,10 @@
       el.viewport.classList.add("loading");
       clearTimeout(el.image._loadTimeout);
       el.image._loadTimeout = setTimeout(function() {
-        el.viewport.classList.remove("loading");
-        el.currentDrawingTitle.textContent = (currentDrawing()?.title || "");
-      }, 8000);
+        if (el.viewport.classList.contains("loading")) {
+          el.currentDrawingTitle.textContent = drawing.title + " 加载较慢，请稍候...";
+        }
+      }, 10000);
     } else {
       el.currentDrawingTitle.textContent = drawing.title;
     }
