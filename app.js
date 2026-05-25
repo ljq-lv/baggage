@@ -1,5 +1,6 @@
 (function () {
   const STORAGE_KEY = "baggage-point-finder-v1";
+  const DOCS_KEY = "baggage-training-docs-v1";
   const SVG_NS = "http://www.w3.org/2000/svg";
 
   const drawings = [
@@ -32,7 +33,12 @@
     autoNameEnabled: false,
     autoNameSegments: [],
     autoNameSeparators: [],
-    autoNamePrimaryIdx: -1
+    autoNamePrimaryIdx: -1,
+    activeModule: "points",
+    docFolders: [],
+    docs: [],
+    activeFolderId: "",
+    selectedDocId: null
   };
 
   const el = {
@@ -72,7 +78,25 @@
     autoNameCompact: document.getElementById("autoNameCompact"),
     autoNameTemplate: document.getElementById("autoNameTemplate"),
     autoNameAdvanced: document.getElementById("autoNameAdvanced"),
-    autoNamePreview: document.getElementById("autoNamePreview")
+    autoNamePreview: document.getElementById("autoNamePreview"),
+    moduleTabs: document.querySelectorAll(".module-tab"),
+    pointModule: document.getElementById("pointModule"),
+    docsModule: document.getElementById("docsModule"),
+    folderNameInput: document.getElementById("folderNameInput"),
+    folderParentSelect: document.getElementById("folderParentSelect"),
+    addFolderButton: document.getElementById("addFolderButton"),
+    docUploadInput: document.getElementById("docUploadInput"),
+    folderTree: document.getElementById("folderTree"),
+    docsCurrentFolder: document.getElementById("docsCurrentFolder"),
+    docsCount: document.getElementById("docsCount"),
+    docSearchInput: document.getElementById("docSearchInput"),
+    docList: document.getElementById("docList"),
+    docEmptyState: document.getElementById("docEmptyState"),
+    docReaderContent: document.getElementById("docReaderContent"),
+    docTitleInput: document.getElementById("docTitleInput"),
+    deleteDocButton: document.getElementById("deleteDocButton"),
+    docMeta: document.getElementById("docMeta"),
+    docBody: document.getElementById("docBody")
   };
 
   var BACKUP_KEY = STORAGE_KEY + "-backup";
@@ -255,6 +279,14 @@
 
   function groupUid() {
     return `grp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  function docUid() {
+    return `doc-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  function folderUid() {
+    return `fld-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
   function renameGroup(groupId, newName) {
@@ -2025,6 +2057,214 @@
     });
   }
 
+  function loadDocsData() {
+    try {
+      const raw = localStorage.getItem(DOCS_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      state.docFolders = Array.isArray(parsed.folders) ? parsed.folders.filter((folder) => folder.id && folder.name) : [];
+      state.docs = Array.isArray(parsed.docs) ? parsed.docs.filter((doc) => doc.id && doc.title) : [];
+      state.activeFolderId = parsed.activeFolderId || "";
+      state.selectedDocId = parsed.selectedDocId || null;
+    } catch (error) {
+      console.warn("Training docs load failed:", error);
+    }
+  }
+
+  function saveDocsData() {
+    const payload = {
+      version: 1,
+      folders: state.docFolders,
+      docs: state.docs,
+      activeFolderId: state.activeFolderId,
+      selectedDocId: state.selectedDocId
+    };
+    localStorage.setItem(DOCS_KEY, JSON.stringify(payload));
+  }
+
+  function folderTitle(folderId) {
+    if (!folderId) return "全部资料";
+    return state.docFolders.find((folder) => folder.id === folderId)?.name || "全部资料";
+  }
+
+  function childFolders(parentId) {
+    return state.docFolders.filter((folder) => (folder.parentId || "") === (parentId || ""));
+  }
+
+  function docsInFolder(folderId) {
+    if (!folderId) return state.docs;
+    return state.docs.filter((doc) => doc.folderId === folderId);
+  }
+
+  function switchModule(moduleName) {
+    state.activeModule = moduleName;
+    el.moduleTabs.forEach((button) => {
+      button.classList.toggle("active", button.dataset.module === moduleName);
+    });
+    el.pointModule.hidden = moduleName !== "points";
+    el.docsModule.hidden = moduleName !== "docs";
+    if (moduleName === "docs") renderDocsModule();
+    if (moduleName === "points") renderOverlay();
+  }
+
+  function renderFolderParentOptions() {
+    el.folderParentSelect.innerHTML = "";
+    const rootOption = document.createElement("option");
+    rootOption.value = "";
+    rootOption.textContent = "顶层目录";
+    el.folderParentSelect.appendChild(rootOption);
+    for (const folder of state.docFolders) {
+      const option = document.createElement("option");
+      option.value = folder.id;
+      option.textContent = folder.name;
+      el.folderParentSelect.appendChild(option);
+    }
+    el.folderParentSelect.value = state.activeFolderId || "";
+  }
+
+  function renderFolderTree() {
+    el.folderTree.innerHTML = "";
+    const allButton = document.createElement("button");
+    allButton.type = "button";
+    allButton.className = "folder-item";
+    allButton.classList.toggle("active", !state.activeFolderId);
+    allButton.innerHTML = `<span>全部资料</span><small>${state.docs.length} 篇文档</small>`;
+    allButton.addEventListener("click", () => {
+      state.activeFolderId = "";
+      saveDocsData();
+      renderDocsModule();
+    });
+    el.folderTree.appendChild(allButton);
+
+    const renderBranch = (parentId, depth) => {
+      for (const folder of childFolders(parentId)) {
+        const count = docsInFolder(folder.id).length;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "folder-item";
+        button.style.marginLeft = `${depth * 14}px`;
+        button.classList.toggle("active", state.activeFolderId === folder.id);
+        button.innerHTML = `<span>${escapeHtml(folder.name)}</span><small>${count} 篇文档</small>`;
+        button.addEventListener("click", () => {
+          state.activeFolderId = folder.id;
+          saveDocsData();
+          renderDocsModule();
+        });
+        el.folderTree.appendChild(button);
+        renderBranch(folder.id, depth + 1);
+      }
+    };
+    renderBranch("", 0);
+  }
+
+  function renderDocList() {
+    const query = el.docSearchInput.value.trim().toLowerCase();
+    const docs = docsInFolder(state.activeFolderId).filter((doc) => {
+      return !query || `${doc.title} ${doc.sourceFileName || ""}`.toLowerCase().includes(query);
+    });
+    el.docList.innerHTML = "";
+    el.docsCurrentFolder.textContent = folderTitle(state.activeFolderId);
+    el.docsCount.textContent = `${docs.length} 篇文档`;
+
+    if (docs.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "minimap-empty";
+      empty.textContent = "当前目录暂无文档";
+      el.docList.appendChild(empty);
+      return;
+    }
+
+    for (const doc of docs) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "doc-item";
+      button.classList.toggle("active", doc.id === state.selectedDocId);
+      button.innerHTML = `<span class="doc-title">${escapeHtml(doc.title)}</span><small>${escapeHtml(doc.sourceFileName || "")}</small>`;
+      button.addEventListener("click", () => {
+        state.selectedDocId = doc.id;
+        saveDocsData();
+        renderDocsModule();
+      });
+      el.docList.appendChild(button);
+    }
+  }
+
+  function renderDocReader() {
+    const doc = state.docs.find((item) => item.id === state.selectedDocId);
+    el.docEmptyState.hidden = Boolean(doc);
+    el.docReaderContent.hidden = !doc;
+    if (!doc) return;
+
+    el.docTitleInput.value = doc.title;
+    el.docMeta.textContent = `${doc.sourceFileName || "DOCX"} · ${folderTitle(doc.folderId)} · ${new Date(doc.createdAt).toLocaleString()}`;
+    el.docBody.innerHTML = doc.htmlContent || `<div class="doc-body-placeholder">DOCX 已加入资料库。当前版本先保存目录、标题和文件信息；后续接入 Word 解析库后，这里会显示正文内容，并可识别点位编号做联动。</div>`;
+  }
+
+  function renderDocsModule() {
+    renderFolderParentOptions();
+    renderFolderTree();
+    renderDocList();
+    renderDocReader();
+  }
+
+  function addDocFolder() {
+    const name = el.folderNameInput.value.trim();
+    if (!name) {
+      el.folderNameInput.focus();
+      return;
+    }
+    state.docFolders.push({
+      id: folderUid(),
+      name,
+      parentId: el.folderParentSelect.value || "",
+      createdAt: new Date().toISOString()
+    });
+    el.folderNameInput.value = "";
+    saveDocsData();
+    renderDocsModule();
+  }
+
+  function uploadDocs(files) {
+    const list = Array.from(files || []);
+    if (list.length === 0) return;
+    for (const file of list) {
+      state.docs.push({
+        id: docUid(),
+        title: file.name.replace(/\.docx$/i, ""),
+        folderId: state.activeFolderId || "",
+        sourceFileName: file.name,
+        size: file.size,
+        type: file.type,
+        linkedPointIds: [],
+        tags: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        htmlContent: ""
+      });
+    }
+    state.selectedDocId = state.docs[state.docs.length - 1]?.id || null;
+    el.docUploadInput.value = "";
+    saveDocsData();
+    renderDocsModule();
+  }
+
+  function updateSelectedDocTitle() {
+    const doc = state.docs.find((item) => item.id === state.selectedDocId);
+    if (!doc) return;
+    doc.title = el.docTitleInput.value.trim() || doc.sourceFileName || "未命名文档";
+    doc.updatedAt = new Date().toISOString();
+    saveDocsData();
+    renderDocsModule();
+  }
+
+  function deleteSelectedDoc() {
+    if (!state.selectedDocId) return;
+    state.docs = state.docs.filter((doc) => doc.id !== state.selectedDocId);
+    state.selectedDocId = null;
+    saveDocsData();
+    renderDocsModule();
+  }
+
   function bindEvents() {
     const preventNativeDrag = (event) => {
       if (
@@ -2039,6 +2279,21 @@
     document.querySelectorAll(".tool-button").forEach((button) => {
       button.addEventListener("click", () => setTool(button.dataset.tool));
     });
+    el.moduleTabs.forEach((button) => {
+      button.addEventListener("click", () => switchModule(button.dataset.module));
+    });
+    el.addFolderButton.addEventListener("click", addDocFolder);
+    el.folderNameInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        addDocFolder();
+      }
+    });
+    el.docUploadInput.addEventListener("change", () => uploadDocs(el.docUploadInput.files));
+    el.docSearchInput.addEventListener("input", renderDocList);
+    el.docTitleInput.addEventListener("change", updateSelectedDocTitle);
+    el.docTitleInput.addEventListener("blur", updateSelectedDocTitle);
+    el.deleteDocButton.addEventListener("click", deleteSelectedDoc);
     el.fitButton.addEventListener("click", fitToViewport);
     el.addGroupButton.addEventListener("click", (event) => {
       if (event.defaultPrevented) return;
@@ -2176,8 +2431,10 @@
 
   loadData();
   loadAutoNameSettings();
+  loadDocsData();
   bindEvents();
   renderDrawingList();
+  renderDocsModule();
   switchDrawing(state.currentDrawingId);
   setTool("pan");
 

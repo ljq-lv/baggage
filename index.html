@@ -7,7 +7,18 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <main class="app-shell">
+    <header class="module-nav" aria-label="培训网站模块">
+      <div>
+        <strong>行李培训</strong>
+        <span>点位与资料库</span>
+      </div>
+      <nav>
+        <button class="module-tab active" type="button" data-module="points">点位图纸</button>
+        <button class="module-tab" type="button" data-module="docs">培训资料</button>
+      </nav>
+    </header>
+
+    <main id="pointModule" class="app-shell module-panel active">
       <aside class="sidebar" aria-label="图纸与搜索">
         <header class="brand">
           <h1>行李输送机点位查找</h1>
@@ -120,6 +131,63 @@
         </div>
       </section>
     </main>
+
+    <section id="docsModule" class="docs-shell module-panel" aria-label="培训资料库" hidden>
+      <aside class="docs-sidebar">
+        <header class="docs-header">
+          <h2>培训资料</h2>
+          <p>按目录整理 Word 文档，后续可关联点位。</p>
+        </header>
+
+        <section class="panel">
+          <div class="section-title">新建目录</div>
+          <input id="folderNameInput" type="text" placeholder="目录名称">
+          <select id="folderParentSelect" class="folder-parent-select" aria-label="父级目录"></select>
+          <button id="addFolderButton" class="wide-action" type="button">新增目录</button>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">上传文档</div>
+          <label class="file-button docs-upload">
+            上传 DOCX
+            <input id="docUploadInput" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
+          </label>
+          <p class="docs-hint">上传到当前选中的目录。</p>
+        </section>
+
+        <section class="panel docs-tree-panel">
+          <div class="section-title">目录</div>
+          <div id="folderTree" class="folder-tree"></div>
+        </section>
+      </aside>
+
+      <main class="docs-workspace">
+        <div class="docs-topbar">
+          <div>
+            <strong id="docsCurrentFolder">全部资料</strong>
+            <span id="docsCount">0 篇文档</span>
+          </div>
+          <input id="docSearchInput" type="search" placeholder="搜索文档标题">
+        </div>
+
+        <div class="docs-content">
+          <section class="doc-list-panel">
+            <div id="docList" class="doc-list"></div>
+          </section>
+          <article class="doc-reader">
+            <div id="docEmptyState" class="doc-empty-state">选择一篇文档查看详情</div>
+            <div id="docReaderContent" hidden>
+              <div class="doc-reader-head">
+                <input id="docTitleInput" type="text" aria-label="文档标题">
+                <button id="deleteDocButton" type="button" class="danger">删除</button>
+              </div>
+              <div id="docMeta" class="doc-meta"></div>
+              <div id="docBody" class="doc-body"></div>
+            </div>
+          </article>
+        </div>
+      </main>
+    </section>
 
     <script src="app.js"></script>
   </body>
