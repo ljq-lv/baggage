@@ -3358,11 +3358,11 @@
   await loadRepoTrainingDocs();
   bindEvents();
   startManifestSync();
+  await initSync();
   renderDrawingList();
   renderDocsModule();
   switchDrawing(state.currentDrawingId);
   setTool("pan");
-  initSync();
 
   // Sync auto-name UI
   if (state.autoNameEnabled) {
