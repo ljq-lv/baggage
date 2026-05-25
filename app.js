@@ -285,17 +285,17 @@
     }
     if (!loaded) {
       try {
-        var staticResp = await fetch("data/sync-data.json", { cache: "no-store" });
+        var staticResp = await fetch("data-backup.json", { cache: "no-store" });
         if (staticResp.ok) {
           var staticData = await staticResp.json();
-          var inner = staticData.data || staticData;
-          if (inner && (inner.points || inner.annotations || inner.groups)) {
-            applyRemoteData(inner);
+          // data-backup.json format: { annotations, groups, collapsedGroups } directly
+          if (staticData.annotations || staticData.groups) {
+            applyRemoteData({ points: staticData });
             loaded = true;
           }
         }
       } catch (e2) {
-        console.warn("Static data load also failed:", e2.message);
+        console.warn("Static data load failed:", e2.message);
       }
     }
     if (!loaded && hasLocalData()) {}
