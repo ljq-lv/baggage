@@ -1022,90 +1022,97 @@ input.minimap-group-name:focus {
 }
 
 @media (max-width: 900px) {
-  html,
-  body {
-    min-width: 0;
-    overflow-x: hidden;
-  }
+  html, body { min-width: 0; overflow-x: hidden; height: 100%; }
 
-  .module-nav {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 8px;
-    height: auto;
-  }
-
-  .module-nav nav,
-  .module-tab {
-    width: 100%;
-  }
+  .module-nav { height: auto; padding: 8px 12px; gap: 6px; }
+  .module-nav nav { gap: 4px; }
+  .module-tab { min-height: 28px; padding: 0 10px; font-size: 12px; }
 
   .app-shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 80px);
+  }
+
+  .workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .topbar {
     height: auto;
-    min-height: 100vh;
-  }
-
-  .sidebar {
-    max-height: 46vh;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .minimap {
-    position: relative;
-    right: auto;
-    top: auto;
-    bottom: auto;
-    width: 100%;
-    border-left: 0;
-    border-top: 1px solid var(--line);
-  }
-
-  .minimap-body {
-    display: none;
-    height: 150px;
-  }
-
-  .minimap-list {
-    max-height: 320px;
-  }
-
-  .minimap.empty .minimap-list {
-    max-height: 320px;
-  }
-
-  .docs-shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
-    height: auto;
-    min-height: 100vh;
-  }
-
-  .docs-sidebar {
-    max-height: 42vh;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .docs-content {
-    grid-template-columns: 1fr;
-    min-height: 70vh;
-  }
-
-  .docs-topbar,
-  .doc-reader-head,
-  .search-row,
-  .group-tools {
+    padding: 6px 10px;
+    gap: 8px;
     flex-wrap: wrap;
+    font-size: 12px;
+  }
+  #currentDrawingTitle { font-size: 13px; }
+  #annotationCount, .mode-hint { display: none; }
+
+  .viewport {
+    flex: 1;
+    touch-action: pan-x pan-y pinch-zoom;
   }
 
-  .doc-list-panel,
-  .doc-reader,
-  .workspace,
-  .docs-workspace {
-    min-width: 0;
+  /* Compact sidebar: only search + drawing list */
+  .sidebar {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 8px 10px;
+    max-height: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    background: #fff;
+  }
+  .sidebar .brand { display: none; }
+  .sidebar .panel {
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+  }
+  .sidebar .section-title { display: none; }
+  .sidebar .panel:nth-of-type(3),
+  .sidebar .panel:nth-of-type(4),
+  .sidebar .panel:nth-of-type(5),
+  .sidebar .panel:nth-of-type(6) { display: none; }
+
+  /* Search bar full width in sidebar */
+  .search-row { gap: 4px; }
+  .search-row input { padding: 6px 8px; font-size: 13px; }
+  .search-row button { min-height: 30px; font-size: 12px; }
+  .search-results { max-height: 160px; }
+
+  /* Drawing selector */
+  .drawing-list { display: flex; gap: 4px; flex-wrap: wrap; }
+  .drawing-item { width: auto; min-height: 28px; padding: 4px 8px; font-size: 12px; }
+  .drawing-item small { display: inline; margin-left: 4px; }
+
+  /* Fit button float */
+  #fitButton {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+
+  /* Hide complex panels on mobile */
+  .minimap, .editor-panel, .auto-name-advanced,
+  .toggle-row, .tool-grid, .data-actions, .status-text {
+    display: none !important;
   }
 }
 
