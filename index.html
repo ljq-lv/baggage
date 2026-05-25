@@ -149,8 +149,8 @@
         <section class="panel">
           <div class="section-title">上传文档</div>
           <label class="file-button docs-upload">
-            上传 DOCX
-            <input id="docUploadInput" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
+            上传文档
+              <input id="docUploadInput" type="file" accept=".docx,.pdf,.xlsx,.xls,.csv,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple>
           </label>
           <p class="docs-hint">上传到当前选中的目录。</p>
         </section>
@@ -189,6 +189,8 @@
       </main>
     </section>
 
+    <script src="node_modules/jszip/dist/jszip.min.js"></script>
+    <script src="node_modules/xlsx/dist/xlsx.full.min.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

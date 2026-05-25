@@ -752,8 +752,8 @@
           }; })(i, key));
           lbl.appendChild(inp); setDiv.appendChild(lbl);
         }
-        addSet("步长", "step", 1); addSet("进位阈值", "carryAt", 0);
-        addSet("进位增量", "carryAmount", 1); addSet("重置为", "resetTo", 0);
+        addSet("每次几位", "step", 1); addSet("到几进位", "carryAt", 0);
+        addSet("进几位", "carryAmount", 1); addSet("初始值", "resetTo", 0);
 
         var primLbl = document.createElement("label");
         var primCheck = document.createElement("input"); primCheck.type = "checkbox"; primCheck.checked = (i === prim);
@@ -2197,7 +2197,7 @@
 
     el.docTitleInput.value = doc.title;
     el.docMeta.textContent = `${doc.sourceFileName || "DOCX"} · ${folderTitle(doc.folderId)} · ${new Date(doc.createdAt).toLocaleString()}`;
-    el.docBody.innerHTML = doc.htmlContent || `<div class="doc-body-placeholder">DOCX 已加入资料库。当前版本先保存目录、标题和文件信息；后续接入 Word 解析库后，这里会显示正文内容，并可识别点位编号做联动。</div>`;
+    el.docBody.innerHTML = doc.htmlContent || `<div class="doc-body-placeholder">文档已加入资料库，但暂未解析出可显示正文。</div>`;
   }
 
   function renderDocsModule() {
@@ -2224,13 +2224,14 @@
     renderDocsModule();
   }
 
-  function uploadDocs(files) {
+  async function uploadDocs(files) {
     const list = Array.from(files || []);
     if (list.length === 0) return;
     for (const file of list) {
+      const parsed = await parseTrainingFile(file);
       state.docs.push({
         id: docUid(),
-        title: file.name.replace(/\.docx$/i, ""),
+        title: file.name.replace(/\.(docx|pdf|xlsx|xls|csv|pptx)$/i, ""),
         folderId: state.activeFolderId || "",
         sourceFileName: file.name,
         size: file.size,
@@ -2239,13 +2240,136 @@
         tags: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        htmlContent: ""
+        htmlContent: parsed.html,
+        textContent: parsed.text,
+        parseStatus: parsed.status
       });
     }
     state.selectedDocId = state.docs[state.docs.length - 1]?.id || null;
     el.docUploadInput.value = "";
     saveDocsData();
     renderDocsModule();
+  }
+
+  async function parseTrainingFile(file) {
+    const ext = file.name.split(".").pop().toLowerCase();
+    try {
+      if (ext === "docx") return await parseDocxFile(file);
+      if (ext === "pptx") return await parsePptxFile(file);
+      if (ext === "xlsx" || ext === "xls" || ext === "csv") return await parseSpreadsheetFile(file);
+      if (ext === "pdf") return await parsePdfFile(file);
+      return {
+        html: `<div class="doc-body-placeholder">暂不支持解析 ${escapeHtml(ext)} 文件，但已保存文件条目。</div>`,
+        text: "",
+        status: "unsupported"
+      };
+    } catch (error) {
+      console.warn("File parse failed:", file.name, error);
+      return {
+        html: `<div class="doc-body-placeholder">解析失败：${escapeHtml(error.message || "未知错误")}。文件条目已保存。</div>`,
+        text: "",
+        status: "failed"
+      };
+    }
+  }
+
+  async function parseDocxFile(file) {
+    if (!window.JSZip) throw new Error("JSZip 未加载");
+    const zip = await window.JSZip.loadAsync(await file.arrayBuffer());
+    const documentXml = await zip.file("word/document.xml")?.async("text");
+    if (!documentXml) throw new Error("未找到 Word 正文");
+    const paragraphs = extractWordParagraphs(documentXml);
+    const text = paragraphs.join("\n");
+    return {
+      html: paragraphs.length
+        ? paragraphs.map((line) => `<p>${escapeHtml(line)}</p>`).join("")
+        : `<div class="doc-body-placeholder">Word 文件已读取，但没有提取到正文。</div>`,
+      text,
+      status: "parsed"
+    };
+  }
+
+  async function parsePptxFile(file) {
+    if (!window.JSZip) throw new Error("JSZip 未加载");
+    const zip = await window.JSZip.loadAsync(await file.arrayBuffer());
+    const slideFiles = Object.keys(zip.files)
+      .filter((name) => /^ppt\/slides\/slide\d+\.xml$/.test(name))
+      .sort((a, b) => Number(a.match(/slide(\d+)/)?.[1] || 0) - Number(b.match(/slide(\d+)/)?.[1] || 0));
+    const slides = [];
+    for (const slideFile of slideFiles) {
+      const xml = await zip.file(slideFile).async("text");
+      const lines = extractXmlText(xml, "a:t");
+      slides.push(lines.join(" ").trim());
+    }
+    const filtered = slides.filter(Boolean);
+    return {
+      html: filtered.length
+        ? filtered.map((text, index) => `<section class="doc-slide"><h3>第 ${index + 1} 页</h3><p>${escapeHtml(text)}</p></section>`).join("")
+        : `<div class="doc-body-placeholder">PPT 文件已读取，但没有提取到文字。</div>`,
+      text: filtered.join("\n"),
+      status: "parsed"
+    };
+  }
+
+  async function parseSpreadsheetFile(file) {
+    if (!window.XLSX) throw new Error("XLSX 未加载");
+    const workbook = window.XLSX.read(await file.arrayBuffer(), { type: "array" });
+    const parts = [];
+    const textParts = [];
+    for (const sheetName of workbook.SheetNames) {
+      const rows = window.XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, blankrows: false });
+      textParts.push(sheetName, ...rows.map((row) => row.join("\t")));
+      parts.push(`<section class="doc-sheet"><h3>${escapeHtml(sheetName)}</h3>${rowsToTable(rows)}</section>`);
+    }
+    return {
+      html: parts.join("") || `<div class="doc-body-placeholder">表格文件已读取，但没有提取到内容。</div>`,
+      text: textParts.join("\n"),
+      status: "parsed"
+    };
+  }
+
+  async function parsePdfFile(file) {
+    const pdfjs = await import("./node_modules/pdfjs-dist/build/pdf.mjs");
+    pdfjs.GlobalWorkerOptions.workerSrc = "./node_modules/pdfjs-dist/build/pdf.worker.mjs";
+    const pdf = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+    const pages = [];
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+      const page = await pdf.getPage(pageNumber);
+      const content = await page.getTextContent();
+      const text = content.items.map((item) => item.str).join(" ").trim();
+      pages.push(text);
+    }
+    const filtered = pages.filter(Boolean);
+    return {
+      html: filtered.length
+        ? filtered.map((text, index) => `<section class="doc-pdf-page"><h3>第 ${index + 1} 页</h3><p>${escapeHtml(text)}</p></section>`).join("")
+        : `<div class="doc-body-placeholder">PDF 已读取，但没有提取到文字。</div>`,
+      text: filtered.join("\n"),
+      status: "parsed"
+    };
+  }
+
+  function extractWordParagraphs(xml) {
+    const doc = new DOMParser().parseFromString(xml, "application/xml");
+    return Array.from(doc.getElementsByTagName("w:p")).map((paragraph) => {
+      return Array.from(paragraph.childNodes).map((node) => {
+        return Array.from(node.getElementsByTagName ? node.getElementsByTagName("w:t") : [])
+          .map((textNode) => textNode.textContent)
+          .join("");
+      }).join("").trim();
+    }).filter(Boolean);
+  }
+
+  function extractXmlText(xml, tagName) {
+    const doc = new DOMParser().parseFromString(xml, "application/xml");
+    return Array.from(doc.getElementsByTagName(tagName)).map((node) => node.textContent || "").filter(Boolean);
+  }
+
+  function rowsToTable(rows) {
+    if (!rows.length) return `<div class="doc-body-placeholder">空工作表</div>`;
+    return `<div class="doc-table-wrap"><table class="doc-table">${rows.map((row) => {
+      return `<tr>${row.map((cell) => `<td>${escapeHtml(cell == null ? "" : cell)}</td>`).join("")}</tr>`;
+    }).join("")}</table></div>`;
   }
 
   function updateSelectedDocTitle() {

@@ -879,6 +879,38 @@ input.minimap-group-name:focus {
   line-height: 1.75;
 }
 
+.doc-body h3 {
+  margin: 18px 0 8px;
+  font-size: 16px;
+}
+
+.doc-slide,
+.doc-pdf-page,
+.doc-sheet {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.doc-table-wrap {
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.doc-table td {
+  min-width: 90px;
+  border: 1px solid var(--line);
+  padding: 6px 8px;
+  vertical-align: top;
+}
+
 .doc-body-placeholder {
   padding: 16px;
   border: 1px solid var(--line);
