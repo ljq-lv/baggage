@@ -3303,6 +3303,15 @@
       renderOverlay();
       renderMinimap();
     });
+    el.image.addEventListener("error", () => {
+      el.viewport.classList.remove("loading");
+      el.currentDrawingTitle.textContent = (currentDrawing()?.title || "") + " 加载失败";
+      setTimeout(function() {
+        if (el.currentDrawingTitle.textContent.indexOf("加载失败") >= 0) {
+          el.currentDrawingTitle.textContent = currentDrawing()?.title || "";
+        }
+      }, 5000);
+    });
   }
 
   function startManifestSync() {
