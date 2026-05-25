@@ -3386,19 +3386,6 @@
   renderDrawingList();
   renderDocsModule();
 
-  // Mobile: sidebar as bottom drawer with drag handle
-  if (window.innerWidth <= 900) {
-    var sidebar = document.querySelector(".sidebar");
-    if (sidebar) {
-      sidebar.classList.add("collapsed");
-      var handle = document.createElement("div");
-      handle.style.cssText = "width:36px;height:4px;margin:8px auto;border-radius:2px;background:var(--line);cursor:pointer;";
-      handle.addEventListener("click", function() {
-        sidebar.classList.toggle("collapsed");
-      });
-      sidebar.insertBefore(handle, sidebar.firstChild);
-    }
-  }
   switchDrawing(state.currentDrawingId);
   setTool("pan");
 

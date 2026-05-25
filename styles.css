@@ -1038,130 +1038,85 @@ input.minimap-group-name:focus {
 @media (max-width: 900px) {
   html, body { min-width: 0; overflow: hidden; height: 100%; position: fixed; width: 100%; }
 
-  .module-nav { height: auto; padding: 6px 10px; gap: 4px; flex-shrink: 0; }
-  .module-nav nav { gap: 4px; }
-  .module-nav strong { font-size: 13px; }
-  .module-nav span { font-size: 11px; }
-  .module-tab { min-height: 28px; padding: 0 8px; font-size: 11px; }
+  .module-nav { height: auto; padding: 4px 8px; gap: 4px; flex-shrink: 0; }
+  .module-nav strong { font-size: 12px; }
+  .module-nav span { display: none; }
+  .module-nav nav { gap: 2px; }
+  .module-tab { min-height: 26px; padding: 0 6px; font-size: 11px; }
 
   .app-shell {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 60px);
-    height: calc(100dvh - 60px);
+    height: calc(100dvh - 52px);
     height: 100%;
   }
 
-  .workspace {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-  }
-
-  .viewport {
-    flex: 1;
-    min-height: 300px;
-    touch-action: pan-x pan-y pinch-zoom;
-  }
-
-  .topbar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: auto;
-    padding: 4px 8px;
-    font-size: 12px;
-    flex-wrap: wrap;
-  }
-  #currentDrawingTitle { font-size: 13px; flex: 1; }
-  #annotationCount, .mode-hint { display: none; }
-
-  .viewport {
-    flex: 1;
-    min-height: 300px;
-    touch-action: pan-x pan-y pinch-zoom;
-  }
-
-  /* Sidebar becomes floating overlay at bottom */
+  /* Sidebar: only search bar at top, rest hidden */
   .sidebar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 20;
-    max-height: 50vh;
-    overflow-y: auto;
-    padding: 0;
-    border-radius: 12px 12px 0 0;
-    border-top: 1px solid var(--line);
+    flex: none;
+    padding: 6px 8px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
     background: #fff;
-    box-shadow: 0 -2px 16px rgba(0,0,0,0.1);
-    transform: translateY(0);
-    transition: transform 0.25s;
   }
-  .sidebar.collapsed { transform: translateY(calc(100% - 24px)); }
   .sidebar .brand { display: none; }
+  .sidebar .panel { padding: 0; margin: 0; border: none; background: transparent; }
+  .sidebar .section-title { display: none; }
 
-  .sidebar .panel {
-    padding: 6px 12px;
-    margin: 0;
-    border: none;
-    border-radius: 0;
-    background: transparent;
-  }
-  .sidebar .panel + .panel { border-top: 1px solid #f0f0f0; }
-  .sidebar .section-title { font-size: 12px; margin-bottom: 6px; }
+  /* Show only search panel + drawing list */
+  .sidebar .panel:first-of-type { margin-bottom: 4px; }
+  .sidebar .panel:nth-of-type(n+3) { display: none; }
 
-  /* Search overlay on top of viewport */
   .search-row { gap: 4px; }
+  .search-row input { padding: 6px 8px; font-size: 13px; }
+  .search-row button { min-height: 30px; font-size: 12px; }
+
   .search-results {
-    position: fixed;
-    top: 50px;
-    left: 8px;
-    right: 8px;
-    z-index: 30;
-    max-height: 40vh;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    background: #fff;
+    position: fixed; top: 50px; left: 8px; right: 8px; z-index: 30;
+    max-height: 40vh; border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); background: #fff;
+    overflow: auto;
   }
   .search-results:empty { display: none; }
 
-  /* Drawing selector as compact dropdown */
-  .drawing-list { display: flex; gap: 4px; flex-wrap: wrap; }
-  .drawing-item { width: auto; min-height: 28px; padding: 3px 8px; font-size: 11px; }
+  .drawing-list { display: flex; gap: 3px; flex-wrap: wrap; }
+  .drawing-item { width: auto; min-height: 26px; padding: 2px 6px; font-size: 11px; }
   .drawing-item small { font-size: 10px; margin-left: 2px; }
+
+  /* Workspace: full remaining height */
+  .workspace { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+  .topbar {
+    display: flex; align-items: center; gap: 6px;
+    height: auto; padding: 2px 8px; font-size: 11px;
+  }
+  #currentDrawingTitle { font-size: 12px; flex: 1; }
+  #annotationCount, .mode-hint { display: none; }
+
+  .viewport { flex: 1; min-height: 200px; touch-action: pan-x pan-y pinch-zoom; }
+
+  /* Smaller annotation dots on mobile */
+  .annotation-shape { stroke-width: 1; }
+  .annotation-shape.selected { stroke-width: 1.5; }
+  .annotation-label { font-size: 11px; stroke-width: 3; }
 
   /* Floating fit button */
   #fitButton {
-    position: fixed;
-    bottom: 20px;
-    right: 16px;
-    z-index: 15;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: none;
-    background: var(--accent);
-    color: #fff;
-    font-size: 16px;
-    line-height: 1;
+    position: fixed; bottom: 16px; right: 12px; z-index: 15;
+    width: 38px; height: 38px; border-radius: 50%; border: none;
+    background: var(--accent); color: #fff;
+    font-size: 14px; line-height: 1;
     box-shadow: 0 2px 12px rgba(0,0,0,0.3);
   }
 
-  /* Hide complex panels */
+  /* Hide everything else */
   .minimap, .editor-panel, .auto-name-advanced,
   .toggle-row, .tool-grid, .data-actions, .status-text,
   #autoNameCompact, #autoNameAdvanced { display: none !important; }
 
   /* Training docs mobile */
-  .docs-shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
-    height: calc(100dvh - 60px);
-  }
-  .docs-sidebar { max-height: 35vh; }
+  .docs-shell { grid-template-columns: 1fr; height: calc(100dvh - 52px); }
+  .docs-sidebar { max-height: 35vh; border-right: 0; border-bottom: 1px solid var(--line); }
   .docs-content { grid-template-columns: 1fr; min-height: 40vh; }
 }
 
