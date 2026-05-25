@@ -1293,8 +1293,14 @@
     if (!groupVisibleInDrawing(state.activeGroupId, drawingId)) state.activeGroupId = "";
     const drawing = currentDrawing();
     if (!drawing) return;
-    el.currentDrawingTitle.textContent = drawing.title + " 加载中...";
-    el.viewport.classList.add("loading");
+    var prevSrc = el.image.getAttribute("src") || "";
+    var srcChanged = prevSrc !== drawing.image;
+    if (srcChanged) {
+      el.currentDrawingTitle.textContent = drawing.title + " 加载中...";
+      el.viewport.classList.add("loading");
+    } else {
+      el.currentDrawingTitle.textContent = drawing.title;
+    }
     el.image.src = drawing.image;
     el.minimapImage.src = drawing.image;
     renderDrawingList();
