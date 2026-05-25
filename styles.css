@@ -96,7 +96,7 @@ button.danger {
 
 .app-shell {
   display: grid;
-  grid-template-columns: 330px minmax(0, 1fr) 260px;
+  grid-template-columns: 330px minmax(0, 1fr);
   height: calc(100vh - 54px);
   overflow: hidden;
 }
@@ -499,20 +499,21 @@ textarea {
 }
 
 .minimap {
-  position: fixed;
+  position: absolute;
   right: 0;
-  top: 54px;
+  top: 0;
   bottom: 0;
   z-index: 5;
   width: 260px;
+  display: flex;
+  flex-direction: column;
   border-left: 1px solid var(--line);
-  border-radius: 0;
   overflow: hidden;
   background: #f8fafb;
-  box-shadow: none;
 }
 
 .minimap-title {
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -539,6 +540,7 @@ textarea {
   position: relative;
   width: 100%;
   height: 190px;
+  flex: none;
   cursor: pointer;
   background:
     linear-gradient(rgba(15, 118, 110, 0.08) 1px, transparent 1px),
@@ -557,6 +559,7 @@ textarea {
   grid-template-columns: minmax(0, 1fr) 52px;
   gap: 6px;
   padding: 10px 12px;
+  flex: none;
   border-bottom: 1px solid var(--line);
   background: #fff;
 }
@@ -590,11 +593,12 @@ textarea {
 }
 
 .minimap-list {
+  flex: 1;
   display: grid;
   gap: 10px;
-  max-height: calc(100vh - 180px);
   overflow: auto;
   padding: 12px;
+  align-content: start;
 }
 
 .minimap-empty {
@@ -614,7 +618,7 @@ textarea {
 
 .minimap-group-title {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
+  grid-template-columns: 24px minmax(0, 1fr) auto 28px;
   align-items: center;
   gap: 6px;
   padding: 4px;
@@ -636,6 +640,15 @@ textarea {
   border-color: transparent;
   background: transparent;
   font-weight: 700;
+}
+
+.minimap-group-title > small {
+  min-width: max-content;
+}
+
+.minimap-group-spacer {
+  width: 24px;
+  height: 24px;
 }
 
 input.minimap-group-name {
@@ -804,6 +817,12 @@ input.minimap-group-name:focus {
   gap: 6px;
 }
 
+.folder-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px;
+  gap: 6px;
+}
+
 .folder-item,
 .doc-item {
   display: grid;
@@ -823,6 +842,15 @@ input.minimap-group-name:focus {
   background: #e8f5f3;
 }
 
+.folder-delete {
+  width: 34px;
+  min-height: 38px;
+  padding: 0;
+  color: var(--danger);
+  border-color: var(--line);
+  background: #fff;
+}
+
 .folder-item small,
 .doc-item small {
   color: var(--muted);
@@ -833,6 +861,8 @@ input.minimap-group-name:focus {
   display: grid;
   grid-template-rows: 56px minmax(0, 1fr);
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .docs-topbar {
@@ -853,6 +883,7 @@ input.minimap-group-name:focus {
   display: grid;
   grid-template-columns: 330px minmax(0, 1fr);
   min-height: 0;
+  overflow: hidden;
 }
 
 .doc-list-panel {
@@ -864,18 +895,20 @@ input.minimap-group-name:focus {
 
 .doc-reader {
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 22px;
   background: #fff;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.doc-reader img {
+  max-width: 100%;
+  height: auto;
 }
 
 .doc-empty-state {
-  display: grid;
-  min-height: 240px;
-  place-items: center;
-  color: var(--muted);
-  border: 1px dashed var(--line);
-  border-radius: 8px;
-  background: #f8fafb;
+  display: none;
 }
 
 .doc-reader-head {
@@ -984,6 +1017,24 @@ input.minimap-group-name:focus {
 }
 
 @media (max-width: 900px) {
+  html,
+  body {
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .module-nav {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+    height: auto;
+  }
+
+  .module-nav nav,
+  .module-tab {
+    width: 100%;
+  }
+
   .app-shell {
     grid-template-columns: 1fr;
     grid-template-rows: auto minmax(0, 1fr);
@@ -1018,5 +1069,62 @@ input.minimap-group-name:focus {
 
   .minimap.empty .minimap-list {
     max-height: 320px;
+  }
+
+  .docs-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .docs-sidebar {
+    max-height: 42vh;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .docs-content {
+    grid-template-columns: 1fr;
+    min-height: 70vh;
+  }
+
+  .docs-topbar,
+  .doc-reader-head,
+  .search-row,
+  .group-tools {
+    flex-wrap: wrap;
+  }
+
+  .doc-list-panel,
+  .doc-reader,
+  .workspace,
+  .docs-workspace {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar,
+  .docs-topbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tool-grid,
+  .data-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .viewport {
+    min-height: 54vh;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 16px;
   }
 }

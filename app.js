@@ -1,9 +1,9 @@
-(function () {
+(async function () {
   const STORAGE_KEY = "baggage-point-finder-v1";
   const DOCS_KEY = "baggage-training-docs-v1";
   const SVG_NS = "http://www.w3.org/2000/svg";
 
-  const drawings = [
+  const defaultDrawings = [
     { id: "b1", title: "B1层", image: "assets/floors/b1.png" },
     { id: "f1", title: "1层", image: "assets/floors/f1.png" },
     { id: "f2", title: "2层", image: "assets/floors/f2.png" },
@@ -13,9 +13,10 @@
     { id: "overview-2d", title: "2D总览", image: "assets/floors/overview-2d.png" },
     { id: "overview-3d", title: "3D总览", image: "assets/floors/overview-3d.png" }
   ];
+  let drawings = defaultDrawings.slice();
 
   const state = {
-    currentDrawingId: drawings[0].id,
+    currentDrawingId: defaultDrawings[0].id,
     tool: "pan",
     annotationsVisible: true,
     labelsVisible: false,
@@ -101,6 +102,187 @@
   };
 
   var BACKUP_KEY = STORAGE_KEY + "-backup";
+  var drawingManifestSignature = "";
+  var trainingManifestSignature = "";
+  var AUTONAME_KEY = "baggage-autoname";
+  var SYNC_META_KEY = STORAGE_KEY + "-sync-meta";
+  var SYNC_ENDPOINT = "/api/data";
+  var syncState = {
+    enabled: location.protocol === "http:" || location.protocol === "https:",
+    applyingRemote: false,
+    pushTimer: null,
+    syncedAt: ""
+  };
+
+  try {
+    var syncMeta = JSON.parse(localStorage.getItem(SYNC_META_KEY) || "{}");
+    syncState.syncedAt = syncMeta.syncedAt || "";
+  } catch (error) {}
+
+  function getPointsPayload() {
+    return {
+      version: 1,
+      drawings: drawings.map(function(d) { return { id: d.id, title: d.title, image: d.image }; }),
+      groups: state.groups,
+      collapsedGroups: state.collapsedGroups,
+      annotations: state.annotations
+    };
+  }
+
+  function savePointsLocal() {
+    var json = JSON.stringify(getPointsPayload());
+    try {
+      localStorage.setItem(STORAGE_KEY, json);
+      localStorage.setItem(BACKUP_KEY, json);
+    } catch (error) {
+      setStatus("淇濆瓨澶辫触锛屽彲鑳藉瓨鍌ㄧ┖闂翠笉瓒炽€傝瀵煎嚭鏁版嵁澶囦唤銆?");
+      console.error("Save failed:", error);
+    }
+    writeBackupFile(json);
+  }
+
+  function getDocsPayload() {
+    return {
+      version: 1,
+      folders: state.docFolders,
+      docs: state.docs,
+      activeFolderId: state.activeFolderId,
+      selectedDocId: state.selectedDocId
+    };
+  }
+
+  function saveDocsLocal() {
+    localStorage.setItem(DOCS_KEY, JSON.stringify(getDocsPayload()));
+  }
+
+  function getAutoNamePayload() {
+    return {
+      enabled: state.autoNameEnabled,
+      segments: state.autoNameSegments,
+      separators: state.autoNameSeparators,
+      primaryIdx: state.autoNamePrimaryIdx
+    };
+  }
+
+  function saveAutoNameLocal() {
+    try {
+      localStorage.setItem(AUTONAME_KEY, JSON.stringify(getAutoNamePayload()));
+    } catch (e) {}
+  }
+
+  function getCombinedPayload() {
+    return {
+      version: 1,
+      points: getPointsPayload(),
+      docs: getDocsPayload(),
+      autoName: getAutoNamePayload()
+    };
+  }
+
+  function hasLocalData() {
+    return state.annotations.length > 0 || state.groups.length > 0 || state.docs.length > 0 || state.docFolders.length > 0;
+  }
+
+  function saveSyncMeta(updatedAt) {
+    syncState.syncedAt = updatedAt || new Date().toISOString();
+    try {
+      localStorage.setItem(SYNC_META_KEY, JSON.stringify({ syncedAt: syncState.syncedAt }));
+    } catch (error) {}
+  }
+
+  function scheduleSyncPush() {
+    if (!syncState.enabled || syncState.applyingRemote) return;
+    window.clearTimeout(syncState.pushTimer);
+    syncState.pushTimer = window.setTimeout(pushSyncData, 650);
+  }
+
+  async function pushSyncData() {
+    if (!syncState.enabled || syncState.applyingRemote) return;
+    try {
+      const response = await fetch(SYNC_ENDPOINT, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: getCombinedPayload() })
+      });
+      if (!response.ok) throw new Error("Sync save failed: " + response.status);
+      const result = await response.json();
+      saveSyncMeta(result.updatedAt);
+      setStatus("宸插悓姝ュ埌鏈嶅姟鍣ㄣ€?");
+    } catch (error) {
+      console.warn("Sync push failed:", error);
+      setStatus("鏈湴宸蹭繚瀛橈紝鏈嶅姟鍣ㄥ悓姝ュけ璐ャ€?");
+    }
+  }
+
+  function applyRemoteData(remoteData) {
+    if (!remoteData || typeof remoteData !== "object") return;
+    syncState.applyingRemote = true;
+    try {
+      if (remoteData.points && typeof remoteData.points === "object") {
+        if (Array.isArray(remoteData.points.groups)) {
+          state.groups = remoteData.points.groups.map(toGroup).filter(Boolean);
+        }
+        if (remoteData.points.collapsedGroups && typeof remoteData.points.collapsedGroups === "object") {
+          state.collapsedGroups = remoteData.points.collapsedGroups;
+        }
+        if (Array.isArray(remoteData.points.annotations)) {
+          state.annotations = remoteData.points.annotations.map(toPointAnnotation).filter(Boolean);
+        }
+      }
+      if (remoteData.docs && typeof remoteData.docs === "object") {
+        state.docFolders = Array.isArray(remoteData.docs.folders)
+          ? remoteData.docs.folders.filter((folder) => folder.id && folder.name)
+          : [];
+        state.docs = Array.isArray(remoteData.docs.docs)
+          ? remoteData.docs.docs.filter((doc) => doc.id && doc.title)
+          : [];
+        state.activeFolderId = remoteData.docs.activeFolderId || "";
+        state.selectedDocId = remoteData.docs.selectedDocId || null;
+      }
+      if (remoteData.autoName && typeof remoteData.autoName === "object") {
+        if (typeof remoteData.autoName.enabled === "boolean") state.autoNameEnabled = remoteData.autoName.enabled;
+        if (Array.isArray(remoteData.autoName.segments)) state.autoNameSegments = remoteData.autoName.segments;
+        if (Array.isArray(remoteData.autoName.separators)) state.autoNameSeparators = remoteData.autoName.separators;
+        if (typeof remoteData.autoName.primaryIdx === "number") state.autoNamePrimaryIdx = remoteData.autoName.primaryIdx;
+      }
+      savePointsLocal();
+      saveDocsLocal();
+      saveAutoNameLocal();
+    } finally {
+      syncState.applyingRemote = false;
+    }
+    renderDrawingList();
+    renderDocsModule();
+    switchDrawing(state.currentDrawingId);
+    setTool(state.tool || "pan");
+    el.autoNameToggle.checked = state.autoNameEnabled;
+    el.autoNameCompact.hidden = !state.autoNameEnabled;
+    el.autoNameExpandBtn.hidden = !state.autoNameEnabled;
+    el.autoNameTemplate.value = segmentsToTemplate(state.autoNameSegments, state.autoNameSeparators);
+    updateAutoNamePreview();
+  }
+
+  async function initSync() {
+    if (!syncState.enabled) {
+      setStatus("鐩存帴鎵撳紑 HTML 鏃朵粎鏈満淇濆瓨锛涜鐢?npm start 鍚姩鍚屾銆?");
+      return;
+    }
+    try {
+      const response = await fetch(SYNC_ENDPOINT, { cache: "no-store" });
+      if (!response.ok) return;
+      const remote = await response.json();
+      if (remote.data && remote.updatedAt && remote.updatedAt !== syncState.syncedAt) {
+        applyRemoteData(remote.data);
+        saveSyncMeta(remote.updatedAt);
+        setStatus("宸蹭粠鏈嶅姟鍣ㄥ悓姝ユ渶鏂版暟鎹€?");
+      } else if (!remote.data && hasLocalData()) {
+        await pushSyncData();
+      }
+    } catch (error) {
+      console.warn("Sync init failed:", error);
+      setStatus("鏈繛鎺ュ埌鍚屾鏈嶅姟锛屽綋鍓嶄娇鐢ㄦ湰鍦版暟鎹€?");
+    }
+  }
 
   function loadData() {
     var raw = localStorage.getItem(STORAGE_KEY);
@@ -157,6 +339,44 @@
       "Data loaded: " + state.annotations.length + "/" + totalAnnotations + " annotations, " +
       state.groups.length + " groups"
     );
+  }
+
+  async function loadDrawingManifest() {
+    try {
+      const response = await fetch("assets/floors/manifest.json", { cache: "no-store" });
+      if (!response.ok) return;
+      const manifest = await response.json();
+      if (!manifest || !Array.isArray(manifest.drawings) || manifest.drawings.length === 0) return;
+      const signature = JSON.stringify(manifest.drawings.map((item) => ({
+        id: item.id,
+        title: item.title,
+        image: item.image,
+        pdf: item.pdf,
+        width: item.width,
+        height: item.height
+      })));
+      if (signature === drawingManifestSignature) return false;
+      drawingManifestSignature = signature;
+
+      drawings = manifest.drawings.map((item) => ({
+        id: item.id,
+        title: item.title || item.id,
+        image: item.image && item.image.includes("/")
+          ? item.image
+          : `assets/floors/${item.image}`,
+        pdf: item.pdf || "",
+        width: item.width,
+        height: item.height
+      })).filter((item) => item.id && item.image);
+
+      if (!drawings.some((drawing) => drawing.id === state.currentDrawingId)) {
+        state.currentDrawingId = drawings[0].id;
+      }
+      return true;
+    } catch (error) {
+      console.warn("Drawing manifest load failed:", error);
+    }
+    return false;
   }
 
   var backupFileHandle = null;
@@ -240,14 +460,10 @@
   }
 
   function saveData() {
-    var payload = {
-      version: 1,
-      drawings: drawings.map(function(d) { return { id: d.id, title: d.title, image: d.image }; }),
-      groups: state.groups,
-      collapsedGroups: state.collapsedGroups,
-      annotations: state.annotations
-    };
-    var json = JSON.stringify(payload);
+    savePointsLocal();
+    scheduleSyncPush();
+    return;
+    var json = JSON.stringify(getPointsPayload());
     try {
       localStorage.setItem(STORAGE_KEY, json);
       localStorage.setItem(BACKUP_KEY, json);
@@ -295,7 +511,9 @@
     if (!name) return false;
     var group = state.groups.find(function(g) { return g.id === groupId; });
     if (!group) return false;
-    if (state.groups.some(function(g) { return g.id !== groupId && g.name === name; })) {
+    if (state.groups.some(function(g) {
+      return g.id !== groupId && g.name === name && groupVisibleInDrawing(g.id, state.currentDrawingId);
+    })) {
       setStatus("分组名已存在。");
       return false;
     }
@@ -308,7 +526,7 @@
   }
 
   function currentDrawing() {
-    return drawings.find((drawing) => drawing.id === state.currentDrawingId);
+    return drawings.find((drawing) => drawing.id === state.currentDrawingId) || drawings[0];
   }
 
   function currentAnnotations() {
@@ -318,6 +536,14 @@
   function groupTitle(groupId) {
     if (!groupId) return "未分组";
     return state.groups.find((group) => group.id === groupId)?.name || "未分组";
+  }
+
+  function groupVisibleInDrawing(groupId, drawingId) {
+    if (!groupId) return true;
+    const group = state.groups.find((item) => item.id === groupId);
+    if (!group) return false;
+    if (group.drawingId === drawingId) return true;
+    return state.annotations.some((annotation) => annotation.drawingId === drawingId && annotation.groupId === groupId);
   }
 
   function getSelected() {
@@ -642,19 +868,12 @@
   }
 
   function saveAutoNameSettings() {
-    var settings = {
-      enabled: state.autoNameEnabled,
-      segments: state.autoNameSegments,
-      separators: state.autoNameSeparators,
-      primaryIdx: state.autoNamePrimaryIdx
-    };
-    try {
-      localStorage.setItem("baggage-autoname", JSON.stringify(settings));
-    } catch (e) {}
+    saveAutoNameLocal();
+    scheduleSyncPush();
   }
 
   function loadAutoNameSettings() {
-    var raw = localStorage.getItem("baggage-autoname");
+    var raw = localStorage.getItem(AUTONAME_KEY);
     if (!raw) return;
     try {
       var settings = JSON.parse(raw);
@@ -1067,10 +1286,13 @@
   }
 
   function switchDrawing(drawingId, options = {}) {
+    if (!drawings.some((drawing) => drawing.id === drawingId)) drawingId = drawings[0]?.id || "";
     state.currentDrawingId = drawingId;
     state.selectedId = options.selectedId || null;
     state.highlightedId = options.highlightedId || null;
+    if (!groupVisibleInDrawing(state.activeGroupId, drawingId)) state.activeGroupId = "";
     const drawing = currentDrawing();
+    if (!drawing) return;
     el.currentDrawingTitle.textContent = drawing.title;
     el.image.src = drawing.image;
     el.minimapImage.src = drawing.image;
@@ -1208,17 +1430,31 @@
     const annotations = currentAnnotations();
     el.minimapList.innerHTML = "";
 
-    // Bucket annotations by group
+    var usedGroupIds = new Set();
+    var currentDrawingId = state.currentDrawingId;
+    var visibleGroups = state.groups.filter(function(group) {
+      return group.drawingId === currentDrawingId;
+    });
+
+    // Bucket annotations by groups that belong to the current drawing. Legacy groups
+    // without drawingId are shown only when a current annotation uses them.
     var groupBuckets = new Map();
     groupBuckets.set("", []);
-    for (var i = 0; i < state.groups.length; i++) {
-      groupBuckets.set(state.groups[i].id, []);
-    }
     for (var i = 0; i < annotations.length; i++) {
       var gid = annotations[i].groupId || "";
       if (gid && !state.groups.some(function(g) { return g.id === gid; })) gid = "";
+      if (gid) usedGroupIds.add(gid);
       if (groupBuckets.has(gid)) groupBuckets.get(gid).push(annotations[i]);
       else groupBuckets.set(gid, [annotations[i]]);
+    }
+    for (var i = 0; i < state.groups.length; i++) {
+      var group = state.groups[i];
+      if (!visibleGroups.some(function(item) { return item.id === group.id; }) && usedGroupIds.has(group.id)) {
+        visibleGroups.push(group);
+      }
+    }
+    for (var i = 0; i < visibleGroups.length; i++) {
+      if (!groupBuckets.has(visibleGroups[i].id)) groupBuckets.set(visibleGroups[i].id, []);
     }
 
     if (annotations.length === 0 && state.groups.length === 0) {
@@ -1283,6 +1519,10 @@
         groupInput.addEventListener("keydown", function(ev) {
           if (ev.key === "Enter") { ev.preventDefault(); groupInput.blur(); }
         });
+        const spacer = document.createElement("span");
+        spacer.className = "minimap-group-spacer";
+        spacer.setAttribute("aria-hidden", "true");
+        heading.appendChild(spacer);
         heading.appendChild(groupInput);
         const count = document.createElement("small");
         count.textContent = "0 个点位";
@@ -1303,7 +1543,7 @@
             deleteGroup(groupId);
           }
         });
-        heading.appendChild(delBtn);
+        if (groupId) heading.appendChild(delBtn);
 
         heading.addEventListener("pointerdown", (event) => event.stopPropagation());
         heading.addEventListener("click", (event) => {
@@ -1397,7 +1637,7 @@
           deleteGroup(groupId);
         }
       });
-      heading.appendChild(delGrpBtn);
+      if (groupId) heading.appendChild(delGrpBtn);
 
       heading.addEventListener("pointerdown", (event) => event.stopPropagation());
       heading.addEventListener("click", (event) => {
@@ -1640,7 +1880,7 @@
       return;
     }
 
-    const existing = state.groups.find((group) => group.name === name);
+    const existing = state.groups.find((group) => group.name === name && groupVisibleInDrawing(group.id, state.currentDrawingId));
     if (existing) {
       el.groupNameInput.value = "";
       setStatus("分组已存在。");
@@ -1650,6 +1890,7 @@
     state.groups.push({
       id: groupUid(),
       name,
+      drawingId: state.currentDrawingId,
       createdAt: new Date().toISOString()
     });
     el.groupNameInput.value = "";
@@ -2118,14 +2359,105 @@
   }
 
   function saveDocsData() {
-    const payload = {
-      version: 1,
-      folders: state.docFolders,
-      docs: state.docs,
-      activeFolderId: state.activeFolderId,
-      selectedDocId: state.selectedDocId
-    };
-    localStorage.setItem(DOCS_KEY, JSON.stringify(payload));
+    saveDocsLocal();
+    scheduleSyncPush();
+  }
+
+  async function loadRepoTrainingDocs() {
+    let manifest;
+    try {
+      const response = await fetch("assets/training-docs-manifest.json", { cache: "no-store" });
+      if (!response.ok) return;
+      manifest = await response.json();
+    } catch (error) {
+      return;
+    }
+
+    if (!manifest || !Array.isArray(manifest.docs)) return;
+    const signature = JSON.stringify(manifest.docs.map((item) => ({
+      path: item.path,
+      size: item.size,
+      mtimeMs: item.mtimeMs
+    })));
+    if (signature === trainingManifestSignature) return false;
+    trainingManifestSignature = signature;
+
+    let changed = false;
+    const rootFolderId = "";
+
+    // Create folders from manifest (including empty ones)
+    if (Array.isArray(manifest.folders)) {
+      for (const f of manifest.folders) {
+        if (!f || !f.path || !f.name) continue;
+        const parentPath = String(f.path).split("/").filter(Boolean).slice(0, -1).join("/");
+        const parentResult = getOrCreateDocFolderByPath(parentPath.length ? parentPath : null, rootFolderId, true);
+        changed = parentResult.created || changed;
+        var existingFolder = state.docFolders.find(function(df) {
+          return df.name === f.name && (df.parentId || "") === (parentResult.folderId || "");
+        });
+        if (!existingFolder) {
+          state.docFolders.push({
+            id: folderUid(),
+            name: f.name,
+            parentId: parentResult.folderId || "",
+            createdAt: new Date().toISOString()
+          });
+          changed = true;
+        }
+      }
+    }
+
+    for (const item of manifest.docs) {
+      if (!item || !item.path || !item.name) continue;
+      const folderPath = String(item.path).split(/[\\/]+/).filter(Boolean).slice(0, -1).join("/");
+      const folderResult = getOrCreateDocFolderByPath(folderPath, rootFolderId, true);
+      changed = folderResult.created || changed;
+
+      const existing = state.docs.find((doc) => doc.sourcePath === item.path);
+      if (existing && existing.manifestMtimeMs === item.mtimeMs && existing.manifestSize === item.size) {
+        if (existing.folderId !== folderResult.folderId) {
+          existing.folderId = folderResult.folderId;
+          changed = true;
+        }
+        continue;
+      }
+
+      try {
+        const response = await fetch(item.url, { cache: "no-store" });
+        if (!response.ok) continue;
+        const blob = await response.blob();
+        const file = new File([blob], item.name, { type: item.type || blob.type });
+        const doc = await addTrainingDoc(file, folderResult.folderId, item.path);
+        doc.manifestMtimeMs = item.mtimeMs;
+        doc.manifestSize = item.size;
+        doc.repoManaged = true;
+        changed = true;
+      } catch (error) {
+        console.warn("Repo training doc load failed:", item.path, error);
+      }
+    }
+
+    const manifestPaths = new Set(manifest.docs.map((item) => item.path));
+    const before = state.docs.length;
+    state.docs = state.docs.filter((doc) => !doc.repoManaged || manifestPaths.has(doc.sourcePath));
+    changed = changed || state.docs.length !== before;
+
+    const usedFolderIds = new Set(state.docs.map((doc) => doc.folderId).filter(Boolean));
+    let removedEmptyFolder = true;
+    while (removedEmptyFolder) {
+      removedEmptyFolder = false;
+      const parentIds = new Set(state.docFolders.map((folder) => folder.parentId).filter(Boolean));
+      const nextFolders = state.docFolders.filter((folder) => {
+        if (!folder.repoManaged || usedFolderIds.has(folder.id) || parentIds.has(folder.id)) return true;
+        removedEmptyFolder = true;
+        return false;
+      });
+      state.docFolders = nextFolders;
+      changed = changed || removedEmptyFolder;
+    }
+
+    if (changed) saveDocsData();
+    return changed;
   }
 
   function folderTitle(folderId) {
@@ -2140,6 +2472,47 @@
   function docsInFolder(folderId) {
     if (!folderId) return state.docs;
     return state.docs.filter((doc) => doc.folderId === folderId);
+  }
+
+  function getFolderPath(folderId) {
+    var parts = [];
+    var currentId = folderId;
+    var visited = new Set();
+    while (currentId && !visited.has(currentId)) {
+      visited.add(currentId);
+      var folder = state.docFolders.find(function(f) { return f.id === currentId; });
+      if (!folder) break;
+      parts.unshift(folder.name);
+      currentId = folder.parentId || "";
+    }
+    return parts.join("/");
+  }
+
+  function getOrCreateDocFolderByPath(path, rootFolderId = "", repoManaged = false) {
+    const parts = String(path || "").split(/[\\/]+/).map((part) => part.trim()).filter(Boolean);
+    let parentId = rootFolderId || "";
+    let created = false;
+
+    for (const part of parts) {
+      let folder = state.docFolders.find((item) => item.name === part && (item.parentId || "") === parentId);
+      if (!folder) {
+        folder = {
+          id: folderUid(),
+          name: part,
+          parentId,
+          repoManaged,
+          createdAt: new Date().toISOString()
+        };
+        state.docFolders.push(folder);
+        created = true;
+      } else if (repoManaged && !folder.repoManaged) {
+        folder.repoManaged = true;
+        created = true;
+      }
+      parentId = folder.id;
+    }
+
+    return { folderId: parentId, created };
   }
 
   function switchModule(moduleName) {
@@ -2185,10 +2558,12 @@
     const renderBranch = (parentId, depth) => {
       for (const folder of childFolders(parentId)) {
         const count = docsInFolder(folder.id).length;
+        const row = document.createElement("div");
+        row.className = "folder-row";
+        row.style.marginLeft = `${depth * 14}px`;
         const button = document.createElement("button");
         button.type = "button";
         button.className = "folder-item";
-        button.style.marginLeft = `${depth * 14}px`;
         button.classList.toggle("active", state.activeFolderId === folder.id);
         button.innerHTML = `<span>${escapeHtml(folder.name)}</span><small>${count} 篇文档</small>`;
         button.addEventListener("click", () => {
@@ -2196,7 +2571,15 @@
           saveDocsData();
           renderDocsModule();
         });
-        el.folderTree.appendChild(button);
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "folder-delete";
+        deleteButton.title = "删除目录";
+        deleteButton.setAttribute("aria-label", `删除目录 ${folder.name}`);
+        deleteButton.textContent = "×";
+        deleteButton.addEventListener("click", () => deleteDocFolder(folder.id));
+        row.append(button, deleteButton);
+        el.folderTree.appendChild(row);
         renderBranch(folder.id, depth + 1);
       }
     };
@@ -2254,18 +2637,76 @@
   }
 
   function addDocFolder() {
-    const name = el.folderNameInput.value.trim();
+    var name = el.folderNameInput.value.trim();
     if (!name) {
       el.folderNameInput.focus();
+      setStatus("请输入目录名称。");
       return;
     }
+    var parentId = el.folderParentSelect.value || "";
+    var duplicate = state.docFolders.some(function(f) {
+      return f.name === name && (f.parentId || "") === parentId;
+    });
+    if (duplicate) {
+      setStatus("同级目录已存在同名文件夹 \"" + name + "\"，请更换名称。");
+      el.folderNameInput.select();
+      return;
+    }
+    // Create folder on server (if sync enabled)
+    if (syncState.enabled) {
+      var parentFolder = state.docFolders.find(function(f) { return f.id === parentId; });
+      var parentPath = parentFolder ? getFolderPath(parentFolder.id) : "";
+      fetch("/api/folder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name, parentPath: parentPath })
+      }).catch(function(e) { console.warn("Server folder creation failed:", e); });
+    }
+
     state.docFolders.push({
       id: folderUid(),
-      name,
-      parentId: el.folderParentSelect.value || "",
+      name: name,
+      parentId: parentId,
       createdAt: new Date().toISOString()
     });
     el.folderNameInput.value = "";
+    saveDocsData();
+    renderDocsModule();
+    setStatus("目录 \"" + name + "\" 已创建。");
+  }
+
+  function collectFolderIds(folderId) {
+    const ids = new Set([folderId]);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const folder of state.docFolders) {
+        if (!ids.has(folder.id) && ids.has(folder.parentId || "")) {
+          ids.add(folder.id);
+          changed = true;
+        }
+      }
+    }
+    return ids;
+  }
+
+  function deleteDocFolder(folderId) {
+    const folder = state.docFolders.find((item) => item.id === folderId);
+    if (!folder) return;
+    if (!confirm("删除目录 \"" + folder.name + "\" 及其子目录和文档？此操作不可恢复。")) return;
+    const ids = collectFolderIds(folderId);
+
+    // Delete from server disk
+    if (syncState.enabled) {
+      var folderPath = getFolderPath(folderId);
+      fetch("/api/delete?path=" + encodeURIComponent(folderPath), { method: "DELETE" })
+        .catch(function(e) { console.warn("Server folder delete failed:", e); });
+    }
+
+    state.docFolders = state.docFolders.filter((item) => !ids.has(item.id));
+    state.docs = state.docs.filter((doc) => !ids.has(doc.folderId));
+    if (ids.has(state.activeFolderId)) state.activeFolderId = "";
+    if (!state.docs.some((doc) => doc.id === state.selectedDocId)) state.selectedDocId = null;
     saveDocsData();
     renderDocsModule();
   }
@@ -2433,28 +2874,69 @@
   async function uploadDocs(files) {
     const list = Array.from(files || []);
     if (list.length === 0) return;
+    setStatus("正在上传...");
     for (const file of list) {
-      const parsed = await parseTrainingFile(file);
-      state.docs.push({
-        id: docUid(),
-        title: file.name.replace(/\.(docx|pdf|xlsx|xls|csv|pptx)$/i, ""),
-        folderId: state.activeFolderId || "",
-        sourceFileName: file.name,
-        size: file.size,
-        type: file.type,
-        linkedPointIds: [],
-        tags: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        htmlContent: parsed.html,
-        textContent: parsed.text,
-        parseStatus: parsed.status
-      });
+      // Upload raw file to server
+      if (syncState.enabled) {
+        try {
+          var formData = new FormData();
+          formData.append("file", file);
+          var folder = state.docFolders.find(function(f) { return f.id === state.activeFolderId; });
+          var folderPath = folder ? getFolderPath(folder.id) : "";
+          var uploadUrl = SYNC_ENDPOINT.replace("/api/data", "/api/upload");
+          if (folderPath) uploadUrl += "?folder=" + encodeURIComponent(folderPath);
+          var resp = await fetch(uploadUrl, { method: "POST", body: formData });
+          if (resp.ok) {
+            var result = await resp.json();
+            // Also add to local state for immediate viewing
+            await addTrainingDoc(file, state.activeFolderId || "", result.path || "");
+          } else {
+            await addTrainingDoc(file, state.activeFolderId || "");
+          }
+        } catch (e) {
+          console.warn("Upload to server failed, local only:", e);
+          await addTrainingDoc(file, state.activeFolderId || "");
+        }
+      } else {
+        await addTrainingDoc(file, state.activeFolderId || "");
+      }
     }
     state.selectedDocId = state.docs[state.docs.length - 1]?.id || null;
     el.docUploadInput.value = "";
     saveDocsData();
     renderDocsModule();
+    setStatus("上传完成。");
+  }
+
+  async function addTrainingDoc(file, folderId, sourcePath = "") {
+    const parsed = await parseTrainingFile(file);
+    const now = new Date().toISOString();
+    const doc = {
+      id: docUid(),
+      title: file.name.replace(/\.(docx|pdf|xlsx|xls|csv|pptx)$/i, ""),
+      folderId: folderId || "",
+      sourceFileName: file.name,
+      sourcePath,
+      size: file.size,
+      type: file.type,
+      linkedPointIds: [],
+      tags: [],
+      createdAt: now,
+      updatedAt: now,
+      htmlContent: parsed.html,
+      textContent: parsed.text,
+      parseStatus: parsed.status
+    };
+
+    const existing = sourcePath
+      ? state.docs.find((item) => item.sourcePath === sourcePath)
+      : null;
+    if (existing) {
+      Object.assign(existing, doc, { id: existing.id, createdAt: existing.createdAt || now });
+      return existing;
+    }
+    state.docs.push(doc);
+    return doc;
   }
 
   async function parseTrainingFile(file) {
@@ -2481,16 +2963,64 @@
 
   async function parseDocxFile(file) {
     if (!window.JSZip) throw new Error("JSZip 未加载");
-    const zip = await window.JSZip.loadAsync(await file.arrayBuffer());
-    const documentXml = await zip.file("word/document.xml")?.async("text");
-    if (!documentXml) throw new Error("未找到 Word 正文");
-    const paragraphs = extractWordParagraphs(documentXml);
-    const text = paragraphs.join("\n");
+    var zip, documentXml;
+    try {
+      zip = await window.JSZip.loadAsync(await file.arrayBuffer());
+    } catch (e) {
+      throw new Error("文件不是有效的 DOCX/ZIP 格式");
+    }
+    var docPaths = ["word/document.xml", "word/document2.xml"];
+    for (var p = 0; p < docPaths.length; p++) {
+      var entry = zip.file(docPaths[p]);
+      if (entry) {
+        try { documentXml = await entry.async("text"); } catch (e) {}
+        if (documentXml) break;
+      }
+    }
+    if (!documentXml) {
+      var allFiles = Object.keys(zip.files).slice(0, 20).join(", ");
+      throw new Error("未找到 Word 正文。（文件内容: " + allFiles + "）");
+    }
+
+    // Extract images from word/media/
+    var imageMap = {};
+    var mediaFiles = Object.keys(zip.files).filter(function(name) {
+      return /^word\/media\//.test(name);
+    });
+    for (var i = 0; i < mediaFiles.length; i++) {
+      var mediaName = mediaFiles[i];
+      try {
+        var imgEntry = zip.file(mediaName);
+        if (!imgEntry) continue;
+        var blob = await imgEntry.async("uint8array");
+        var ext = mediaName.split(".").pop().toLowerCase();
+        var mime = ext === "png" ? "image/png" : ext === "jpg" || ext === "jpeg" ? "image/jpeg" : ext === "gif" ? "image/gif" : ext === "bmp" ? "image/bmp" : ext === "svg" ? "image/svg+xml" : "application/octet-stream";
+        var binary = "";
+        for (var j = 0; j < blob.length; j++) {
+          binary += String.fromCharCode(blob[j]);
+        }
+        imageMap[mediaName] = "data:" + mime + ";base64," + btoa(binary);
+      } catch (e) { console.warn("Image extract failed:", mediaName, e); }
+    }
+
+    var paragraphs = extractWordParagraphs(documentXml);
+    var text = paragraphs.join("\n");
+    var html = paragraphs.length
+      ? paragraphs.map(function(line) { return "<p>" + escapeHtml(line) + "</p>"; }).join("")
+      : "<div class=\"doc-body-placeholder\">Word 文件已读取，但没有提取到正文。</div>";
+
+    // Replace image references with base64 img tags
+    for (var key in imageMap) {
+      if (imageMap.hasOwnProperty(key)) {
+        var dataUri = imageMap[key];
+        // Replace r:embed references (simplified: just add images at end)
+        html += "<p><img src=\"" + dataUri + "\" style=\"max-width:100%;\" alt=\"\"></p>";
+      }
+    }
+
     return {
-      html: paragraphs.length
-        ? paragraphs.map((line) => `<p>${escapeHtml(line)}</p>`).join("")
-        : `<div class="doc-body-placeholder">Word 文件已读取，但没有提取到正文。</div>`,
-      text,
+      html: html,
+      text: text,
       status: "parsed"
     };
   }
@@ -2589,7 +3119,19 @@
 
   function deleteSelectedDoc() {
     if (!state.selectedDocId) return;
-    state.docs = state.docs.filter((doc) => doc.id !== state.selectedDocId);
+    var doc = state.docs.find(function(d) { return d.id === state.selectedDocId; });
+    if (!doc) return;
+    if (!confirm("删除文档 \"" + doc.title + "\"？此操作不可恢复。")) return;
+
+    // Delete from server disk
+    if (syncState.enabled) {
+      var folderPath = doc.folderId ? getFolderPath(doc.folderId) : "";
+      var filePath = folderPath ? folderPath + "/" + doc.sourceFileName : doc.sourceFileName;
+      fetch("/api/delete?path=" + encodeURIComponent(filePath), { method: "DELETE" })
+        .catch(function(e) { console.warn("Server delete failed:", e); });
+    }
+
+    state.docs = state.docs.filter(function(d) { return d.id !== state.selectedDocId; });
     state.selectedDocId = null;
     saveDocsData();
     renderDocsModule();
@@ -2760,14 +3302,33 @@
     });
   }
 
+  function startManifestSync() {
+    window.setInterval(async () => {
+      const drawingsChanged = await loadDrawingManifest();
+      if (drawingsChanged) {
+        renderDrawingList();
+        switchDrawing(state.currentDrawingId);
+      }
+
+      const docsChanged = await loadRepoTrainingDocs();
+      if (docsChanged && state.activeModule === "docs") {
+        renderDocsModule();
+      }
+    }, 5000);
+  }
+
+  await loadDrawingManifest();
   loadData();
   loadAutoNameSettings();
   loadDocsData();
+  await loadRepoTrainingDocs();
   bindEvents();
+  startManifestSync();
   renderDrawingList();
   renderDocsModule();
   switchDrawing(state.currentDrawingId);
   setTool("pan");
+  initSync();
 
   // Sync auto-name UI
   if (state.autoNameEnabled) {

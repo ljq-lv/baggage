@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "render:pdfs": "node scripts/render-pdfs.mjs"
+    "start": "node server.mjs",
+    "dev": "node server.mjs",
+    "render:pdfs": "node scripts/render-pdfs.mjs",
+    "scan:docs": "node scripts/scan-training-docs.mjs"
   },
   "dependencies": {
     "@napi-rs/canvas": "^0.1.82",

@@ -1,0 +1,25 @@
+{
+  "updatedAt": "2026-05-25T15:30:43.902Z",
+  "data": {
+    "points": {
+      "annotations": [],
+      "groups": [],
+      "collapsedGroups": {},
+      "drawings": [],
+      "version": 1
+    },
+    "docs": {
+      "folders": [],
+      "docs": [],
+      "activeFolderId": "",
+      "selectedDocId": null
+    },
+    "autoName": {
+      "enabled": false,
+      "segments": [],
+      "separators": [],
+      "primaryIdx": -1
+    },
+    "version": 1
+  }
+}
