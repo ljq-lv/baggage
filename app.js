@@ -1293,7 +1293,8 @@
     if (!groupVisibleInDrawing(state.activeGroupId, drawingId)) state.activeGroupId = "";
     const drawing = currentDrawing();
     if (!drawing) return;
-    el.currentDrawingTitle.textContent = drawing.title;
+    el.currentDrawingTitle.textContent = drawing.title + " 加载中...";
+    el.viewport.classList.add("loading");
     el.image.src = drawing.image;
     el.minimapImage.src = drawing.image;
     renderDrawingList();
@@ -3283,6 +3284,8 @@
     el.importInput.addEventListener("change", () => importData(el.importInput.files[0]));
     window.addEventListener("resize", renderOverlay);
     el.image.addEventListener("load", () => {
+      el.viewport.classList.remove("loading");
+      el.currentDrawingTitle.textContent = currentDrawing()?.title || "";
       state.imageSize.width = el.image.naturalWidth;
       state.imageSize.height = el.image.naturalHeight;
       el.stage.style.width = `${state.imageSize.width}px`;

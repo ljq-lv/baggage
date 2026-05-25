@@ -480,6 +480,11 @@ textarea {
   user-select: none;
 }
 
+.viewport.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 .viewport.drawing {
   cursor: crosshair;
 }
