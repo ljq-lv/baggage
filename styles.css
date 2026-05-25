@@ -1024,7 +1024,7 @@ input.minimap-group-name:focus {
 @media (max-width: 900px) {
   html, body { min-width: 0; overflow: hidden; height: 100%; position: fixed; width: 100%; }
 
-  .module-nav { height: auto; padding: 6px 10px; gap: 4px; }
+  .module-nav { height: auto; padding: 6px 10px; gap: 4px; flex-shrink: 0; }
   .module-nav nav { gap: 4px; }
   .module-nav strong { font-size: 13px; }
   .module-nav span { font-size: 11px; }
@@ -1035,6 +1035,7 @@ input.minimap-group-name:focus {
     flex-direction: column;
     height: calc(100vh - 60px);
     height: calc(100dvh - 60px);
+    height: 100%;
   }
 
   .workspace {
@@ -1042,6 +1043,12 @@ input.minimap-group-name:focus {
     display: flex;
     flex-direction: column;
     min-height: 0;
+  }
+
+  .viewport {
+    flex: 1;
+    min-height: 300px;
+    touch-action: pan-x pan-y pinch-zoom;
   }
 
   .topbar {
@@ -1058,6 +1065,7 @@ input.minimap-group-name:focus {
 
   .viewport {
     flex: 1;
+    min-height: 300px;
     touch-action: pan-x pan-y pinch-zoom;
   }
 
