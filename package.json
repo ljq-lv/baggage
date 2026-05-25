@@ -1,0 +1,16 @@
+{
+  "name": "baggage-point-finder",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render:pdfs": "node scripts/render-pdfs.mjs"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.82",
+    "pdfjs-dist": "^4.10.38"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

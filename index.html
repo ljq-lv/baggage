@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>行李输送机点位查找</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="图纸与搜索">
+        <header class="brand">
+          <h1>行李输送机点位查找</h1>
+          <p>本地标注与搜索</p>
+        </header>
+
+        <section class="panel">
+          <label class="field-label" for="searchInput">搜索点位</label>
+          <div class="search-row">
+            <input id="searchInput" type="search" placeholder="输入点位编号或备注">
+            <button id="searchButton" type="button">搜索</button>
+          </div>
+          <div id="searchResults" class="search-results" aria-live="polite"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">图纸</div>
+          <div id="drawingList" class="drawing-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">标注工具</div>
+          <div class="tool-grid" role="group" aria-label="标注工具">
+            <button class="tool-button active" type="button" data-tool="pan">拖动</button>
+            <button class="tool-button" type="button" data-tool="point">点标注</button>
+            <button id="fitButton" type="button">适配</button>
+          </div>
+          <label class="toggle-row">
+            <input id="showAnnotations" type="checkbox" checked>
+            <span>显示全部标注</span>
+          </label>
+          <label class="toggle-row">
+            <input id="showLabels" type="checkbox">
+            <span>显示点位名称</span>
+          </label>
+          <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--line);">
+          <label class="toggle-row">
+            <input id="autoNameToggle" type="checkbox">
+            <span>自动命名</span>
+            <button id="autoNameExpandBtn" type="button" class="mini-icon-btn" hidden title="展开高级配置">⚙</button>
+          </label>
+          <div id="autoNameCompact" hidden>
+            <input id="autoNameTemplate" type="text" placeholder="如 3103.21.# 或 E# 或 #号卸载线" autocomplete="off" style="margin-top: 6px;">
+            <div id="autoNamePreview" style="margin-top: 6px; font-size: 12px; color: var(--accent);"></div>
+          </div>
+          <div id="autoNameAdvanced" hidden></div>
+        </section>
+
+        <section class="panel editor-panel">
+          <div class="section-title">当前标注</div>
+          <div id="emptyEditor" class="empty-state">选择或新建一个标注</div>
+          <form id="annotationForm" class="annotation-form" hidden>
+            <label>
+              点位编号
+              <input id="pointCode" type="text" autocomplete="off" required>
+            </label>
+            <label>
+              备注
+              <textarea id="pointNote" rows="3"></textarea>
+            </label>
+            <div class="form-actions">
+              <button id="saveAnnotation" type="submit">保存</button>
+              <button id="deleteAnnotation" type="button" class="danger">删除</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">数据</div>
+          <div class="data-actions">
+            <button id="exportButton" type="button">导出JSON</button>
+            <label class="file-button">
+              导入JSON
+              <input id="importInput" type="file" accept="application/json,.json">
+            </label>
+            <button id="setBackupButton" type="button" class="wide-action">设置自动备份</button>
+          </div>
+          <p id="statusText" class="status-text"></p>
+        </section>
+      </aside>
+
+      <section class="workspace" aria-label="图纸工作区">
+        <div class="topbar">
+          <div>
+            <strong id="currentDrawingTitle">B1层</strong>
+            <span id="annotationCount">0 个标注</span>
+          </div>
+          <div id="modeHint" class="mode-hint">拖动画布浏览，滚轮缩放。</div>
+        </div>
+        <div id="viewport" class="viewport">
+          <div id="stage" class="stage">
+            <img id="drawingImage" alt="当前图纸" draggable="false">
+            <svg id="overlay" aria-label="标注层"></svg>
+          </div>
+          <div class="minimap" aria-label="点位总览">
+            <div class="minimap-title">
+              <strong>点位总览</strong>
+              <span id="minimapCount">0 个点位</span>
+            </div>
+            <div id="minimapBody" class="minimap-body" hidden>
+              <img id="minimapImage" alt="" draggable="false">
+              <svg id="minimapOverlay" aria-hidden="true"></svg>
+            </div>
+            <div class="group-tools" aria-label="分组工具">
+              <input id="groupNameInput" type="text" placeholder="新建分组">
+              <button id="addGroupButton" type="button">新增</button>
+            </div>
+            <div id="minimapList" class="minimap-list" aria-label="标注列表"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

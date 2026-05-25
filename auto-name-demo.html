@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>自动命名 Demo — 多段进位递增</title>
+  <style>
+    :root {
+      --bg: #eef2f5; --panel: #fff; --text: #17212b; --muted: #657381;
+      --line: #d9e1e8; --accent: #0f766e; --danger: #b42318; --highlight: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+    button, input, select { font: inherit; }
+    button {
+      min-height: 32px; border: 1px solid var(--line); border-radius: 6px;
+      background: #fff; cursor: pointer; padding: 4px 12px; font-size: 13px;
+    }
+    button:hover { border-color: var(--accent); }
+    button.primary { border-color: var(--accent); color: #fff; background: var(--accent); }
+    button.danger { color: var(--danger); }
+    input, select {
+      border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px;
+      color: var(--text); background: #fff; font-size: 13px;
+    }
+    input:focus, select:focus { border-color: var(--accent); outline: none; }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+    h1 { font-size: 20px; margin: 0 0 4px; }
+    .subtitle { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+
+    .panel {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+      padding: 14px; margin-bottom: 14px;
+    }
+    .panel-title { font-weight: 700; font-size: 14px; margin: 0 0 10px; }
+
+    /* Presets */
+    .presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .presets button { font-size: 12px; }
+
+    /* Segment row */
+    .segments-row { display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap; }
+    .seg-sep {
+      display: flex; align-items: center; padding: 16px 2px 0;
+    }
+    .seg-sep input {
+      width: 28px; text-align: center; padding: 4px 2px; font-size: 13px;
+    }
+    .seg-block {
+      display: flex; flex-direction: column; gap: 4px;
+      border: 2px solid var(--line); border-radius: 8px; padding: 8px;
+      background: #fafbfc; min-width: 90px;
+    }
+    .seg-block.num { border-color: var(--accent); background: #e8f5f3; }
+    .seg-block.primary { border-color: var(--highlight); background: #fff7ed; }
+
+    .seg-value {
+      font-size: 16px; font-weight: 700; text-align: center; font-family: monospace;
+      border: 1px solid var(--line); border-radius: 4px; padding: 3px 6px;
+      background: #fff; width: 100%;
+    }
+    .seg-type-row { display: flex; gap: 0; }
+    .seg-type-row button {
+      flex: 1; min-height: 24px; padding: 1px 6px; font-size: 11px;
+      border-radius: 0; border: 1px solid var(--line);
+    }
+    .seg-type-row button:first-child { border-radius: 4px 0 0 4px; }
+    .seg-type-row button:last-child { border-radius: 0 4px 4px 0; }
+    .seg-type-row button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .seg-settings { display: grid; gap: 3px; font-size: 11px; margin-top: 2px; }
+    .seg-settings label { display: flex; align-items: center; gap: 3px; color: var(--muted); }
+    .seg-settings input[type="number"] { width: 52px; padding: 2px 4px; font-size: 11px; min-height: auto; }
+    .seg-settings select { width: 85px; padding: 2px 3px; font-size: 11px; min-height: auto; }
+
+    .seg-badge {
+      font-size: 10px; color: #fff; font-weight: 700; text-align: center;
+      background: var(--highlight); border-radius: 3px; padding: 1px 4px;
+    }
+    .seg-badge.text-badge { background: var(--muted); }
+
+    .seg-actions { display: flex; gap: 4px; justify-content: center; }
+    .seg-actions button { font-size: 10px; min-height: 22px; padding: 0 6px; }
+
+    .add-seg-btn { font-size: 16px; min-height: 28px; width: 28px; padding: 0; margin-top: 4px; }
+
+    /* Actions */
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+    .current-preview {
+      font-family: monospace; font-size: 18px; font-weight: 700;
+      color: var(--accent); margin-left: auto;
+    }
+
+    /* Results */
+    .result-list { display: grid; gap: 3px; max-height: 400px; overflow: auto; }
+    .result-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 8px; border-radius: 4px; background: #fff;
+      border: 1px solid var(--line); font-family: monospace; font-size: 14px;
+    }
+    .result-item .ri-index { color: var(--muted); font-size: 11px; min-width: 32px; }
+    .result-item .ri-name { font-weight: 700; }
+    .result-item .ri-highlight { color: var(--highlight); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>自动命名 Demo</h1>
+  <p class="subtitle">配置多段编号模板，模拟批量创建点位测试递增逻辑</p>
+
+  <div class="panel">
+    <div class="panel-title">预设模板</div>
+    <div class="presets">
+      <button data-preset="dot3">3103.21.3（三段数字）</button>
+      <button data-preset="dot2">A1.1（两段数字）</button>
+      <button data-preset="letterNum">E32（字母+数字）</button>
+      <button data-preset="numCn">1号卸载线（数字+中文）</button>
+      <button data-preset="cnNum">卸载线-1（中文+数字）</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">模板配置（点击段可展开/折叠设置）</div>
+    <div id="segmentsRow" class="segments-row"></div>
+    <div style="margin-top: 8px; display: flex; gap: 8px; align-items: center;">
+      <button id="addSegBtn" class="add-seg-btn" title="添加段">+段</button>
+      <span class="current-preview" id="currentPreview"></span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="newPointBtn" class="primary">新建点位</button>
+    <button id="batch10Btn">批量 +10</button>
+    <button id="batch50Btn">批量 +50</button>
+    <button id="batch100Btn">批量 +100</button>
+    <button id="resetBtn" class="danger">重置列表 & 恢复初始值</button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">生成的点位编号 <span id="listCount" style="color: var(--muted); font-weight: 400;"></span></div>
+    <div id="resultList" class="result-list"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // Template data model:
+  // segments: [{ type: "text"|"number", value, step?, carryAt?, carryTarget?, carryAmount?, resetTo? }, ...]
+  // separators: ["", ".", "-", ...] — between segments, length = segments.length - 1
+  // primaryIdx: index of the "primary" number segment that auto-increments on new point
+
+  var presets = {
+    dot3: {
+      segments: [
+        { type: "text", value: "3103" },
+        { type: "number", value: 21, step: 1, carryAt: 99, carryTarget: -1, carryAmount: 1, resetTo: 0 },
+        { type: "number", value: 3,  step: 1, carryAt: 99, carryTarget: -1, carryAmount: 1, resetTo: 0 }
+      ],
+      separators: [".", "."],
+      primaryIdx: 2
+    },
+    dot2: {
+      segments: [
+        { type: "text", value: "A1" },
+        { type: "number", value: 1, step: 1, carryAt: 99, carryTarget: -1, carryAmount: 1, resetTo: 0 }
+      ],
+      separators: ["."],
+      primaryIdx: 1
+    },
+    letterNum: {
+      segments: [
+        { type: "text", value: "E" },
+        { type: "number", value: 32, step: 1, carryAt: null, carryTarget: -1, carryAmount: 1, resetTo: 0 }
+      ],
+      separators: [""],
+      primaryIdx: 1
+    },
+    numCn: {
+      segments: [
+        { type: "number", value: 1, step: 1, carryAt: null, carryTarget: -1, carryAmount: 1, resetTo: 0 },
+        { type: "text", value: "号卸载线" }
+      ],
+      separators: [""],
+      primaryIdx: 0
+    },
+    cnNum: {
+      segments: [
+        { type: "text", value: "卸载线" },
+        { type: "number", value: 1, step: 1, carryAt: null, carryTarget: -1, carryAmount: 1, resetTo: 0 }
+      ],
+      separators: ["-"],
+      primaryIdx: 1
+    }
+  };
+
+  var segments, separators, primaryIdx;
+  var generatedNames = [];
+  var initialValues = null; // Snapshot for reset
+
+  var el = {
+    segmentsRow: document.getElementById("segmentsRow"),
+    resultList: document.getElementById("resultList"),
+    listCount: document.getElementById("listCount"),
+    currentPreview: document.getElementById("currentPreview")
+  };
+
+  function applyPreset(name) {
+    var p = presets[name];
+    segments = JSON.parse(JSON.stringify(p.segments));
+    separators = p.separators.slice();
+    primaryIdx = p.primaryIdx;
+    saveInitialValues();
+    renderAll();
+  }
+
+  function saveInitialValues() {
+    initialValues = JSON.parse(JSON.stringify({ segments: segments, separators: separators, primaryIdx: primaryIdx }));
+  }
+
+  function getNumberSegments() {
+    var nums = [];
+    for (var i = 0; i < segments.length; i++) {
+      if (segments[i].type === "number") nums.push(i);
+    }
+    return nums;
+  }
+
+  function buildFullName() {
+    var parts = [];
+    for (var i = 0; i < segments.length; i++) {
+      parts.push(segments[i].type === "text" ? segments[i].value : String(segments[i].value));
+      if (i < separators.length) parts.push(separators[i]);
+    }
+    return parts.join("");
+  }
+
+  function increment() {
+    var numSegs = getNumberSegments();
+    if (numSegs.length === 0) return;
+
+    // Find primary position in numSegs array
+    var primaryPos = -1;
+    for (var j = 0; j < numSegs.length; j++) {
+      if (numSegs[j] === primaryIdx) { primaryPos = j; break; }
+    }
+    if (primaryPos < 0) {
+      primaryIdx = numSegs[numSegs.length - 1];
+      primaryPos = numSegs.length - 1;
+    }
+
+    function processCarry(posInNums) {
+      if (posInNums < 0) return;
+      var segIdx = numSegs[posInNums];
+      var seg = segments[segIdx];
+
+      seg.value += seg.step;
+
+      if (seg.carryAt !== null && seg.carryAt > 0 && seg.value > seg.carryAt) {
+        seg.value = seg.resetTo;
+
+        // Find carry target
+        var targetPos;
+        if (seg.carryTarget === -1) {
+          targetPos = posInNums - 1; // previous number segment
+        } else {
+          for (var k = 0; k < numSegs.length; k++) {
+            if (numSegs[k] === seg.carryTarget) { targetPos = k; break; }
+          }
+        }
+
+        if (targetPos !== undefined && targetPos >= 0 && targetPos < numSegs.length) {
+          var targetSeg = segments[numSegs[targetPos]];
+          targetSeg.value += (seg.carryAmount || 1);
+          // Recursive carry check
+          if (targetSeg.carryAt !== null && targetSeg.carryAt > 0 && targetSeg.value > targetSeg.carryAt) {
+            processCarry(targetPos);
+          }
+        }
+      }
+    }
+
+    processCarry(primaryPos);
+  }
+
+  function renderAll() {
+    renderSegments();
+    renderPreview();
+  }
+
+  function renderSegments() {
+    el.segmentsRow.innerHTML = "";
+    var numSegs = getNumberSegments();
+
+    for (var i = 0; i < segments.length; i++) {
+      var seg = segments[i];
+
+      // Segment block
+      var block = document.createElement("div");
+      block.className = "seg-block";
+      if (seg.type === "number") {
+        block.classList.add("num");
+        if (i === primaryIdx) block.classList.add("primary");
+      }
+
+      // Badge
+      var badge = document.createElement("div");
+      if (seg.type === "text") {
+        badge.className = "seg-badge text-badge";
+        badge.textContent = "文本";
+      } else {
+        badge.className = "seg-badge";
+        badge.textContent = i === primaryIdx ? "递增段" : "数字";
+      }
+
+      // Value input
+      var valInput = document.createElement("input");
+      valInput.className = "seg-value";
+      valInput.value = seg.value;
+      valInput.addEventListener("change", (function(idx) {
+        return function() {
+          var v = this.value;
+          if (segments[idx].type === "number") {
+            v = parseInt(v, 10);
+            if (!isNaN(v)) segments[idx].value = v;
+            this.value = segments[idx].value;
+          } else {
+            segments[idx].value = v;
+          }
+          renderPreview();
+        };
+      })(i));
+
+      // Type toggle
+      var typeRow = document.createElement("div");
+      typeRow.className = "seg-type-row";
+      var textBtn = document.createElement("button");
+      textBtn.textContent = "T";
+      textBtn.title = "切换为文本";
+      textBtn.classList.toggle("active", seg.type === "text");
+      textBtn.addEventListener("click", (function(idx) {
+        return function() {
+          if (segments[idx].type === "text") return;
+          segments[idx] = { type: "text", value: String(segments[idx].value) };
+          fixPrimary();
+          renderAll();
+        };
+      })(i));
+      var numBtn = document.createElement("button");
+      numBtn.textContent = "N";
+      numBtn.title = "切换为数字";
+      numBtn.classList.toggle("active", seg.type === "number");
+      numBtn.addEventListener("click", (function(idx) {
+        return function() {
+          if (segments[idx].type === "number") return;
+          var parsed = parseInt(segments[idx].value, 10);
+          segments[idx] = {
+            type: "number", value: isNaN(parsed) ? 0 : parsed,
+            step: 1, carryAt: null, carryTarget: -1, carryAmount: 1, resetTo: 0
+          };
+          if (primaryIdx < 0) primaryIdx = idx;
+          renderAll();
+        };
+      })(i));
+      typeRow.appendChild(textBtn);
+      typeRow.appendChild(numBtn);
+
+      // Settings (number only)
+      var settingsDiv = document.createElement("div");
+      if (seg.type === "number") {
+        settingsDiv.className = "seg-settings";
+
+        function addSetting(label, key, min, placeholder) {
+          var lbl = document.createElement("label");
+          lbl.textContent = label;
+          var inp = document.createElement("input");
+          inp.type = "number"; if (min != null) inp.min = String(min);
+          inp.value = seg[key] != null ? seg[key] : "";
+          if (placeholder) inp.placeholder = placeholder;
+          inp.addEventListener("change", (function(idx, k) {
+            return function() {
+              var v = parseInt(this.value, 10);
+              segments[idx][k] = isNaN(v) ? null : v;
+            };
+          })(i, key));
+          lbl.appendChild(inp);
+          settingsDiv.appendChild(lbl);
+        }
+
+        addSetting("步长:", "step", 1);
+        addSetting("进位阈值:", "carryAt", 0, "无");
+        addSetting("进位增量:", "carryAmount", 1);
+        addSetting("重置为:", "resetTo", 0);
+
+        // Carry target select
+        var targetLbl = document.createElement("label");
+        targetLbl.textContent = "进位到:";
+        var targetSel = document.createElement("select");
+        targetSel.innerHTML = '<option value="-1">前一个数字段</option>';
+        for (var j = 0; j < numSegs.length; j++) {
+          if (numSegs[j] === i) continue;
+          targetSel.innerHTML += '<option value="' + numSegs[j] + '">第' + (j + 1) + '段(数字)</option>';
+        }
+        targetSel.value = (seg.carryTarget === -1 || seg.carryTarget == null) ? "-1" : String(seg.carryTarget);
+        targetSel.addEventListener("change", (function(idx) {
+          return function() { segments[idx].carryTarget = this.value === "-1" ? -1 : parseInt(this.value, 10); };
+        })(i));
+        targetLbl.appendChild(targetSel);
+        settingsDiv.appendChild(targetLbl);
+
+        // Primary toggle
+        var primLbl = document.createElement("label");
+        var primCheck = document.createElement("input");
+        primCheck.type = "checkbox";
+        primCheck.checked = (i === primaryIdx);
+        primCheck.addEventListener("change", (function(idx) {
+          return function() { if (this.checked) primaryIdx = idx; renderAll(); };
+        })(i));
+        primLbl.appendChild(primCheck);
+        primLbl.appendChild(document.createTextNode(" 主递增段"));
+        settingsDiv.appendChild(primLbl);
+      }
+
+      // Delete button
+      var delBtn = document.createElement("button");
+      delBtn.textContent = "✕";
+      delBtn.title = "删除此段";
+      delBtn.style.cssText = "font-size:10px;min-height:22px;padding:0 5px;";
+      delBtn.addEventListener("click", (function(idx) {
+        return function() {
+          if (segments.length <= 1) return;
+          segments.splice(idx, 1);
+          if (idx < separators.length) separators.splice(idx, 1);
+          else separators.pop();
+          fixPrimary();
+          renderAll();
+        };
+      })(i));
+
+      block.appendChild(badge);
+      block.appendChild(valInput);
+      block.appendChild(typeRow);
+      if (seg.type === "number") block.appendChild(settingsDiv);
+      block.appendChild(delBtn);
+      el.segmentsRow.appendChild(block);
+
+      // Separator after this segment (except last)
+      if (i < segments.length - 1) {
+        var sepWrap = document.createElement("div");
+        sepWrap.className = "seg-sep";
+        var sepInput = document.createElement("input");
+        sepInput.value = separators[i] || "";
+        sepInput.placeholder = "分隔";
+        sepInput.title = "分隔符（可为空、.、-、_ 等）";
+        sepInput.addEventListener("change", (function(idx) {
+          return function() { separators[idx] = this.value; renderPreview(); };
+        })(i));
+        sepWrap.appendChild(sepInput);
+        el.segmentsRow.appendChild(sepWrap);
+      }
+    }
+
+    renderPreview();
+  }
+
+  function renderPreview() {
+    el.currentPreview.textContent = "当前: " + buildFullName();
+  }
+
+  function fixPrimary() {
+    var nums = getNumberSegments();
+    if (nums.length === 0) { primaryIdx = -1; return; }
+    var found = false;
+    for (var j = 0; j < nums.length; j++) {
+      if (nums[j] === primaryIdx) { found = true; break; }
+    }
+    if (!found) primaryIdx = nums[nums.length - 1];
+  }
+
+  function addResult(name) {
+    generatedNames.push(name);
+    // Highlight changed part
+    var prev = generatedNames.length > 1 ? generatedNames[generatedNames.length - 2] : "";
+    var nameDisplay = name;
+
+    var item = document.createElement("div");
+    item.className = "result-item";
+    item.innerHTML = '<span class="ri-index">#' + generatedNames.length + '</span>' +
+      '<span class="ri-name">' + nameDisplay + '</span>';
+    el.resultList.appendChild(item);
+    el.resultList.scrollTop = el.resultList.scrollHeight;
+    el.listCount.textContent = "（" + generatedNames.length + " 个）";
+    renderPreview();
+  }
+
+  function newPoint() {
+    increment();
+    addResult(buildFullName());
+  }
+
+  function batch(n) {
+    for (var i = 0; i < n; i++) {
+      increment();
+      addResult(buildFullName());
+    }
+  }
+
+  function resetAll() {
+    if (initialValues) {
+      segments = JSON.parse(JSON.stringify(initialValues.segments));
+      separators = initialValues.separators.slice();
+      primaryIdx = initialValues.primaryIdx;
+    }
+    generatedNames = [];
+    el.resultList.innerHTML = "";
+    el.listCount.textContent = "";
+    renderAll();
+  }
+
+  // Bind events
+  document.getElementById("newPointBtn").addEventListener("click", newPoint);
+  document.getElementById("batch10Btn").addEventListener("click", function () { batch(10); });
+  document.getElementById("batch50Btn").addEventListener("click", function () { batch(50); });
+  document.getElementById("batch100Btn").addEventListener("click", function () { batch(100); });
+  document.getElementById("resetBtn").addEventListener("click", resetAll);
+  document.getElementById("addSegBtn").addEventListener("click", function () {
+    var lastSeg = segments[segments.length - 1];
+    if (lastSeg && lastSeg.type === "number") {
+      segments.push({ type: "number", value: 0, step: 1, carryAt: null, carryTarget: -1, carryAmount: 1, resetTo: 0 });
+    } else {
+      segments.push({ type: "text", value: "new" });
+    }
+    separators.push(".");
+    fixPrimary();
+    renderAll();
+  });
+
+  // Preset buttons
+  document.querySelectorAll("[data-preset]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      applyPreset(this.dataset.preset);
+    });
+  });
+
+  // Start with default preset
+  applyPreset("dot3");
+})();
+</script>
+</body>
+</html>
