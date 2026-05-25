@@ -357,6 +357,11 @@ async function serveStatic(req, res) {
     return;
   }
 
+  const ext = path.extname(requestedPath).toLowerCase();
+  const mimeType = mimeTypes[ext] || "application/octet-stream";
+  // Cache images and static assets, but not HTML/API
+  const isStatic = /\.(png|jpe?g|gif|svg|ico|webp|css|js|mjs|woff2?|pdf)$/.test(ext);
+  const cacheHeader = isStatic ? "public, max-age=86400" : "no-cache";
   const stream = createReadStream(requestedPath);
   stream.on("error", () => {
     if (!res.headersSent) {
@@ -367,8 +372,8 @@ async function serveStatic(req, res) {
     res.destroy();
   });
   res.writeHead(200, {
-    "Content-Type": mimeTypes[path.extname(requestedPath).toLowerCase()] || "application/octet-stream",
-    "Cache-Control": "no-store"
+    "Content-Type": mimeType,
+    "Cache-Control": cacheHeader
   });
   stream.pipe(res);
 }
