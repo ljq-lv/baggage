@@ -208,6 +208,12 @@ textarea {
   background: var(--accent);
 }
 
+.secondary-action {
+  border-color: var(--line);
+  color: var(--text);
+  background: #fff;
+}
+
 .toggle-row {
   display: flex;
   align-items: center;
@@ -265,32 +271,34 @@ textarea {
 .auto-name-seg {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  border: 2px solid var(--line);
-  border-radius: 6px;
-  padding: 6px;
+  gap: 3px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
   background: #fff;
-  min-width: 56px;
+  min-width: 70px;
+  position: relative;
 }
 
 .auto-name-seg.num {
   border-color: var(--accent);
-  background: #e8f5f3;
+  background: #f0faf8;
 }
 
 .auto-name-seg.primary {
   border-color: var(--highlight);
-  background: #fff7ed;
+  background: #fffbf0;
 }
 
 .auto-name-seg-val {
   width: 100%;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   text-align: center;
   font-family: monospace;
-  padding: 2px 4px;
+  padding: 3px 6px;
   min-height: auto;
+  border-radius: 4px;
 }
 
 .auto-name-seg-type {
@@ -300,19 +308,19 @@ textarea {
 
 .auto-name-seg-type button {
   flex: 1;
-  min-height: 20px;
-  padding: 0 4px;
-  font-size: 10px;
+  min-height: 22px;
+  padding: 0 6px;
+  font-size: 11px;
   border-radius: 0;
   border: 1px solid var(--line);
 }
 
 .auto-name-seg-type button:first-child {
-  border-radius: 3px 0 0 3px;
+  border-radius: 4px 0 0 4px;
 }
 
 .auto-name-seg-type button:last-child {
-  border-radius: 0 3px 3px 0;
+  border-radius: 0 4px 4px 0;
 }
 
 .auto-name-seg-type button.active {
@@ -322,13 +330,14 @@ textarea {
 }
 
 .auto-name-seg-badge {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   text-align: center;
-  border-radius: 3px;
-  padding: 0 3px;
+  border-radius: 4px;
+  padding: 1px 6px;
   color: #fff;
   background: var(--highlight);
+  align-self: flex-start;
 }
 
 .auto-name-seg-badge.text-badge {
@@ -337,47 +346,54 @@ textarea {
 
 .auto-name-seg-settings {
   display: grid;
-  gap: 2px;
-  font-size: 10px;
-  margin-top: 2px;
+  gap: 3px;
+  font-size: 11px;
 }
 
 .auto-name-seg-settings label {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   color: var(--muted);
 }
 
 .auto-name-seg-settings input[type="number"] {
-  width: 44px;
-  padding: 1px 3px;
-  font-size: 10px;
+  width: 42px;
+  padding: 2px 4px;
+  font-size: 11px;
   min-height: auto;
+  border-radius: 4px;
 }
 
 .auto-name-seg-settings select {
   width: 70px;
-  padding: 1px 2px;
-  font-size: 10px;
+  padding: 2px 3px;
+  font-size: 11px;
   min-height: auto;
 }
 
 .auto-name-seg-del {
-  min-height: 18px;
-  padding: 0 4px;
-  font-size: 9px;
-  color: var(--danger);
-  border-color: transparent;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-height: 16px;
+  width: 16px;
+  padding: 0;
+  font-size: 10px;
+  color: var(--muted);
+  border: none;
   background: transparent;
   cursor: pointer;
+  line-height: 1;
 }
 
+.auto-name-seg-del:hover { color: var(--danger); }
+
 .auto-name-add-seg {
-  min-height: 24px;
-  padding: 0 8px;
-  font-size: 11px;
-  margin-top: 6px;
+  min-height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+  margin-top: 8px;
 }
 
 #autoNamePreview code {
@@ -576,7 +592,7 @@ textarea {
 .minimap-list {
   display: grid;
   gap: 10px;
-  max-height: calc(100vh - 122px);
+  max-height: calc(100vh - 180px);
   overflow: auto;
   padding: 12px;
 }

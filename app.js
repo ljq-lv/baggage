@@ -85,6 +85,7 @@
     folderNameInput: document.getElementById("folderNameInput"),
     folderParentSelect: document.getElementById("folderParentSelect"),
     addFolderButton: document.getElementById("addFolderButton"),
+    seedDocsButton: document.getElementById("seedDocsButton"),
     docUploadInput: document.getElementById("docUploadInput"),
     folderTree: document.getElementById("folderTree"),
     docsCurrentFolder: document.getElementById("docsCurrentFolder"),
@@ -752,18 +753,57 @@
           }; })(i, key));
           lbl.appendChild(inp); setDiv.appendChild(lbl);
         }
-        addSet("每次几位", "step", 1); addSet("到几进位", "carryAt", 0);
-        addSet("进几位", "carryAmount", 1); addSet("初始值", "resetTo", 0);
+        addSet("步长", "step", 1);
 
-        var primLbl = document.createElement("label");
-        var primCheck = document.createElement("input"); primCheck.type = "checkbox"; primCheck.checked = (i === prim);
-        primCheck.addEventListener("change", (function(idx) { return function() {
-          if (this.checked) state.autoNamePrimaryIdx = idx;
-          syncTemplateFromSegments(); saveAutoNameSettings(); renderAutoNameAdvanced();
-          updateAutoNamePreview();
-        }; })(i));
-        primLbl.appendChild(primCheck); primLbl.appendChild(document.createTextNode("主递增"));
-        setDiv.appendChild(primLbl);
+        // Combined: "到 # 进 # 位"
+        (function() {
+          var lbl = document.createElement("label"); lbl.style.whiteSpace = "nowrap";
+          lbl.appendChild(document.createTextNode("到"));
+          var inpAt = document.createElement("input"); inpAt.type = "number"; inpAt.min = "0";
+          inpAt.value = seg.carryAt != null ? seg.carryAt : "";
+          inpAt.style.width = "38px";
+          inpAt.addEventListener("change", (function(idx) { return function() {
+            var v = parseInt(this.value, 10); segs[idx].carryAt = isNaN(v) ? null : v;
+            syncTemplateFromSegments(); saveAutoNameSettings(); updateAutoNamePreview();
+          }; })(i));
+          lbl.appendChild(inpAt);
+          lbl.appendChild(document.createTextNode("进"));
+          var inpAmt = document.createElement("input"); inpAmt.type = "number"; inpAmt.min = "1";
+          inpAmt.value = seg.carryAmount || 1;
+          inpAmt.style.width = "38px";
+          inpAmt.addEventListener("change", (function(idx) { return function() {
+            var v = parseInt(this.value, 10); segs[idx].carryAmount = isNaN(v) || v < 1 ? 1 : v;
+            syncTemplateFromSegments(); saveAutoNameSettings(); updateAutoNamePreview();
+          }; })(i));
+          lbl.appendChild(inpAmt);
+          lbl.appendChild(document.createTextNode("位"));
+          setDiv.appendChild(lbl);
+        })();
+
+        // Combined row: 初始值 + 主递增
+        (function() {
+          var lbl = document.createElement("label"); lbl.style.whiteSpace = "nowrap";
+          lbl.appendChild(document.createTextNode("初始值"));
+          var inpReset = document.createElement("input"); inpReset.type = "number"; inpReset.min = "0";
+          inpReset.value = seg.resetTo != null ? seg.resetTo : 0;
+          inpReset.style.width = "38px";
+          inpReset.addEventListener("change", (function(idx) { return function() {
+            var v = parseInt(this.value, 10); segs[idx].resetTo = isNaN(v) ? 0 : v;
+            syncTemplateFromSegments(); saveAutoNameSettings(); updateAutoNamePreview();
+          }; })(i));
+          lbl.appendChild(inpReset);
+          var primCheck = document.createElement("input"); primCheck.type = "checkbox";
+          primCheck.checked = (i === prim); primCheck.style.marginLeft = "6px";
+          primCheck.addEventListener("change", (function(idx) { return function() {
+            if (this.checked) state.autoNamePrimaryIdx = idx;
+            syncTemplateFromSegments(); saveAutoNameSettings(); renderAutoNameAdvanced();
+            updateAutoNamePreview();
+          }; })(i));
+          lbl.appendChild(primCheck);
+          lbl.appendChild(document.createTextNode("递增段"));
+          setDiv.appendChild(lbl);
+        })();
+
         block.appendChild(setDiv);
       }
 
@@ -1035,6 +1075,7 @@
     el.image.src = drawing.image;
     el.minimapImage.src = drawing.image;
     renderDrawingList();
+    renderMinimapList();
     updateEditor();
   }
 
@@ -2224,6 +2265,166 @@
     renderDocsModule();
   }
 
+  function seedTrainingDocs() {
+    const seedTag = "sample-training-seed";
+    const existingSample = state.docs.find((doc) => Array.isArray(doc.tags) && doc.tags.includes(seedTag));
+    if (existingSample) {
+      state.activeFolderId = existingSample.folderId || "";
+      state.selectedDocId = existingSample.id;
+      saveDocsData();
+      renderDocsModule();
+      setStatus("示例资料已存在。");
+      return;
+    }
+
+    const now = new Date().toISOString();
+    const folderByPath = new Map();
+
+    const getFolder = (path) => {
+      const parts = path.split("/").filter(Boolean);
+      let parentId = "";
+      let key = "";
+      for (const part of parts) {
+        key = key ? `${key}/${part}` : part;
+        let folder = folderByPath.get(key);
+        if (!folder) {
+          folder = state.docFolders.find((item) => item.name === part && (item.parentId || "") === parentId);
+        }
+        if (!folder) {
+          folder = {
+            id: folderUid(),
+            name: part,
+            parentId,
+            createdAt: now
+          };
+          state.docFolders.push(folder);
+        }
+        folderByPath.set(key, folder);
+        parentId = folder.id;
+      }
+      return parentId;
+    };
+
+    const sampleFolders = [
+      "机械系统/输送机结构/皮带机",
+      "机械系统/输送机结构/转弯机",
+      "机械系统/分拣机构/摆轮分拣",
+      "机械系统/分拣机构/滑槽与导流",
+      "机械系统/维护保养/日检",
+      "机械系统/维护保养/月检",
+      "电气系统/动力配电/MCC柜",
+      "电气系统/动力配电/变频器",
+      "电气系统/控制回路/传感器",
+      "电气系统/控制回路/急停与安全",
+      "电气系统/故障排查",
+      "IT系统/PLC与网络/PLC点表",
+      "IT系统/PLC与网络/工业交换机",
+      "IT系统/上位机与数据库/报警系统",
+      "IT系统/上位机与数据库/日志与追踪",
+      "IT系统/接口联动/航班与行李数据接口",
+      "IT系统/接口联动/点位编号联动",
+      "运行培训/新员工入门",
+      "运行培训/应急处置"
+    ];
+    sampleFolders.forEach(getFolder);
+
+    const makeDoc = ({ title, folderPath, tags, sections }) => {
+      const textContent = sections.map((section) => `${section.heading}\n${section.items.join("\n")}`).join("\n\n");
+      const htmlContent = sections.map((section) => {
+        const items = section.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+        return `<section class="sample-doc-section"><h3>${escapeHtml(section.heading)}</h3><ul>${items}</ul></section>`;
+      }).join("");
+      return {
+        id: docUid(),
+        title,
+        folderId: getFolder(folderPath),
+        sourceFileName: `${title}.示例资料`,
+        size: 0,
+        type: "sample",
+        linkedPointIds: [],
+        tags: [seedTag].concat(tags || []),
+        createdAt: now,
+        updatedAt: now,
+        htmlContent,
+        textContent,
+        parseStatus: "sample"
+      };
+    };
+
+    const samples = [
+      makeDoc({
+        title: "皮带机日检流程",
+        folderPath: "机械系统/维护保养/日检",
+        tags: ["机械", "日检", "皮带机"],
+        sections: [
+          { heading: "检查重点", items: ["确认皮带无明显跑偏、撕裂、起毛。", "检查托辊转动是否顺畅，异常噪声需记录点位。", "观察张紧机构刻度，偏离基准线时提交维护单。"] },
+          { heading: "记录要求", items: ["巡检表记录设备编号、点位编号、发现时间。", "需要拍照时优先拍摄故障点和周边参照物。"] }
+        ]
+      }),
+      makeDoc({
+        title: "转弯机常见机械故障",
+        folderPath: "机械系统/输送机结构/转弯机",
+        tags: ["机械", "转弯机"],
+        sections: [
+          { heading: "常见现象", items: ["行李在内侧堆积，多与导向条磨损或速度差异常有关。", "转弯段抖动时先排查支撑脚、链条张力和轴承温度。"] },
+          { heading: "处理建议", items: ["停机后清理异物，再手动盘车确认无卡滞。", "重复故障需关联最近三次报警和现场点位。"] }
+        ]
+      }),
+      makeDoc({
+        title: "MCC柜送电检查",
+        folderPath: "电气系统/动力配电/MCC柜",
+        tags: ["电气", "MCC"],
+        sections: [
+          { heading: "送电前", items: ["核对柜号、回路名称、挂牌状态。", "确认断路器位置、接地状态、绝缘测试记录齐全。"] },
+          { heading: "送电后", items: ["观察三相电压、电流是否平衡。", "确认柜门指示灯与上位机状态一致。"] }
+        ]
+      }),
+      makeDoc({
+        title: "光电传感器清洁与校准",
+        folderPath: "电气系统/控制回路/传感器",
+        tags: ["电气", "传感器"],
+        sections: [
+          { heading: "清洁", items: ["使用无尘布清理镜面，避免直接刮擦。", "检查支架是否松动，光轴偏移会导致误触发。"] },
+          { heading: "校准", items: ["用标准行李箱通过测试，观察输入点变化。", "校准完成后在培训资料中记录对应点位。"] }
+        ]
+      }),
+      makeDoc({
+        title: "PLC网络排查步骤",
+        folderPath: "IT系统/PLC与网络/工业交换机",
+        tags: ["IT", "PLC", "网络"],
+        sections: [
+          { heading: "基础检查", items: ["确认交换机电源、端口灯、光纤收发状态。", "检查PLC、远程IO、上位机的IP规划是否冲突。"] },
+          { heading: "定位方法", items: ["先按区域隔离，再按链路逐段恢复。", "保留ping、日志截图和点位影响范围。"] }
+        ]
+      }),
+      makeDoc({
+        title: "上位机报警确认流程",
+        folderPath: "IT系统/上位机与数据库/报警系统",
+        tags: ["IT", "上位机", "报警"],
+        sections: [
+          { heading: "确认顺序", items: ["先确认报警等级，再确认影响区域。", "同一设备重复报警时，检查数据库写入和PLC通信状态。"] },
+          { heading: "交接要求", items: ["未恢复报警必须进入交接班记录。", "重大报警需关联现场点位和处置人员。"] }
+        ]
+      }),
+      makeDoc({
+        title: "点位编号与培训资料联动示例",
+        folderPath: "IT系统/接口联动/点位编号联动",
+        tags: ["联动", "点位"],
+        sections: [
+          { heading: "设计思路", items: ["培训资料可以绑定点位编号，点击资料时定位到图纸点位。", "点位详情页可反向显示相关操作规程、故障案例和巡检表。"] },
+          { heading: "示例字段", items: ["pointCode: BHS-MECH-CV-031", "docId: PLC网络排查步骤", "relationType: 故障排查"] }
+        ]
+      })
+    ];
+
+    state.docs.push(...samples);
+    state.activeFolderId = samples[0].folderId;
+    state.selectedDocId = samples[0].id;
+    saveDocsData();
+    renderDocsModule();
+    setStatus("示例资料已生成。");
+  }
+
   async function uploadDocs(files) {
     const list = Array.from(files || []);
     if (list.length === 0) return;
@@ -2407,6 +2608,7 @@
       button.addEventListener("click", () => switchModule(button.dataset.module));
     });
     el.addFolderButton.addEventListener("click", addDocFolder);
+    el.seedDocsButton.addEventListener("click", seedTrainingDocs);
     el.folderNameInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
