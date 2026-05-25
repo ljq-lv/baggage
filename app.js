@@ -1325,6 +1325,21 @@
     }
     el.image.src = drawing.image;
     el.minimapImage.src = drawing.image;
+    // Fallback: poll image.complete in case load event doesn't fire (mobile Safari)
+    if (srcChanged) {
+      var pollCount = 0;
+      var pollTimer = setInterval(function() {
+        pollCount++;
+        if (el.image.complete && el.image.naturalWidth > 0) {
+          clearInterval(pollTimer);
+          if (el.viewport.classList.contains("loading")) {
+            el.image.dispatchEvent(new Event("load"));
+          }
+        } else if (pollCount > 60) {
+          clearInterval(pollTimer);
+        }
+      }, 500);
+    }
     renderDrawingList();
     renderMinimapList();
     updateEditor();
@@ -3315,6 +3330,7 @@
       clearTimeout(el.image._loadTimeout);
       el.viewport.classList.remove("loading");
       el.currentDrawingTitle.textContent = currentDrawing()?.title || "";
+      console.log("Image loaded: " + el.image.src.split("/").pop() + " " + el.image.naturalWidth + "x" + el.image.naturalHeight);
       state.imageSize.width = el.image.naturalWidth;
       state.imageSize.height = el.image.naturalHeight;
       el.stage.style.width = `${state.imageSize.width}px`;
