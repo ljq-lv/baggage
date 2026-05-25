@@ -4,14 +4,14 @@
   const SVG_NS = "http://www.w3.org/2000/svg";
 
   const defaultDrawings = [
-    { id: "b1", title: "B1层", image: "assets/floors/b1.png" },
-    { id: "f1", title: "1层", image: "assets/floors/f1.png" },
-    { id: "f2", title: "2层", image: "assets/floors/f2.png" },
-    { id: "f3", title: "3层", image: "assets/floors/f3.png" },
-    { id: "f3-transfer", title: "3层开包间", image: "assets/floors/f3-transfer.png" },
-    { id: "f4", title: "4层", image: "assets/floors/f4.png" },
-    { id: "overview-2d", title: "2D总览", image: "assets/floors/overview-2d.png" },
-    { id: "overview-3d", title: "3D总览", image: "assets/floors/overview-3d.png" }
+    { id: "b1", title: "B1层", image: "assets/floors/b1.jpg" },
+    { id: "f1", title: "1层", image: "assets/floors/f1.jpg" },
+    { id: "f2", title: "2层", image: "assets/floors/f2.jpg" },
+    { id: "f3", title: "3层", image: "assets/floors/f3.jpg" },
+    { id: "f3-transfer", title: "3层开包间", image: "assets/floors/f3-transfer.jpg" },
+    { id: "f4", title: "4层", image: "assets/floors/f4.jpg" },
+    { id: "overview-2d", title: "2D总览", image: "assets/floors/overview-2d.jpg" },
+    { id: "overview-3d", title: "3D总览", image: "assets/floors/overview-3d.jpg" }
   ];
   let drawings = defaultDrawings.slice();
 
