@@ -1078,19 +1078,8 @@ input.minimap-group-name:focus {
     transform: translateY(0);
     transition: transform 0.25s;
   }
-  .sidebar.collapsed { transform: translateY(calc(100% - 36px)); }
+  .sidebar.collapsed { transform: translateY(calc(100% - 24px)); }
   .sidebar .brand { display: none; }
-
-  /* Sidebar handle */
-  .sidebar::before {
-    content: "";
-    display: block;
-    width: 36px;
-    height: 4px;
-    margin: 8px auto;
-    border-radius: 2px;
-    background: var(--line);
-  }
 
   .sidebar .panel {
     padding: 6px 12px;
