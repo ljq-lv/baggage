@@ -1314,6 +1314,11 @@
     if (srcChanged) {
       el.currentDrawingTitle.textContent = drawing.title + " 加载中...";
       el.viewport.classList.add("loading");
+      clearTimeout(el.image._loadTimeout);
+      el.image._loadTimeout = setTimeout(function() {
+        el.viewport.classList.remove("loading");
+        el.currentDrawingTitle.textContent = (currentDrawing()?.title || "");
+      }, 8000);
     } else {
       el.currentDrawingTitle.textContent = drawing.title;
     }
@@ -3306,6 +3311,7 @@
     el.importInput.addEventListener("change", () => importData(el.importInput.files[0]));
     window.addEventListener("resize", renderOverlay);
     el.image.addEventListener("load", () => {
+      clearTimeout(el.image._loadTimeout);
       el.viewport.classList.remove("loading");
       el.currentDrawingTitle.textContent = currentDrawing()?.title || "";
       state.imageSize.width = el.image.naturalWidth;
@@ -3326,6 +3332,7 @@
       renderMinimap();
     });
     el.image.addEventListener("error", () => {
+      clearTimeout(el.image._loadTimeout);
       el.viewport.classList.remove("loading");
       el.currentDrawingTitle.textContent = (currentDrawing()?.title || "") + " 加载失败";
       setTimeout(function() {
