@@ -262,28 +262,44 @@
     updateAutoNamePreview();
   }
 
-  async function initSync() {
+    async function initSync() {
     if (!syncState.enabled) {
-      setStatus("鐩存帴鎵撳紑 HTML 鏃朵粎鏈満淇濆瓨锛涜鐢?npm start 鍚姩鍚屾銆?");
       return;
     }
+    var loaded = false;
     try {
-      const response = await fetch(SYNC_ENDPOINT, { cache: "no-store" });
-      if (!response.ok) return;
-      const remote = await response.json();
-      if (remote.data && remote.updatedAt && remote.updatedAt !== syncState.syncedAt) {
-        applyRemoteData(remote.data);
-        saveSyncMeta(remote.updatedAt);
-        setStatus("宸蹭粠鏈嶅姟鍣ㄥ悓姝ユ渶鏂版暟鎹€?");
-      } else if (!remote.data && hasLocalData()) {
-        await pushSyncData();
+      var response = await fetch(SYNC_ENDPOINT, { cache: "no-store" });
+      if (response.ok) {
+        var remote = await response.json();
+        if (remote.data && remote.updatedAt && remote.updatedAt !== syncState.syncedAt) {
+          applyRemoteData(remote.data);
+          saveSyncMeta(remote.updatedAt);
+          loaded = true;
+        } else if (!remote.data && hasLocalData()) {
+          await pushSyncData();
+          loaded = true;
+        }
       }
-    } catch (error) {
-      console.warn("Sync init failed:", error);
-      setStatus("鏈繛鎺ュ埌鍚屾鏈嶅姟锛屽綋鍓嶄娇鐢ㄦ湰鍦版暟鎹€?");
+    } catch (e) {
+      console.warn("Sync API unavailable, trying static JSON:", e.message);
     }
+    if (!loaded) {
+      try {
+        var staticResp = await fetch("data/sync-data.json", { cache: "no-store" });
+        if (staticResp.ok) {
+          var staticData = await staticResp.json();
+          var inner = staticData.data || staticData;
+          if (inner && (inner.points || inner.annotations || inner.groups)) {
+            applyRemoteData(inner);
+            loaded = true;
+          }
+        }
+      } catch (e2) {
+        console.warn("Static data load also failed:", e2.message);
+      }
+    }
+    if (!loaded && hasLocalData()) {}
   }
-
   function loadData() {
     var raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
