@@ -3461,6 +3461,9 @@
   }
 
   function bindEvents() {
+    const preventPageZoom = (event) => {
+      event.preventDefault();
+    };
     const preventNativeDrag = (event) => {
       if (
         event.target instanceof Element &&
@@ -3470,6 +3473,13 @@
         event.preventDefault();
       }
     };
+
+    ["gesturestart", "gesturechange", "gestureend"].forEach((eventName) => {
+      document.addEventListener(eventName, preventPageZoom, { passive: false });
+    });
+    el.viewport.addEventListener("touchmove", (event) => {
+      if (event.touches && event.touches.length > 1) event.preventDefault();
+    }, { passive: false });
 
     document.querySelectorAll(".tool-button").forEach((button) => {
       button.addEventListener("click", () => setTool(button.dataset.tool));
