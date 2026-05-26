@@ -24,6 +24,7 @@
     groups: [],
     collapsedGroups: {},
     selectedForGroupMove: new Set(),
+    groupMoveSelectionAnchorId: null,
     activeGroupId: "",
     selectedId: null,
     highlightedId: null,
@@ -1715,6 +1716,29 @@
     }
 
     let runningIndex = 0;
+    const visibleAnnotationIds = [];
+    function applyGroupMoveSelection(annotationId, checked, isRangeSelection) {
+      const anchorIndex = visibleAnnotationIds.indexOf(state.groupMoveSelectionAnchorId);
+      const targetIndex = visibleAnnotationIds.indexOf(annotationId);
+      if (isRangeSelection && anchorIndex !== -1 && targetIndex !== -1) {
+        const start = Math.min(anchorIndex, targetIndex);
+        const end = Math.max(anchorIndex, targetIndex);
+        for (let i = start; i <= end; i++) {
+          if (checked) {
+            state.selectedForGroupMove.add(visibleAnnotationIds[i]);
+          } else {
+            state.selectedForGroupMove.delete(visibleAnnotationIds[i]);
+          }
+        }
+      } else if (checked) {
+        state.selectedForGroupMove.add(annotationId);
+      } else {
+        state.selectedForGroupMove.delete(annotationId);
+      }
+      state.groupMoveSelectionAnchorId = annotationId;
+      renderMinimapList();
+    }
+
     for (const [groupId, groupedAnnotations] of groupBuckets) {
       if (groupedAnnotations.length === 0 && groupId !== "") {
         const section = document.createElement("section");
@@ -1895,6 +1919,7 @@
 
       for (const annotation of groupedAnnotations) {
         runningIndex += 1;
+        visibleAnnotationIds.push(annotation.id);
       const row = document.createElement("div");
       row.className = "minimap-item";
       row.dataset.id = annotation.id;
@@ -1921,14 +1946,9 @@
       batchCheck.checked = state.selectedForGroupMove.has(annotation.id);
       batchCheck.setAttribute("aria-label", "批量选择点位");
       batchCheck.addEventListener("pointerdown", (event) => event.stopPropagation());
-      batchCheck.addEventListener("click", (event) => event.stopPropagation());
-      batchCheck.addEventListener("change", () => {
-        if (batchCheck.checked) {
-          state.selectedForGroupMove.add(annotation.id);
-        } else {
-          state.selectedForGroupMove.delete(annotation.id);
-        }
-        row.classList.toggle("checked", batchCheck.checked);
+      batchCheck.addEventListener("click", (event) => {
+        event.stopPropagation();
+        applyGroupMoveSelection(annotation.id, batchCheck.checked, event.shiftKey);
       });
 
       const indexBadge = document.createElement("button");
@@ -1952,6 +1972,10 @@
       });
       title.addEventListener("click", (event) => {
         event.stopPropagation();
+        if (event.shiftKey) {
+          applyGroupMoveSelection(annotation.id, !state.selectedForGroupMove.has(annotation.id), true);
+          return;
+        }
         selectAnnotationFromList(annotation.id);
       });
       title.addEventListener("input", () => {
@@ -2085,6 +2109,8 @@
 
   function deleteSelectedAnnotation() {
     if (!state.selectedId) return false;
+    state.selectedForGroupMove.delete(state.selectedId);
+    if (state.groupMoveSelectionAnchorId === state.selectedId) state.groupMoveSelectionAnchorId = null;
     state.annotations = state.annotations.filter((annotation) => annotation.id !== state.selectedId);
     state.selectedId = null;
     state.highlightedId = null;
@@ -2102,6 +2128,8 @@
     const annotation = state.annotations.find((item) => item.id === id);
     if (!annotation) return false;
 
+    state.selectedForGroupMove.delete(id);
+    if (state.groupMoveSelectionAnchorId === id) state.groupMoveSelectionAnchorId = null;
     state.annotations = state.annotations.filter((item) => item.id !== id);
     if (state.selectedId === id) state.selectedId = null;
     if (state.highlightedId === id) state.highlightedId = null;
@@ -2227,6 +2255,7 @@
       moved += 1;
     }
     state.selectedForGroupMove.clear();
+    state.groupMoveSelectionAnchorId = null;
     saveData();
     renderMinimapList();
     setStatus(groupId ? `已将 ${moved} 个点位移入 ${groupTitle(groupId)}。` : `已将 ${moved} 个点位移入未分组。`);
