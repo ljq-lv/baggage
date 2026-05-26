@@ -404,6 +404,43 @@ textarea {
   font-size: 11px;
 }
 
+.batch-code-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.batch-code-panel .field-label {
+  margin-bottom: 0;
+}
+
+.batch-code-panel textarea {
+  min-height: 92px;
+  font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+  line-height: 1.45;
+}
+
+.batch-code-preview {
+  min-height: 20px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.batch-code-preview code {
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--accent);
+  background: #e8f5f3;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.batch-code-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
 .annotation-form {
   display: grid;
   gap: 10px;
@@ -1020,6 +1057,19 @@ input.minimap-group-name:focus {
   stroke-width: 2.5;
 }
 
+.annotation-shape.compact-focus {
+  stroke: #7c2d12;
+  stroke-width: 2.5;
+}
+
+.annotation-focus-ring {
+  fill: rgba(245, 158, 11, 0.16);
+  stroke: #f59e0b;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
 .annotation-shape.inactive {
   cursor: pointer;
 }
@@ -1098,7 +1148,19 @@ input.minimap-group-name:focus {
   /* Smaller annotation dots on mobile */
   .annotation-shape { stroke-width: 1; }
   .annotation-shape.selected { stroke-width: 1.5; }
+  .annotation-shape.compact-focus {
+    stroke-width: 2.5;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.38));
+  }
+  .annotation-focus-ring {
+    stroke-width: 2.5;
+    filter: drop-shadow(0 2px 7px rgba(0,0,0,0.35));
+  }
   .annotation-label { font-size: 11px; stroke-width: 3; }
+  .annotation-label.compact-focus {
+    font-size: 14px;
+    stroke-width: 5;
+  }
 
   /* Floating fit button */
   #fitButton {

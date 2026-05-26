@@ -35,6 +35,10 @@
     autoNameSegments: [],
     autoNameSeparators: [],
     autoNamePrimaryIdx: -1,
+    batchCodes: [],
+    batchCodeIndex: 0,
+    batchCodeActive: false,
+    lastPointCodeSource: "",
     activeModule: "points",
     docFolders: [],
     docs: [],
@@ -80,6 +84,10 @@
     autoNameTemplate: document.getElementById("autoNameTemplate"),
     autoNameAdvanced: document.getElementById("autoNameAdvanced"),
     autoNamePreview: document.getElementById("autoNamePreview"),
+    batchCodeInput: document.getElementById("batchCodeInput"),
+    batchCodePreview: document.getElementById("batchCodePreview"),
+    startBatchCodeButton: document.getElementById("startBatchCodeButton"),
+    clearBatchCodeButton: document.getElementById("clearBatchCodeButton"),
     moduleTabs: document.querySelectorAll(".module-tab"),
     pointModule: document.getElementById("pointModule"),
     docsModule: document.getElementById("docsModule"),
@@ -183,6 +191,31 @@
     return state.annotations.length > 0 || state.groups.length > 0 || state.docs.length > 0 || state.docFolders.length > 0;
   }
 
+  function payloadHasData(payload) {
+    if (!payload || typeof payload !== "object") return false;
+    const points = payload.points || payload;
+    const docs = payload.docs || {};
+    return (
+      (Array.isArray(points.annotations) && points.annotations.length > 0) ||
+      (Array.isArray(points.groups) && points.groups.length > 0) ||
+      (Array.isArray(docs.docs) && docs.docs.length > 0) ||
+      (Array.isArray(docs.folders) && docs.folders.length > 0)
+    );
+  }
+
+  function hasPointData() {
+    return state.annotations.length > 0 || state.groups.length > 0;
+  }
+
+  function payloadHasPointData(payload) {
+    if (!payload || typeof payload !== "object") return false;
+    const points = payload.points || payload;
+    return (
+      (Array.isArray(points.annotations) && points.annotations.length > 0) ||
+      (Array.isArray(points.groups) && points.groups.length > 0)
+    );
+  }
+
   function saveSyncMeta(updatedAt) {
     syncState.syncedAt = updatedAt || new Date().toISOString();
     try {
@@ -251,6 +284,7 @@
     } finally {
       syncState.applyingRemote = false;
     }
+    selectFirstAnnotatedDrawingIfNeeded();
     renderDrawingList();
     renderDocsModule();
     switchDrawing(state.currentDrawingId);
@@ -262,42 +296,53 @@
     updateAutoNamePreview();
   }
 
-    async function initSync() {
-    if (!syncState.enabled) {
-      return;
-    }
-    var loaded = false;
+  async function loadStaticPointBackup() {
     try {
-      var response = await fetch(SYNC_ENDPOINT, { cache: "no-store" });
-      if (response.ok) {
-        var remote = await response.json();
-        if (remote.data && remote.updatedAt && remote.updatedAt !== syncState.syncedAt) {
-          applyRemoteData(remote.data);
-          saveSyncMeta(remote.updatedAt);
-          loaded = true;
-        } else if (!remote.data && hasLocalData()) {
-          await pushSyncData();
-          loaded = true;
-        }
-      }
-    } catch (e) {
-      console.warn("Sync API unavailable, trying static JSON:", e.message);
+      var staticUrl = new URL("data-backup.json?v=20260526", document.baseURI).href;
+      var staticResp = await fetch(staticUrl, { cache: "no-store" });
+      if (!staticResp.ok) return false;
+      var staticData = await staticResp.json();
+      if (!payloadHasPointData(staticData)) return false;
+      applyRemoteData({ points: staticData });
+      return true;
+    } catch (error) {
+      console.warn("Static data load failed:", error.message);
+      return false;
     }
-    if (!loaded) {
+  }
+
+  async function initSync() {
+    var loaded = false;
+
+    if (syncState.enabled) {
       try {
-        var staticResp = await fetch("data-backup.json", { cache: "no-store" });
-        if (staticResp.ok) {
-          var staticData = await staticResp.json();
-          // data-backup.json format: { annotations, groups, collapsedGroups } directly
-          if (staticData.annotations || staticData.groups) {
-            applyRemoteData({ points: staticData });
+        var response = await fetch(SYNC_ENDPOINT, { cache: "no-store" });
+        if (response.ok) {
+          var remote = await response.json();
+          if (payloadHasData(remote.data)) {
+            applyRemoteData(remote.data);
+            saveSyncMeta(remote.updatedAt);
             loaded = true;
           }
         }
-      } catch (e2) {
-        console.warn("Static data load failed:", e2.message);
+      } catch (e) {
+        console.warn("Sync API unavailable, trying static JSON:", e.message);
       }
     }
+
+    if (!hasPointData()) {
+      loaded = await loadStaticPointBackup() || loaded;
+    }
+
+    if (!loaded && hasLocalData() && syncState.enabled) {
+      try {
+        await pushSyncData();
+        loaded = true;
+      } catch (error) {
+        console.warn("Initial sync push failed:", error.message);
+      }
+    }
+
     if (!loaded && hasLocalData()) {}
   }
   function loadData() {
@@ -355,6 +400,7 @@
       "Data loaded: " + state.annotations.length + "/" + totalAnnotations + " annotations, " +
       state.groups.length + " groups"
     );
+    selectFirstAnnotatedDrawingIfNeeded();
   }
 
   async function loadDrawingManifest() {
@@ -547,6 +593,14 @@
 
   function currentAnnotations() {
     return state.annotations.filter((annotation) => annotation.drawingId === state.currentDrawingId);
+  }
+
+  function selectFirstAnnotatedDrawingIfNeeded() {
+    if (state.annotations.some((annotation) => annotation.drawingId === state.currentDrawingId)) return;
+    const drawing = drawings.find((item) => {
+      return state.annotations.some((annotation) => annotation.drawingId === item.id);
+    });
+    if (drawing) state.currentDrawingId = drawing.id;
   }
 
   function groupTitle(groupId) {
@@ -786,6 +840,112 @@
 
     // Preview shows current value (what next click will generate)
     return buildAutoName(segs, seps);
+  }
+
+  function parseBatchCodes(text) {
+    return String(text || "")
+      .split(/[\n\r\t,，;；]+/)
+      .map(function(item) { return item.trim(); })
+      .filter(Boolean);
+  }
+
+  function batchCodeRemaining() {
+    return Math.max(0, state.batchCodes.length - state.batchCodeIndex);
+  }
+
+  function previewBatchCode() {
+    return state.batchCodes[state.batchCodeIndex] || "";
+  }
+
+  function updateBatchCodePanel() {
+    if (!el.batchCodeInput) return;
+    var parsedCount = parseBatchCodes(el.batchCodeInput.value).length;
+    var remaining = batchCodeRemaining();
+
+    el.startBatchCodeButton.textContent = state.batchCodeActive ? "暂停批量" : "开始批量";
+    el.startBatchCodeButton.classList.toggle("primary", state.batchCodeActive);
+    el.startBatchCodeButton.disabled = !state.batchCodeActive && parsedCount === 0 && remaining === 0;
+
+    if (state.batchCodeActive) {
+      if (remaining > 0) {
+        el.batchCodePreview.innerHTML = "批量中：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
+      } else {
+        el.batchCodePreview.textContent = "批量编号已用完";
+      }
+      return;
+    }
+
+    if (remaining > 0) {
+      el.batchCodePreview.innerHTML = "已暂停：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
+      return;
+    }
+
+    el.batchCodePreview.textContent = parsedCount > 0 ? "待开始：" + parsedCount + " 个编号" : "未导入编号";
+  }
+
+  function startOrPauseBatchCodes() {
+    if (state.batchCodeActive) {
+      state.batchCodeActive = false;
+      setStatus("已暂停批量点位。");
+      updateBatchCodePanel();
+      updateModeHint();
+      return;
+    }
+
+    if (batchCodeRemaining() === 0) {
+      state.batchCodes = parseBatchCodes(el.batchCodeInput.value);
+      state.batchCodeIndex = 0;
+    }
+
+    if (state.batchCodes.length === 0) {
+      setStatus("请先粘贴点位编号。");
+      updateBatchCodePanel();
+      return;
+    }
+
+    state.batchCodeActive = true;
+    setTool("point");
+    setStatus("已进入批量点位模式，请按顺序点击图纸。");
+    updateBatchCodePanel();
+  }
+
+  function clearBatchCodes() {
+    state.batchCodes = [];
+    state.batchCodeIndex = 0;
+    state.batchCodeActive = false;
+    el.batchCodeInput.value = "";
+    setStatus("批量点位编号已清空。");
+    updateBatchCodePanel();
+    updateModeHint();
+  }
+
+  function consumeBatchCode() {
+    if (!state.batchCodeActive) return "";
+    var code = previewBatchCode();
+    if (!code) {
+      state.batchCodeActive = false;
+      updateBatchCodePanel();
+      updateModeHint();
+      setStatus("批量编号已用完。");
+      return "";
+    }
+    state.batchCodeIndex += 1;
+    if (state.batchCodeIndex >= state.batchCodes.length) {
+      state.batchCodeActive = false;
+    }
+    updateBatchCodePanel();
+    updateModeHint();
+    return code;
+  }
+
+  function nextPointCode() {
+    state.lastPointCodeSource = "";
+    if (state.batchCodeActive) {
+      state.lastPointCodeSource = "batch";
+      return consumeBatchCode() || null;
+    }
+    state.lastPointCodeSource = state.autoNameEnabled ? "auto" : "";
+    return generateAutoName();
   }
 
   function initSegmentsFromExisting(segments, separators, primaryIdx) {
@@ -1238,6 +1398,10 @@
     return annotation.code || annotation.note || "未命名";
   }
 
+  function isCompactViewport() {
+    return window.matchMedia("(max-width: 900px)").matches;
+  }
+
   function applyTransform(options = {}) {
     const { x, y, scale } = state.transform;
     el.stage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
@@ -1279,11 +1443,22 @@
     document.querySelectorAll(".tool-button").forEach((button) => {
       button.classList.toggle("active", button.dataset.tool === tool);
     });
+    updateModeHint();
+    renderOverlay();
+  }
+
+  function updateModeHint() {
+    if (state.batchCodeActive && state.tool === "point") {
+      var nextCode = previewBatchCode();
+      el.modeHint.textContent = nextCode
+        ? "批量点位中：下一点 " + nextCode + "，剩余 " + batchCodeRemaining() + " 个。"
+        : "批量编号已用完。";
+      return;
+    }
     el.modeHint.textContent = {
       pan: "拖动画布浏览，滚轮缩放。1切换拖动，2切换点标注，F适配。",
       point: "点击画布添加点标注。Esc取消选择，Delete删除选中。"
-    }[tool];
-    renderOverlay();
+    }[state.tool];
   }
 
   function renderDrawingList() {
@@ -1352,7 +1527,8 @@
     el.overlay.setAttribute("viewBox", `0 0 ${state.imageSize.width} ${state.imageSize.height}`);
 
     const visibleIds = new Set();
-    if (state.annotationsVisible) {
+    const compactFocusId = isCompactViewport() && state.highlightedId ? state.highlightedId : null;
+    if (state.annotationsVisible && !compactFocusId) {
       for (const annotation of currentAnnotations()) visibleIds.add(annotation.id);
     }
     if (state.highlightedId) visibleIds.add(state.highlightedId);
@@ -1824,15 +2000,29 @@
 
   function drawAnnotation(annotation) {
     const center = annotationCenter(annotation);
+    const isHighlighted = annotation.id === state.highlightedId;
+    const isSelected = annotation.id === state.selectedId;
+    const isCompactFocus = isCompactViewport() && isHighlighted;
+
+    if (isCompactFocus) {
+      const halo = document.createElementNS(SVG_NS, "circle");
+      halo.classList.add("annotation-focus-ring");
+      halo.setAttribute("cx", center.x);
+      halo.setAttribute("cy", center.y);
+      halo.setAttribute("r", 18 / Math.sqrt(state.transform.scale));
+      el.overlay.appendChild(halo);
+    }
+
     const shape = document.createElementNS(SVG_NS, "circle");
     shape.classList.add("annotation-shape", "point-shape");
-    shape.classList.toggle("selected", annotation.id === state.selectedId);
-    shape.classList.toggle("highlight", annotation.id === state.highlightedId);
+    shape.classList.toggle("selected", isSelected);
+    shape.classList.toggle("highlight", isHighlighted);
+    shape.classList.toggle("compact-focus", isCompactFocus);
     shape.classList.toggle("inactive", state.tool !== "pan");
     shape.dataset.id = annotation.id;
     shape.setAttribute("cx", center.x);
     shape.setAttribute("cy", center.y);
-    shape.setAttribute("r", 3.5 / Math.sqrt(state.transform.scale));
+    shape.setAttribute("r", (isCompactFocus ? 7 : 3.5) / Math.sqrt(state.transform.scale));
 
     shape.addEventListener("pointerdown", (event) => {
       event.stopPropagation();
@@ -1845,14 +2035,19 @@
 
     const shouldShowLabel = annotation.code && (
       state.labelsVisible ||
-      annotation.id === state.selectedId ||
-      annotation.id === state.highlightedId
+      isSelected ||
+      isHighlighted
     );
     if (shouldShowLabel) {
       const label = document.createElementNS(SVG_NS, "text");
       label.classList.add("annotation-label");
-      label.setAttribute("x", center.x + 6);
-      label.setAttribute("y", center.y - 6);
+      label.classList.toggle("compact-focus", isCompactFocus);
+      label.setAttribute("x", center.x + (isCompactFocus ? 14 / state.transform.scale : 6));
+      label.setAttribute("y", center.y - (isCompactFocus ? 14 / state.transform.scale : 6));
+      if (isCompactFocus) {
+        label.style.fontSize = `${18 / state.transform.scale}px`;
+        label.style.strokeWidth = `${5 / state.transform.scale}px`;
+      }
       label.textContent = annotation.code || "未命名";
       el.overlay.appendChild(label);
     }
@@ -2045,7 +2240,8 @@
 
   function createAnnotation(type, imagePoints) {
     var now = new Date().toISOString();
-    var code = generateAutoName();
+    var code = nextPointCode();
+    if (code === null) return;
     var annotation = {
       id: uid(),
       drawingId: state.currentDrawingId,
@@ -2062,7 +2258,11 @@
     renderDrawingList();
     renderOverlay();
     selectAnnotation(annotation.id);
-    setStatus(code ? "已新增: " + code : "已新增点位。");
+    if (code && state.lastPointCodeSource === "batch" && state.batchCodeIndex >= state.batchCodes.length) {
+      setStatus("已新增: " + code + "。批量编号已全部添加。");
+    } else {
+      setStatus(code ? "已新增: " + code : "已新增点位。");
+    }
   }
 
   function beginMoveAnnotation(event, id) {
@@ -2258,7 +2458,13 @@
       switchDrawing(annotation.drawingId, { selectedId: id, highlightedId: id });
       return;
     }
-    centerOnAnnotation(annotation);
+    if (isCompactViewport()) {
+      zoomToAnnotation(annotation);
+      el.searchInput.blur();
+      el.searchResults.innerHTML = "";
+    } else {
+      centerOnAnnotation(annotation);
+    }
     updateEditor();
     renderOverlay();
     window.clearTimeout(focusAnnotation.timer);
@@ -2282,9 +2488,10 @@
     const rect = el.viewport.getBoundingClientRect();
     const boundsWidth = Math.max(40, bounds.maxX - bounds.minX);
     const boundsHeight = Math.max(40, bounds.maxY - bounds.minY);
-    const scale = Math.min(rect.width / (boundsWidth * 3), rect.height / (boundsHeight * 3));
+    const focusPadding = isCompactViewport() ? 2.2 : 3;
+    const scale = Math.min(rect.width / (boundsWidth * focusPadding), rect.height / (boundsHeight * focusPadding));
 
-    state.transform.scale = clamp(scale, 0.25, 5);
+    state.transform.scale = clamp(scale, isCompactViewport() ? 0.55 : 0.25, isCompactViewport() ? 5 : 5);
     state.transform.x = rect.width / 2 - center.x * state.transform.scale;
     state.transform.y = rect.height / 2 - center.y * state.transform.scale;
     applyTransform();
@@ -2343,7 +2550,7 @@
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `baggage-points-${new Date().toISOString().slice(0, 10)}.json`;
+    link.download = "data-backup.json";
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -2363,6 +2570,7 @@
         saveData();
         state.selectedId = null;
         state.highlightedId = null;
+        selectFirstAnnotatedDrawingIfNeeded();
         renderDrawingList();
         renderOverlay();
         updateEditor();
@@ -3265,6 +3473,15 @@
 
     el.autoNameTemplate.addEventListener("change", applyTemplateChange);
     el.autoNameTemplate.addEventListener("blur", applyTemplateChange);
+    el.batchCodeInput.addEventListener("input", function() {
+      if (!state.batchCodeActive) {
+        state.batchCodes = [];
+        state.batchCodeIndex = 0;
+      }
+      updateBatchCodePanel();
+    });
+    el.startBatchCodeButton.addEventListener("click", startOrPauseBatchCodes);
+    el.clearBatchCodeButton.addEventListener("click", clearBatchCodes);
     [el.viewport, el.stage, el.image, el.minimapImage].forEach((target) => {
       target.addEventListener("dragstart", (event) => event.preventDefault());
       target.addEventListener("dragover", (event) => event.preventDefault());
@@ -3338,7 +3555,10 @@
       fitToViewport();
       if (state.highlightedId) {
         const annotation = state.annotations.find((item) => item.id === state.highlightedId);
-        if (annotation) centerOnAnnotation(annotation);
+        if (annotation) {
+          if (isCompactViewport()) zoomToAnnotation(annotation);
+          else centerOnAnnotation(annotation);
+        }
         window.clearTimeout(focusAnnotation.timer);
         focusAnnotation.timer = window.setTimeout(() => {
           state.highlightedId = null;
@@ -3397,4 +3617,5 @@
     el.autoNameTemplate.value = segmentsToTemplate(state.autoNameSegments, state.autoNameSeparators);
     updateAutoNamePreview();
   }
+  updateBatchCodePanel();
 })();

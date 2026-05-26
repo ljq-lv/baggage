@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>行李输送机点位查找</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260526-autoload">
   </head>
   <body>
     <header class="module-nav" aria-label="培训网站模块">
@@ -65,6 +65,16 @@
             <div id="autoNamePreview" style="margin-top: 6px; font-size: 12px; color: var(--accent);"></div>
           </div>
           <div id="autoNameAdvanced" hidden></div>
+          <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--line);">
+          <div class="batch-code-panel">
+            <label class="field-label" for="batchCodeInput">批量点位编号</label>
+            <textarea id="batchCodeInput" rows="4" placeholder="从 Excel 复制后粘贴，一行一个编号"></textarea>
+            <div id="batchCodePreview" class="batch-code-preview">未导入编号</div>
+            <div class="batch-code-actions">
+              <button id="startBatchCodeButton" type="button">开始批量</button>
+              <button id="clearBatchCodeButton" type="button" class="secondary-action">清空</button>
+            </div>
+          </div>
         </section>
 
         <section class="panel editor-panel">
@@ -89,7 +99,7 @@
         <section class="panel">
           <div class="section-title">数据</div>
           <div class="data-actions">
-            <button id="exportButton" type="button">导出JSON</button>
+            <button id="exportButton" type="button">导出备份</button>
             <label class="file-button">
               导入JSON
               <input id="importInput" type="file" accept="application/json,.json">
@@ -192,6 +202,6 @@
 
     <script src="node_modules/jszip/dist/jszip.min.js"></script>
     <script src="node_modules/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v=20260526-autoload"></script>
   </body>
 </html>

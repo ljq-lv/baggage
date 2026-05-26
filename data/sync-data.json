@@ -1,14 +1,1080 @@
 {
-  "updatedAt": "2026-05-25T15:30:43.902Z",
+  "updatedAt": "2026-05-26T04:23:32.629Z",
   "data": {
+    "version": 1,
     "points": {
-      "annotations": [],
-      "groups": [],
-      "collapsedGroups": {},
-      "drawings": [],
-      "version": 1
+      "version": 1,
+      "drawings": [
+        {
+          "id": "f1",
+          "title": "1层",
+          "image": "assets/floors/f1.jpg"
+        },
+        {
+          "id": "f2",
+          "title": "2层",
+          "image": "assets/floors/f2.jpg"
+        },
+        {
+          "id": "overview-2d",
+          "title": "2D总览",
+          "image": "assets/floors/overview-2d.jpg"
+        },
+        {
+          "id": "f3",
+          "title": "3层",
+          "image": "assets/floors/f3.jpg"
+        },
+        {
+          "id": "f3-transfer",
+          "title": "3层开包间",
+          "image": "assets/floors/f3-transfer.jpg"
+        },
+        {
+          "id": "overview-3d",
+          "title": "3D总览",
+          "image": "assets/floors/overview-3d.jpg"
+        },
+        {
+          "id": "f4",
+          "title": "4层",
+          "image": "assets/floors/f4.jpg"
+        },
+        {
+          "id": "b1",
+          "title": "B1层",
+          "image": "assets/floors/b1.jpg"
+        }
+      ],
+      "groups": [
+        {
+          "id": "grp-mpkpnht9-tkp6e6",
+          "name": "西边两舱",
+          "createdAt": "2026-05-25T04:32:58.605Z"
+        },
+        {
+          "id": "grp-mpkq6u0n-ozcl78",
+          "name": "一号值机岛（D小）",
+          "createdAt": "2026-05-25T04:48:00.887Z"
+        }
+      ],
+      "collapsedGroups": {
+        "grp-mpkpnht9-tkp6e6": true,
+        "grp-mpkq6u0n-ozcl78": true
+      },
+      "annotations": [
+        {
+          "id": "ann-mpkpog06-zd1vwp",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.1.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.27128069909636826,
+              "y": 0.1341510002974405
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:42.918Z",
+          "updatedAt": "2026-05-25T04:34:51.042Z"
+        },
+        {
+          "id": "ann-mpkpoghc-ij7hor",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.1.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.27386403115813585,
+              "y": 0.1273586966736824
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:43.536Z",
+          "updatedAt": "2026-05-25T04:35:01.425Z"
+        },
+        {
+          "id": "ann-mpkpogyv-4hjet2",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.3.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2725862538042133,
+              "y": 0.13536811787660075
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:44.167Z",
+          "updatedAt": "2026-05-25T04:35:07.929Z"
+        },
+        {
+          "id": "ann-mpkpohbr-ydolhk",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.3.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.27525292004702473,
+              "y": 0.12826171878978446
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:44.631Z",
+          "updatedAt": "2026-05-25T04:35:13.384Z"
+        },
+        {
+          "id": "ann-mpkpohru-fc7832",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.5.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.27808625465192377,
+              "y": 0.13894094955654512
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:45.210Z",
+          "updatedAt": "2026-05-25T04:35:31.027Z"
+        },
+        {
+          "id": "ann-mpkpoi3e-3zozyh",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.5.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.28080847560258027,
+              "y": 0.13199159707796662
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:45.626Z",
+          "updatedAt": "2026-05-25T04:35:37.560Z"
+        },
+        {
+          "id": "ann-mpkpoigj-oujtl9",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.7.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2795306982486577,
+              "y": 0.14058994718051143
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:46.099Z",
+          "updatedAt": "2026-05-25T04:35:42.756Z"
+        },
+        {
+          "id": "ann-mpkpoirr-ea4221",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.7.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2822529213185905,
+              "y": 0.13328723871010661
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:46.503Z",
+          "updatedAt": "2026-05-25T04:35:45.849Z"
+        },
+        {
+          "id": "ann-mpkpoj8p-y878hr",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.9.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2844195867136914,
+              "y": 0.14361311198731924
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:47.113Z",
+          "updatedAt": "2026-05-25T04:35:51.270Z"
+        },
+        {
+          "id": "ann-mpkpojo5-7vivh6",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.9.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2873362554996343,
+              "y": 0.13670302228409148
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:47.669Z",
+          "updatedAt": "2026-05-25T04:35:54.297Z"
+        },
+        {
+          "id": "ann-mpkpok3c-8ae36a",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.11.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.28611403073428054,
+              "y": 0.1451443257783985
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:48.216Z",
+          "updatedAt": "2026-05-25T04:36:00.570Z"
+        },
+        {
+          "id": "ann-mpkpokfv-kpt1nd",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.11.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2891418110551899,
+              "y": 0.13795940263860246
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:48.667Z",
+          "updatedAt": "2026-05-25T04:36:04.155Z"
+        },
+        {
+          "id": "ann-mpkpon3w-bym8ud",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.13.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2823084760264355,
+              "y": 0.1299499791891015
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:52.124Z",
+          "updatedAt": "2026-05-25T04:36:13.770Z"
+        },
+        {
+          "id": "ann-mpkpot5i-ofg9qx",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.15.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2945862529565028,
+              "y": 0.1393728325967947
+            }
+          ],
+          "createdAt": "2026-05-25T04:33:59.958Z",
+          "updatedAt": "2026-05-25T04:36:23.623Z"
+        },
+        {
+          "id": "ann-mpkpou1g-7q2s8w",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.15.2",
+          "note": "",
+          "points": [
+            {
+              "x": 0.29861403073428056,
+              "y": 0.14263156506937655
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:01.108Z",
+          "updatedAt": "2026-05-25T04:36:25.884Z"
+        },
+        {
+          "id": "ann-mpkpp02n-miicjf",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.17.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.3064473674584559,
+              "y": 0.14816748908748456
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:08.927Z",
+          "updatedAt": "2026-05-25T04:36:33.471Z"
+        },
+        {
+          "id": "ann-mpkpp1g5-aglp2c",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.33.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.31066958883296764,
+              "y": 0.15287891429360942
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:10.709Z",
+          "updatedAt": "2026-05-25T04:36:50.661Z"
+        },
+        {
+          "id": "ann-mpkpp3ex-qzfd4o",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.33.2",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30958625295650277,
+              "y": 0.1584541025847899
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:13.257Z",
+          "updatedAt": "2026-05-25T04:36:48.216Z"
+        },
+        {
+          "id": "ann-mpkpp40v-jjp2zw",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.33.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30816958883296763,
+              "y": 0.1610846471266989
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:14.047Z",
+          "updatedAt": "2026-05-25T04:36:52.911Z"
+        },
+        {
+          "id": "ann-mpkpp4hg-4a3554",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.33.4",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30872514438852316,
+              "y": 0.16426485854174447
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:14.644Z",
+          "updatedAt": "2026-05-25T04:36:56.026Z"
+        },
+        {
+          "id": "ann-mpkppaf5-a6qfel",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.19.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30391958798525714,
+              "y": 0.1438486841462585
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:22.336Z",
+          "updatedAt": "2026-05-25T04:37:07.065Z"
+        },
+        {
+          "id": "ann-mpkppat8-142p54",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.19.2",
+          "note": "",
+          "points": [
+            {
+              "x": 0.3029473657630349,
+              "y": 0.14589030203512363
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:22.844Z",
+          "updatedAt": "2026-05-25T04:37:09.145Z"
+        },
+        {
+          "id": "ann-mpkppbve-w8lxwz",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.19.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30172514523623367,
+              "y": 0.1485993721277341
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:24.218Z",
+          "updatedAt": "2026-05-25T04:37:11.199Z"
+        },
+        {
+          "id": "ann-mpkppduz-1bmp6k",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.21.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30080847772185654,
+              "y": 0.15130843922490114
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:26.795Z",
+          "updatedAt": "2026-05-25T04:37:18.976Z"
+        },
+        {
+          "id": "ann-mpkppe8m-0i71f7",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.23.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.29878069909636823,
+              "y": 0.1556665099369214
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:27.286Z",
+          "updatedAt": "2026-05-25T04:37:27.636Z"
+        },
+        {
+          "id": "ann-mpkpphou-fnoqve",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.25.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.299058476874146,
+              "y": 0.15927860139677305
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:31.758Z",
+          "updatedAt": "2026-05-25T04:37:35.820Z"
+        },
+        {
+          "id": "ann-mpkppjk2-iboo35",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.29.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.3018640341251226,
+              "y": 0.16092759902073936
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:34.178Z",
+          "updatedAt": "2026-05-25T04:37:39.382Z"
+        },
+        {
+          "id": "ann-mpkppk15-g6vt55",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkpnht9-tkp6e6",
+          "code": "3101.29.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.3055306999440787,
+              "y": 0.15091582045772406
+            }
+          ],
+          "createdAt": "2026-05-25T04:34:34.793Z",
+          "updatedAt": "2026-05-25T04:37:43.828Z"
+        },
+        {
+          "id": "ann-mpkq700c-6or4ii",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.1.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2729881234350884,
+              "y": 0.24008054885757638
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:08.652Z",
+          "updatedAt": "2026-05-25T04:48:42.169Z"
+        },
+        {
+          "id": "ann-mpkq70jp-sx97e8",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.1.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2736055752317303,
+              "y": 0.23749822663297004
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:09.349Z",
+          "updatedAt": "2026-05-25T04:55:58.921Z"
+        },
+        {
+          "id": "ann-mpkq727l-j1nzlm",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.2.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.27461237791930726,
+              "y": 0.240572499918116
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:11.505Z",
+          "updatedAt": "2026-05-25T04:49:13.348Z"
+        },
+        {
+          "id": "ann-mpkq72jj-pcs6g1",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.2.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.27530848866997076,
+              "y": 0.23822206939015672
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:11.935Z",
+          "updatedAt": "2026-05-25T04:49:44.066Z"
+        },
+        {
+          "id": "ann-mpkq73dn-slufxh",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.3.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.27917576406144146,
+              "y": 0.24210300923163347
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:13.019Z",
+          "updatedAt": "2026-05-25T04:49:49.882Z"
+        },
+        {
+          "id": "ann-mpkq73mz-i5ny2m",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.3.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.27983319969779263,
+              "y": 0.23964325809924927
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:13.355Z",
+          "updatedAt": "2026-05-25T04:49:53.683Z"
+        },
+        {
+          "id": "ann-mpkq7428-muvlfu",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.5.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.28060665477608676,
+              "y": 0.24330555673187618
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:13.904Z",
+          "updatedAt": "2026-05-25T04:50:04.015Z"
+        },
+        {
+          "id": "ann-mpkq74bs-zguaz3",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.5.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2814961292963238,
+              "y": 0.24029919423673998
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:14.248Z",
+          "updatedAt": "2026-05-25T04:50:05.590Z"
+        },
+        {
+          "id": "ann-mpkq74vq-np222q",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.7.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.28648491809191734,
+              "y": 0.24521869650150827
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:14.966Z",
+          "updatedAt": "2026-05-25T04:50:09.040Z"
+        },
+        {
+          "id": "ann-mpkq754a-1dbdrb",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.7.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2868329705167521,
+              "y": 0.2424856396877481
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:15.274Z",
+          "updatedAt": "2026-05-25T04:50:11.947Z"
+        },
+        {
+          "id": "ann-mpkq75i9-560fri",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.9.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2877224450369891,
+              "y": 0.2464212398314373
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:15.777Z",
+          "updatedAt": "2026-05-25T04:50:14.585Z"
+        },
+        {
+          "id": "ann-mpkq75pq-w6crv0",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.9.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.28888262765443035,
+              "y": 0.24330555673187618
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:16.046Z",
+          "updatedAt": "2026-05-25T04:50:16.301Z"
+        },
+        {
+          "id": "ann-mpkq76dy-808t8a",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.11.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2941421186462341,
+              "y": 0.24806107391969337
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:16.918Z",
+          "updatedAt": "2026-05-25T04:50:18.109Z"
+        },
+        {
+          "id": "ann-mpkq76kk-0hcyu7",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.11.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2946835407416363,
+              "y": 0.2459839532434239
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:17.156Z",
+          "updatedAt": "2026-05-25T04:50:18.947Z"
+        },
+        {
+          "id": "ann-mpkq76wj-3683i1",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.13.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.29526363205035694,
+              "y": 0.24926362141993613
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:17.587Z",
+          "updatedAt": "2026-05-25T04:50:19.574Z"
+        },
+        {
+          "id": "ann-mpkq7736-joeyem",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.13.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2959210676867081,
+              "y": 0.24696785119418932
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:17.826Z",
+          "updatedAt": "2026-05-25T04:50:20.191Z"
+        },
+        {
+          "id": "ann-mpkq7b41-lxa0a2",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.15.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30106454513756287,
+              "y": 0.25106743224451583
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:23.041Z",
+          "updatedAt": "2026-05-25T04:50:20.935Z"
+        },
+        {
+          "id": "ann-mpkq7bha-l6ntwd",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.15.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.3018766723796723,
+              "y": 0.24893565335119078
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:23.518Z",
+          "updatedAt": "2026-05-25T04:50:21.614Z"
+        },
+        {
+          "id": "ann-mpkq7buh-ahk2g6",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.17.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30257278017983885,
+              "y": 0.25237930034918343
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:23.993Z",
+          "updatedAt": "2026-05-25T04:50:23.500Z"
+        },
+        {
+          "id": "ann-mpkq7c3t-mulnfj",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.17.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30319154660287173,
+              "y": 0.2500835342937504
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:24.329Z",
+          "updatedAt": "2026-05-25T04:50:25.001Z"
+        },
+        {
+          "id": "ann-mpkq7cmu-cersgn",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.19.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30856705703661835,
+              "y": 0.2542377798166031
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:25.014Z",
+          "updatedAt": "2026-05-25T04:50:27.902Z"
+        },
+        {
+          "id": "ann-mpkq7ctt-rncjik",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.19.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30906980401770834,
+              "y": 0.25259794572834704
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:25.265Z",
+          "updatedAt": "2026-05-25T04:50:29.595Z"
+        },
+        {
+          "id": "ann-mpkq7d63-nporwo",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.21.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.31003662286557604,
+              "y": 0.25516701746515613
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:25.707Z",
+          "updatedAt": "2026-05-25T04:50:30.187Z"
+        },
+        {
+          "id": "ann-mpkq7df0-c8xjm1",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.21.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.3105006947323537,
+              "y": 0.2529259117119355
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:26.028Z",
+          "updatedAt": "2026-05-25T04:50:30.833Z"
+        },
+        {
+          "id": "ann-mpkq7dyq-1ouuds",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.23.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.31587620811659733,
+              "y": 0.2574081273886904
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:26.738Z",
+          "updatedAt": "2026-05-25T04:50:32.479Z"
+        },
+        {
+          "id": "ann-mpkq7e7e-f6sgbt",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.23.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.31657231886726084,
+              "y": 0.25527634223989476
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:27.050Z",
+          "updatedAt": "2026-05-25T04:50:34.897Z"
+        },
+        {
+          "id": "ann-mpkq7eka-em3605",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.25.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.3173844490598672,
+              "y": 0.2580640593558674
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:27.514Z",
+          "updatedAt": "2026-05-25T04:50:41.297Z"
+        },
+        {
+          "id": "ann-mpkq7etk-pp3sf3",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.25.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.3182739176791103,
+              "y": 0.25615091958623526
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:27.848Z",
+          "updatedAt": "2026-05-25T04:50:44.578Z"
+        },
+        {
+          "id": "ann-mpkq7f9z-exfd6q",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.27.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.32345607024427736,
+              "y": 0.26014118420245064
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:28.439Z",
+          "updatedAt": "2026-05-25T04:50:49.519Z"
+        },
+        {
+          "id": "ann-mpkq7fgc-zr2ixf",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.27.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.3239974864386857,
+              "y": 0.2583920253394558
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:28.668Z",
+          "updatedAt": "2026-05-25T04:50:50.981Z"
+        },
+        {
+          "id": "ann-mpkq7fr6-gcutrt",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.29.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.32496430528655335,
+              "y": 0.261398387834592
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:29.058Z",
+          "updatedAt": "2026-05-25T04:50:52.883Z"
+        },
+        {
+          "id": "ann-mpkq7fy7-guluwd",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.29.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.32577643547915974,
+              "y": 0.259102621779159
+            }
+          ],
+          "createdAt": "2026-05-25T04:48:29.311Z",
+          "updatedAt": "2026-05-25T04:50:54.914Z"
+        },
+        {
+          "id": "ann-mpkrhjmr-v7teye",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.31.1",
+          "note": "",
+          "points": [
+            {
+              "x": 0.2818587890058397,
+              "y": 0.23677850014002494
+            }
+          ],
+          "createdAt": "2026-05-25T05:24:20.259Z",
+          "updatedAt": "2026-05-25T05:36:08.470Z"
+        },
+        {
+          "id": "ann-mpkrhms8-gumqrz",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.31.2",
+          "note": "",
+          "points": [
+            {
+              "x": 0.30348336356574707,
+              "y": 0.2461765373842969
+            }
+          ],
+          "createdAt": "2026-05-25T05:24:24.344Z",
+          "updatedAt": "2026-05-25T05:36:08.470Z"
+        },
+        {
+          "id": "ann-mpkrhr22-q0lg83",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.31.3",
+          "note": "",
+          "points": [
+            {
+              "x": 0.31809941646264844,
+              "y": 0.252018548926363
+            }
+          ],
+          "createdAt": "2026-05-25T05:24:29.882Z",
+          "updatedAt": "2026-05-25T05:36:08.470Z"
+        }
+      ]
     },
     "docs": {
+      "version": 1,
       "folders": [],
       "docs": [],
       "activeFolderId": "",
@@ -19,7 +1085,6 @@
       "segments": [],
       "separators": [],
       "primaryIdx": -1
-    },
-    "version": 1
+    }
   }
 }
