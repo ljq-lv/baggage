@@ -29,6 +29,7 @@
     highlightedId: null,
     transform: { x: 0, y: 0, scale: 1 },
     imageSize: { width: 1, height: 1 },
+    activePointers: new Map(),
     drag: null,
     draft: null,
     autoNameEnabled: false,
@@ -2284,6 +2285,27 @@
     if (event.button !== 0) return;
     event.preventDefault();
 
+    if (event.pointerType === "touch") {
+      state.activePointers.set(event.pointerId, {
+        clientX: event.clientX,
+        clientY: event.clientY
+      });
+      el.viewport.setPointerCapture(event.pointerId);
+
+      if (state.activePointers.size >= 2) {
+        const points = Array.from(state.activePointers.values()).slice(0, 2);
+        const center = pointerCenter(points);
+        state.drag = {
+          type: "pinch",
+          startDistance: pointerDistance(points),
+          startScale: state.transform.scale,
+          centerImage: screenToImage(center.x, center.y)
+        };
+        el.viewport.classList.add("grabbing");
+        return;
+      }
+    }
+
     if (state.tool === "pan") {
       state.drag = {
         type: "pan",
@@ -2305,7 +2327,26 @@
   }
 
   function handlePointerMove(event) {
+    if (event.pointerType === "touch" && state.activePointers.has(event.pointerId)) {
+      state.activePointers.set(event.pointerId, {
+        clientX: event.clientX,
+        clientY: event.clientY
+      });
+    }
     if (!state.drag) return;
+
+    if (state.drag.type === "pinch") {
+      const points = Array.from(state.activePointers.values()).slice(0, 2);
+      if (points.length < 2) return;
+      const center = pointerCenter(points);
+      const nextScale = state.drag.startScale * (pointerDistance(points) / state.drag.startDistance);
+      state.transform.scale = clamp(nextScale, 0.08, 8);
+      state.transform.x = center.x - el.viewport.getBoundingClientRect().left - state.drag.centerImage.x * state.transform.scale;
+      state.transform.y = center.y - el.viewport.getBoundingClientRect().top - state.drag.centerImage.y * state.transform.scale;
+      applyTransform();
+      renderOverlay();
+      return;
+    }
 
     if (state.drag.type === "pan") {
       state.transform.x = state.drag.originX + event.clientX - state.drag.startX;
@@ -2331,11 +2372,25 @@
   }
 
   function handlePointerUp(event) {
+    if (event.pointerType === "touch") {
+      state.activePointers.delete(event.pointerId);
+    }
     if (!state.drag) return;
 
     if (state.drag.type === "move-annotation") {
       saveData();
       renderDrawingList();
+    }
+
+    if (state.drag.type === "pinch" && state.activePointers.size > 0) {
+      el.viewport.classList.remove("grabbing");
+      state.drag = null;
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      } catch (error) {
+        // Pointer capture may already be released by the browser.
+      }
+      return;
     }
 
     el.viewport.classList.remove("grabbing");
@@ -2413,6 +2468,19 @@
     state.transform.y += clientY - screen.y;
     applyTransform();
     renderOverlay();
+  }
+
+  function pointerCenter(points) {
+    return {
+      x: (points[0].clientX + points[1].clientX) / 2,
+      y: (points[0].clientY + points[1].clientY) / 2
+    };
+  }
+
+  function pointerDistance(points) {
+    const dx = points[0].clientX - points[1].clientX;
+    const dy = points[0].clientY - points[1].clientY;
+    return Math.max(1, Math.hypot(dx, dy));
   }
 
   function search() {

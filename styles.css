@@ -21,6 +21,7 @@ body {
   color: var(--text);
   background: var(--bg);
   font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+  overscroll-behavior: none;
 }
 
 button,
@@ -514,6 +515,7 @@ textarea {
   background: #dce4ea;
   cursor: grab;
   touch-action: none;
+  overscroll-behavior: none;
   user-select: none;
 }
 
@@ -1143,7 +1145,7 @@ input.minimap-group-name:focus {
   #currentDrawingTitle { font-size: 12px; flex: 1; }
   #annotationCount, .mode-hint { display: none; }
 
-  .viewport { flex: 1; min-height: 200px; touch-action: pan-x pan-y pinch-zoom; }
+  .viewport { flex: 1; min-height: 200px; touch-action: none; }
 
   /* Smaller annotation dots on mobile */
   .annotation-shape { stroke-width: 1; }
