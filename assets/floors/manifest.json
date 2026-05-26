@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-05-25T14:31:31.152Z",
+  "generatedAt": "2026-05-26T15:54:29.997Z",
   "drawings": [
     {
       "id": "f1",
       "title": "1层",
       "pdf": "1层布局图.pdf",
-      "image": "f1.jpg",
+      "image": "f1.png",
       "pages": 1,
       "width": 3600,
       "height": 2547
@@ -14,7 +14,7 @@
       "id": "f2",
       "title": "2层",
       "pdf": "2层布局图.pdf",
-      "image": "f2.jpg",
+      "image": "f2.png",
       "pages": 1,
       "width": 3600,
       "height": 2547
@@ -23,7 +23,7 @@
       "id": "overview-2d",
       "title": "2D总览",
       "pdf": "2D总布局图.pdf",
-      "image": "overview-2d.jpg",
+      "image": "overview-2d.png",
       "pages": 1,
       "width": 3600,
       "height": 1968

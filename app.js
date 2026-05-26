@@ -1,7 +1,8 @@
-(async function () {
+﻿(async function () {
   const STORAGE_KEY = "baggage-point-finder-v1";
   const DOCS_KEY = "baggage-training-docs-v1";
   const SVG_NS = "http://www.w3.org/2000/svg";
+  const INTERACTION_OVERLAY_REFRESH_MS = 90;
 
   const defaultDrawings = [
     { id: "b1", title: "B1层", image: "assets/floors/b1.jpg" },
@@ -38,6 +39,9 @@
     autoNameSeparators: [],
     autoNamePrimaryIdx: -1,
     batchCodes: [],
+    requiredDevices: [],
+    requiredDeviceHeaders: [],
+    requiredDeviceFilter: "",
     batchCodeIndex: 0,
     batchCodeActive: false,
     lastPointCodeSource: "",
@@ -88,8 +92,15 @@
     autoNamePreview: document.getElementById("autoNamePreview"),
     batchCodeInput: document.getElementById("batchCodeInput"),
     batchCodePreview: document.getElementById("batchCodePreview"),
+    deviceIssuePanel: document.getElementById("deviceIssuePanel"),
     startBatchCodeButton: document.getElementById("startBatchCodeButton"),
     clearBatchCodeButton: document.getElementById("clearBatchCodeButton"),
+    nextRequiredDeviceButton: document.getElementById("nextRequiredDeviceButton"),
+    requiredDeviceFileInput: document.getElementById("requiredDeviceFileInput"),
+    requiredDeviceFilter: document.getElementById("requiredDeviceFilter"),
+    requiredDeviceList: document.getElementById("requiredDeviceList"),
+    deviceDetailPanel: document.getElementById("deviceDetailPanel"),
+    deviceDetailBody: document.getElementById("deviceDetailBody"),
     moduleTabs: document.querySelectorAll(".module-tab"),
     pointModule: document.getElementById("pointModule"),
     docsModule: document.getElementById("docsModule"),
@@ -117,12 +128,17 @@
   var AUTONAME_KEY = "baggage-autoname";
   var SYNC_META_KEY = STORAGE_KEY + "-sync-meta";
   var SYNC_ENDPOINT = "/api/data";
+  var MAX_UNDO_STEPS = 50;
   var syncState = {
     enabled: location.protocol === "http:" || location.protocol === "https:",
     applyingRemote: false,
     pushTimer: null,
     syncedAt: ""
   };
+  var undoStack = [];
+  var transformFrame = 0;
+  var overlayRefreshTimer = 0;
+  var deviceIssueCache = null;
 
   try {
     var syncMeta = JSON.parse(localStorage.getItem(SYNC_META_KEY) || "{}");
@@ -135,7 +151,9 @@
       drawings: drawings.map(function(d) { return { id: d.id, title: d.title, image: d.image }; }),
       groups: state.groups,
       collapsedGroups: state.collapsedGroups,
-      annotations: state.annotations
+      annotations: state.annotations,
+      requiredDevices: state.requiredDevices,
+      requiredDeviceHeaders: state.requiredDeviceHeaders
     };
   }
 
@@ -145,7 +163,7 @@
       localStorage.setItem(STORAGE_KEY, json);
       localStorage.setItem(BACKUP_KEY, json);
     } catch (error) {
-      setStatus("淇濆瓨澶辫触锛屽彲鑳藉瓨鍌ㄧ┖闂翠笉瓒炽€傝瀵煎嚭鏁版嵁澶囦唤銆?");
+      setStatus("娣囨繂鐡ㄦ径杈Е閿涘苯褰查懗钘夌摠閸屻劎鈹栭梻缈犵瑝鐡掔偨鈧倽顕€电厧鍤弫鐗堝祦婢跺洣鍞ら妴?");
       console.error("Save failed:", error);
     }
     writeBackupFile(json);
@@ -242,10 +260,10 @@
       if (!response.ok) throw new Error("Sync save failed: " + response.status);
       const result = await response.json();
       saveSyncMeta(result.updatedAt);
-      setStatus("宸插悓姝ュ埌鏈嶅姟鍣ㄣ€?");
+      setStatus("瀹告彃鎮撳銉ュ煂閺堝秴濮熼崳銊ｂ偓?");
     } catch (error) {
       console.warn("Sync push failed:", error);
-      setStatus("鏈湴宸蹭繚瀛橈紝鏈嶅姟鍣ㄥ悓姝ュけ璐ャ€?");
+      setStatus("閺堫剙婀村韫箽鐎涙﹫绱濋張宥呭閸ｃ劌鎮撳銉ャ亼鐠愩儯鈧?");
     }
   }
 
@@ -262,6 +280,11 @@
         }
         if (Array.isArray(remoteData.points.annotations)) {
           state.annotations = remoteData.points.annotations.map(toPointAnnotation).filter(Boolean);
+        }
+        if (Array.isArray(remoteData.points.requiredDevices)) {
+          state.requiredDeviceHeaders = Array.isArray(remoteData.points.requiredDeviceHeaders) ? remoteData.points.requiredDeviceHeaders : [];
+          state.requiredDevices = normalizeRequiredDevices(remoteData.points.requiredDevices);
+          syncBatchCodesFromRequiredDevices();
         }
       }
       if (remoteData.docs && typeof remoteData.docs === "object") {
@@ -280,6 +303,7 @@
         if (Array.isArray(remoteData.autoName.separators)) state.autoNameSeparators = remoteData.autoName.separators;
         if (typeof remoteData.autoName.primaryIdx === "number") state.autoNamePrimaryIdx = remoteData.autoName.primaryIdx;
       }
+      syncAllAutoGroups();
       savePointsLocal();
       saveDocsLocal();
       saveAutoNameLocal();
@@ -396,6 +420,11 @@
         setStatus(failedCount + " 个标注数据异常已跳过。");
       }
     }
+    if (Array.isArray(parsed.requiredDevices)) {
+      state.requiredDeviceHeaders = Array.isArray(parsed.requiredDeviceHeaders) ? parsed.requiredDeviceHeaders : [];
+      state.requiredDevices = normalizeRequiredDevices(parsed.requiredDevices);
+      syncBatchCodesFromRequiredDevices();
+    }
 
     var totalAnnotations = Array.isArray(parsed.annotations) ? parsed.annotations.length : 0;
     console.log(
@@ -503,7 +532,7 @@
     backupFileHandle.queryPermission({ mode: "readwrite" }).then(function(state) {
       if (state === "denied") {
         backupFileHandle = null;
-        console.warn("Backup file permission denied. Please click '设置自动备份' to re-enable.");
+        console.warn("Backup file permission denied. Please click '璁剧疆鑷姩澶囦唤' to re-enable.");
         return;
       }
       if (state === "prompt") {
@@ -532,10 +561,91 @@
       localStorage.setItem(STORAGE_KEY, json);
       localStorage.setItem(BACKUP_KEY, json);
     } catch (error) {
-      setStatus("保存失败，可能存储空间不足。请导出数据备份。");
+      setStatus("保存失败，请导出数据备份。");
       console.error("Save failed:", error);
     }
     writeBackupFile(json);
+  }
+
+  function clonePlain(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function createUndoSnapshot(label) {
+    return {
+      label: label || "操作",
+      currentDrawingId: state.currentDrawingId,
+      groups: clonePlain(state.groups),
+      collapsedGroups: clonePlain(state.collapsedGroups),
+      annotations: clonePlain(state.annotations),
+      activeGroupId: state.activeGroupId,
+      selectedId: state.selectedId,
+      highlightedId: state.highlightedId,
+      selectedForGroupMove: Array.from(state.selectedForGroupMove),
+      groupMoveSelectionAnchorId: state.groupMoveSelectionAnchorId,
+      batchCodes: clonePlain(state.batchCodes),
+      requiredDevices: clonePlain(state.requiredDevices),
+      requiredDeviceHeaders: clonePlain(state.requiredDeviceHeaders),
+      requiredDeviceFilter: state.requiredDeviceFilter,
+      batchCodeIndex: state.batchCodeIndex,
+      batchCodeActive: state.batchCodeActive,
+      lastPointCodeSource: state.lastPointCodeSource
+    };
+  }
+
+  function recordUndoSnapshot(label) {
+    undoStack.push(createUndoSnapshot(label));
+    if (undoStack.length > MAX_UNDO_STEPS) undoStack.shift();
+  }
+
+  function restoreUndoSnapshot(snapshot) {
+    state.currentDrawingId = snapshot.currentDrawingId;
+    state.groups = clonePlain(snapshot.groups);
+    state.collapsedGroups = clonePlain(snapshot.collapsedGroups);
+    state.annotations = clonePlain(snapshot.annotations);
+    state.activeGroupId = snapshot.activeGroupId || "";
+    state.selectedId = snapshot.selectedId || null;
+    state.highlightedId = snapshot.highlightedId || null;
+    state.selectedForGroupMove = new Set(snapshot.selectedForGroupMove || []);
+    state.groupMoveSelectionAnchorId = snapshot.groupMoveSelectionAnchorId || null;
+    state.batchCodes = clonePlain(snapshot.batchCodes || []);
+    state.requiredDevices = clonePlain(snapshot.requiredDevices || []);
+    state.requiredDeviceHeaders = clonePlain(snapshot.requiredDeviceHeaders || []);
+    state.requiredDeviceFilter = snapshot.requiredDeviceFilter || "";
+    if (el.requiredDeviceFilter) el.requiredDeviceFilter.value = state.requiredDeviceFilter;
+    state.batchCodeIndex = snapshot.batchCodeIndex || 0;
+    state.batchCodeActive = Boolean(snapshot.batchCodeActive);
+    state.lastPointCodeSource = snapshot.lastPointCodeSource || "";
+
+    saveData();
+    renderDrawingList();
+    renderDocsModule();
+    switchDrawing(state.currentDrawingId, { selectedId: state.selectedId });
+    updateEditor();
+    syncBatchCodesFromRequiredDevices();
+    updateBatchCodePanel();
+    resetAutoNameInit();
+    initAutoNameFromExisting();
+  }
+
+  function undoLastAction() {
+    const snapshot = undoStack.pop();
+    if (!snapshot) {
+      setStatus("没有可撤回的操作。");
+      return false;
+    }
+    restoreUndoSnapshot(snapshot);
+    setStatus("已撤回：" + snapshot.label + "。");
+    return true;
+  }
+
+  function annotationPointsChanged(before, after) {
+    if (!Array.isArray(before) || !Array.isArray(after) || before.length !== after.length) return true;
+    for (let i = 0; i < before.length; i++) {
+      if (Math.abs((before[i].x || 0) - (after[i].x || 0)) > 0.000001) return true;
+      if (Math.abs((before[i].y || 0) - (after[i].y || 0)) > 0.000001) return true;
+    }
+    return false;
   }
 
   function setStatus(message) {
@@ -562,6 +672,105 @@
     return `grp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
+  function autoGroupUid(drawingId, prefix) {
+    return `auto-${String(drawingId).replace(/[^a-z0-9_-]/gi, "-")}-${prefix}`;
+  }
+
+  function firstFourDigits(value) {
+    const digits = String(value || "").replace(/\D/g, "");
+    return digits.length >= 4 ? digits.slice(0, 4) : "";
+  }
+
+  function groupDisplayName(group) {
+    if (!group) return "未分组";
+    return (group.alias || group.name || group.autoKey || "").trim() || "未分组";
+  }
+
+  function normalizeAutoGroup(group, drawingId) {
+    const prefix = firstFourDigits(group.autoKey || group.name || group.alias);
+    if (!prefix) return false;
+    group.autoKey = prefix;
+    group.isAuto = true;
+    group.drawingId = group.drawingId || drawingId || state.currentDrawingId;
+    if (!group.alias && group.name && group.name !== prefix) group.alias = group.name;
+    group.name = prefix;
+    return true;
+  }
+
+  function findAutoGroup(prefix, drawingId) {
+    return state.groups.find((group) => {
+      if ((group.drawingId || drawingId) !== drawingId) return false;
+      if (group.autoKey === prefix) return true;
+      return firstFourDigits(group.name || group.alias) === prefix;
+    }) || null;
+  }
+
+  function ensureAutoGroup(prefix, drawingId = state.currentDrawingId) {
+    if (!prefix) return null;
+    let group = findAutoGroup(prefix, drawingId);
+    if (!group) {
+      let id = autoGroupUid(drawingId, prefix);
+      if (state.groups.some((item) => item.id === id)) id = groupUid();
+      group = {
+        id,
+        name: prefix,
+        alias: "",
+        autoKey: prefix,
+        isAuto: true,
+        drawingId,
+        createdAt: new Date().toISOString()
+      };
+      state.groups.push(group);
+      return group;
+    }
+    normalizeAutoGroup(group, drawingId);
+    return group;
+  }
+
+  function autoGroupForAnnotation(annotation) {
+    const prefix = firstFourDigits(annotation.code);
+    return prefix ? ensureAutoGroup(prefix, annotation.drawingId) : null;
+  }
+
+  function annotationEffectiveGroupId(annotation) {
+    const autoGroup = autoGroupForAnnotation(annotation);
+    if (autoGroup) return autoGroup.id;
+    const group = state.groups.find((item) => item.id === annotation.groupId);
+    if (group && !group.isAuto) return group.id;
+    return "";
+  }
+
+  function syncAutoGroupsForDrawing(drawingId = state.currentDrawingId) {
+    let changed = false;
+    for (const group of state.groups) {
+      if ((group.drawingId || drawingId) !== drawingId) continue;
+      if (!group.isAuto && firstFourDigits(group.name)) {
+        changed = normalizeAutoGroup(group, drawingId) || changed;
+      }
+    }
+    for (const annotation of state.annotations) {
+      if (annotation.drawingId !== drawingId) continue;
+      const group = autoGroupForAnnotation(annotation);
+      if (!group) continue;
+      if (annotation.groupId !== group.id) {
+        annotation.groupId = group.id;
+        changed = true;
+      }
+    }
+    return changed;
+  }
+
+  function syncAllAutoGroups() {
+    let changed = false;
+    const drawingIds = new Set(state.annotations.map((annotation) => annotation.drawingId));
+    drawingIds.add(state.currentDrawingId);
+    for (const drawingId of drawingIds) {
+      changed = syncAutoGroupsForDrawing(drawingId) || changed;
+    }
+    if (changed) saveData();
+    return changed;
+  }
+
   function docUid() {
     return `doc-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   }
@@ -575,17 +784,24 @@
     if (!name) return false;
     var group = state.groups.find(function(g) { return g.id === groupId; });
     if (!group) return false;
-    if (state.groups.some(function(g) {
+    var oldName = group.isAuto ? (group.alias || group.autoKey || group.name) : group.name;
+    if (name === oldName) return false;
+    if (!group.isAuto && state.groups.some(function(g) {
       return g.id !== groupId && g.name === name && groupVisibleInDrawing(g.id, state.currentDrawingId);
     })) {
-      setStatus("分组名已存在。");
+      setStatus("设备清单已轮询完成。");
       return false;
     }
-    group.name = name;
+    recordUndoSnapshot("??");
+    if (group.isAuto) {
+      group.alias = name === group.autoKey ? "" : name;
+    } else {
+      group.name = name;
+    }
     saveData();
     renderDrawingList();
     updateEditor();
-    setStatus("分组已重命名。");
+    setStatus(group.isAuto ? "默认分组别名已保存。" : "分组已重命名。");
     return true;
   }
 
@@ -607,7 +823,7 @@
 
   function groupTitle(groupId) {
     if (!groupId) return "未分组";
-    return state.groups.find((group) => group.id === groupId)?.name || "未分组";
+    return groupDisplayName(state.groups.find((group) => group.id === groupId));
   }
 
   function groupVisibleInDrawing(groupId, drawingId) {
@@ -679,7 +895,7 @@
         sep = lastChar;
         prefix = prefix.slice(0, -1);
       } else {
-        sep = ""; // No separator, e.g., "E#" or "#号卸载线"
+        sep = ""; // No separator, e.g., "E#" or "#鍙峰嵏杞界嚎"
       }
     } else if (suffix.length > 0) {
       var firstChar = suffix.charAt(0);
@@ -846,9 +1062,396 @@
 
   function parseBatchCodes(text) {
     return String(text || "")
-      .split(/[\n\r\t,，;；]+/)
+      .split(/[\n\r\t,，；;]+/)
       .map(function(item) { return item.trim(); })
       .filter(Boolean);
+  }
+
+  function normalizeDeviceCode(value) {
+    return String(value == null ? "" : value).trim();
+  }
+
+  function canonicalDeviceCode(value) {
+    return normalizeDeviceCode(value)
+      .split(".")
+      .map(function(part) {
+        if (!/^\d+$/.test(part)) return part;
+        return String(Number(part));
+      })
+      .join(".");
+  }
+
+  function requiredCodeSet() {
+    return new Set(state.requiredDevices.map(function(device) { return normalizeDeviceCode(device.code); }).filter(Boolean));
+  }
+
+  function requiredCanonicalMap() {
+    var map = new Map();
+    state.requiredDevices.forEach(function(device) {
+      var code = normalizeDeviceCode(device.code);
+      var canonical = canonicalDeviceCode(code);
+      if (!canonical) return;
+      if (!map.has(canonical)) map.set(canonical, []);
+      map.get(canonical).push(device);
+    });
+    return map;
+  }
+
+  function annotationCodeSet() {
+    return new Set(state.annotations.map(function(annotation) { return normalizeDeviceCode(annotation.code); }).filter(Boolean));
+  }
+
+  function annotationCodeCounts() {
+    var counts = new Map();
+    state.annotations.forEach(function(annotation) {
+      var code = normalizeDeviceCode(annotation.code);
+      if (!code) return;
+      counts.set(code, (counts.get(code) || 0) + 1);
+    });
+    return counts;
+  }
+
+  function invalidateDeviceIssueCache() {
+    deviceIssueCache = null;
+  }
+
+  function getDeviceIssueContext() {
+    if (deviceIssueCache) return deviceIssueCache;
+
+    var required = requiredCodeSet();
+    var actual = annotationCodeSet();
+    var counts = annotationCodeCounts();
+    var canonicalMap = requiredCanonicalMap();
+    var extras = [];
+    var specials = [];
+    var reasonById = new Map();
+
+    state.annotations.forEach(function(annotation) {
+      var code = normalizeDeviceCode(annotation.code);
+      var isExtra = state.requiredDevices.length && code && !required.has(code);
+      if (isExtra) {
+        extras.push({ annotation, code });
+      }
+
+      var reason = "";
+      if (!code) {
+        reason = "空编号";
+      } else if ((counts.get(code) || 0) > 1) {
+        reason = "重复标注";
+      } else if (isExtra) {
+        var matches = canonicalMap.get(canonicalDeviceCode(code)) || [];
+        var exactMismatch = matches.find(function(device) {
+          return normalizeDeviceCode(device.code) !== code;
+        });
+        if (exactMismatch) reason = "格式疑似：" + exactMismatch.code;
+      }
+
+      if (reason) {
+        reasonById.set(annotation.id, reason);
+        specials.push({ annotation, code: code || "未命名", reason });
+      }
+    });
+
+    extras.sort(function(a, b) {
+      return String(a.code).localeCompare(String(b.code), undefined, { numeric: true });
+    });
+    specials.sort(function(a, b) {
+      return String(a.code).localeCompare(String(b.code), undefined, { numeric: true });
+    });
+
+    deviceIssueCache = { required, actual, counts, extras, specials, reasonById };
+    return deviceIssueCache;
+  }
+
+  function normalizeRequiredDevices(items) {
+    var seen = new Set();
+    var result = [];
+    for (var i = 0; i < (items || []).length; i++) {
+      var item = items[i] || {};
+      var code = normalizeDeviceCode(item.code || item.deviceCode || item["璁惧缂栧彿"]);
+      if (!code || seen.has(code)) continue;
+      seen.add(code);
+      result.push({
+        code,
+        values: Array.isArray(item.values) ? item.values.slice(0, 19).map(normalizeDeviceCode) : [],
+        details: item.details && typeof item.details === "object" ? item.details : {},
+        sourceRow: item.sourceRow || 0
+      });
+    }
+    return result;
+  }
+
+  function deviceDetailEntries(device) {
+    if (!device) return [];
+    if (Array.isArray(device.values) && state.requiredDeviceHeaders.length) {
+      return state.requiredDeviceHeaders.map(function(header, index) {
+        return { key: header || ("列" + (index + 1)), value: normalizeDeviceCode(device.values[index]) };
+      }).filter(function(item) { return item.value !== ""; });
+    }
+    return Object.keys(device.details || {}).map(function(key) {
+      return { key, value: normalizeDeviceCode(device.details[key]) };
+    }).filter(function(item) { return item.value !== ""; });
+  }
+
+  function deviceDetailValue(device, names) {
+    var entries = deviceDetailEntries(device);
+    for (var i = 0; i < names.length; i++) {
+      var hit = entries.find(function(item) { return item.key === names[i]; });
+      if (hit) return hit.value;
+    }
+    return "";
+  }
+
+  function syncBatchCodesFromRequiredDevices() {
+    if (!state.requiredDevices.length) return;
+    state.batchCodes = state.requiredDevices.map(function(device) { return device.code; });
+    state.batchCodeIndex = Math.min(state.batchCodeIndex || 0, state.batchCodes.length);
+    if (el.batchCodeInput) el.batchCodeInput.value = state.batchCodes.join("\n");
+  }
+
+  function requiredCoverageStats() {
+    var ctx = getDeviceIssueContext();
+    var required = ctx.required;
+    var actual = ctx.actual;
+    var covered = 0;
+    required.forEach(function(code) {
+      if (actual.has(code)) covered += 1;
+    });
+    return {
+      total: required.size,
+      covered,
+      missing: Math.max(0, required.size - covered),
+      extra: ctx.extras.length,
+      special: ctx.specials.length
+    };
+  }
+
+  function deviceForCode(code) {
+    var normalized = normalizeDeviceCode(code);
+    return state.requiredDevices.find(function(device) { return normalizeDeviceCode(device.code) === normalized; }) || null;
+  }
+
+  function isExtraAnnotation(annotation) {
+    if (!state.requiredDevices.length) return false;
+    var code = normalizeDeviceCode(annotation.code);
+    return Boolean(code) && !getDeviceIssueContext().required.has(code);
+  }
+
+  function specialReasonForAnnotation(annotation) {
+    if (!annotation) return "";
+    return getDeviceIssueContext().reasonById.get(annotation.id) || "";
+  }
+
+  function isSpecialAnnotation(annotation) {
+    return Boolean(specialReasonForAnnotation(annotation));
+  }
+
+  function deviceIssueSummary() {
+    var ctx = getDeviceIssueContext();
+    return { extras: ctx.extras, specials: ctx.specials };
+  }
+
+  function renderDeviceIssuePanel() {
+    if (!el.deviceIssuePanel) return;
+    var issues = deviceIssueSummary();
+    el.deviceIssuePanel.innerHTML = "";
+    if (!state.requiredDevices.length || (!issues.extras.length && !issues.specials.length)) {
+      el.deviceIssuePanel.hidden = true;
+      return;
+    }
+    el.deviceIssuePanel.hidden = false;
+
+    var summary = document.createElement("div");
+    summary.className = "device-issue-summary";
+    var extraBadge = document.createElement("span");
+    extraBadge.className = "device-issue-pill extra";
+    extraBadge.textContent = "多余 " + issues.extras.length;
+    summary.appendChild(extraBadge);
+    var specialBadge = document.createElement("span");
+    specialBadge.className = "device-issue-pill special";
+    specialBadge.textContent = "特殊 " + issues.specials.length;
+    summary.appendChild(specialBadge);
+    el.deviceIssuePanel.appendChild(summary);
+
+    if (issues.extras.length) {
+      el.deviceIssuePanel.appendChild(renderIssueList("多余编号", issues.extras, "extra"));
+    }
+    if (issues.specials.length) {
+      el.deviceIssuePanel.appendChild(renderIssueList("特殊/可疑", issues.specials, "special"));
+    }
+  }
+
+  function renderIssueList(title, issues, kind) {
+    var section = document.createElement("section");
+    section.className = "device-issue-section " + kind;
+    var heading = document.createElement("div");
+    heading.className = "device-issue-heading";
+    heading.textContent = title + "（" + issues.length + "）";
+    section.appendChild(heading);
+
+    issues.slice(0, 120).forEach(function(issue) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "device-issue-item " + kind;
+      button.innerHTML = "<strong>" + escapeHtml(issue.code) + "</strong>" +
+        (issue.reason ? "<small>" + escapeHtml(issue.reason) + "</small>" : "");
+      button.addEventListener("click", function() {
+        focusAnnotation(issue.annotation.id);
+      });
+      section.appendChild(button);
+    });
+
+    if (issues.length > 120) {
+      var more = document.createElement("div");
+      more.className = "required-device-more";
+      more.textContent = "还有 " + (issues.length - 120) + " 条未显示";
+      section.appendChild(more);
+    }
+    return section;
+  }
+
+  function renderRequiredDeviceList() {
+    if (!el.requiredDeviceList) return;
+    var query = (el.requiredDeviceFilter ? el.requiredDeviceFilter.value : "").trim().toLowerCase();
+    var actual = annotationCodeSet();
+    var rows = state.requiredDevices.filter(function(device) {
+      if (!query) return true;
+      var detailText = deviceDetailEntries(device).map(function(item) {
+        return item.key + " " + item.value;
+      }).join(" ");
+      return (device.code + " " + detailText).toLowerCase().includes(query);
+    }).sort(function(a, b) {
+      var aCovered = actual.has(a.code);
+      var bCovered = actual.has(b.code);
+      if (aCovered !== bCovered) return aCovered ? 1 : -1;
+      return String(a.code).localeCompare(String(b.code), undefined, { numeric: true });
+    });
+    el.requiredDeviceList.innerHTML = "";
+    if (!state.requiredDevices.length) {
+      el.requiredDeviceList.textContent = "";
+      return;
+    }
+    rows.slice(0, 120).forEach(function(device) {
+      var covered = actual.has(device.code);
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "required-device-item";
+      button.classList.toggle("covered", covered);
+      button.classList.toggle("missing", !covered);
+      var type = deviceDetailValue(device, ["设备类型", "具体线路", "系统大类"]);
+      button.innerHTML = `<strong>${escapeHtml(device.code)}</strong><small>${covered ? "已覆盖" : "未覆盖"} ${escapeHtml(type)}</small>`;
+      button.addEventListener("click", function() {
+        var annotation = state.annotations.find(function(item) { return normalizeDeviceCode(item.code) === device.code; });
+        if (annotation) {
+          focusAnnotation(annotation.id);
+          return;
+        }
+        var index = state.batchCodes.indexOf(device.code);
+        if (index >= 0) state.batchCodeIndex = index;
+        state.batchCodeActive = true;
+        setTool("point");
+        updateBatchCodePanel();
+        updateModeHint();
+        setStatus("当前待覆盖：" + device.code + "。请在图纸上点击对应位置。");
+      });
+      el.requiredDeviceList.appendChild(button);
+    });
+    if (rows.length > 120) {
+      var more = document.createElement("div");
+      more.className = "required-device-more";
+      more.textContent = "还有 " + (rows.length - 120) + " 条，继续搜索可缩小范围";
+      el.requiredDeviceList.appendChild(more);
+    }
+  }
+
+  function renderDeviceDetail(annotation) {
+    if (!el.deviceDetailPanel || !el.deviceDetailBody) return;
+    var device = annotation ? deviceForCode(annotation.code) : null;
+    el.deviceDetailPanel.hidden = !annotation;
+    if (!annotation) return;
+    if (!device) {
+      el.deviceDetailPanel.open = true;
+      el.deviceDetailBody.innerHTML = state.requiredDevices.length
+        ? `<div class="device-extra-note">此点位不在设备必填清单中。</div>`
+        : `<div class="device-extra-note">尚未导入设备必填清单。</div>`;
+      return;
+    }
+    var rows = deviceDetailEntries(device).map(function(item) {
+      return `<dt>${escapeHtml(item.key)}</dt><dd>${escapeHtml(item.value)}</dd>`;
+    }).join("");
+    el.deviceDetailBody.innerHTML = rows ? `<dl>${rows}</dl>` : `<div class="device-extra-note">设备编号：${escapeHtml(device.code)}</div>`;
+  }
+
+  function jumpToNextMissingRequiredDevice() {
+    if (!state.requiredDevices.length) {
+      setStatus("请先导入设备总清单。");
+      return;
+    }
+    var actual = annotationCodeSet();
+    var start = Math.max(0, state.batchCodeIndex || 0);
+    var targetIndex = -1;
+    for (var offset = 0; offset < state.requiredDevices.length; offset++) {
+      var idx = (start + offset) % state.requiredDevices.length;
+      if (!actual.has(state.requiredDevices[idx].code)) {
+        targetIndex = idx;
+        break;
+      }
+    }
+    if (targetIndex < 0) {
+      setStatus("设备清单已全部覆盖。");
+      updateBatchCodePanel();
+      return;
+    }
+    state.batchCodeIndex = targetIndex;
+    state.batchCodeActive = true;
+    setTool("point");
+    updateBatchCodePanel();
+    updateModeHint();
+    setStatus("下一个未覆盖：" + state.requiredDevices[targetIndex].code + "。");
+  }
+
+  async function importRequiredDeviceWorkbook(file) {
+    if (!file) return;
+    if (!window.XLSX) {
+      setStatus("缺少 Excel 解析库，请检查 xlsx 是否加载。");
+      return;
+    }
+    var buffer = await file.arrayBuffer();
+    var workbook = XLSX.read(buffer, { type: "array" });
+    var sheetName = workbook.SheetNames.includes("Sheet1") ? "Sheet1" : workbook.SheetNames[0];
+    var rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, defval: "" });
+    var headerIndex = rows.findIndex(function(row) {
+      return normalizeDeviceCode(row[6]) === "设备编号";
+    });
+    if (headerIndex < 0) headerIndex = 4;
+    var maxDetailColumns = 19;
+    var headers = (rows[headerIndex] || []).slice(0, maxDetailColumns).map(function(value, index) {
+      return normalizeDeviceCode(value) || ("列" + (index + 1));
+    });
+    var devices = [];
+    for (var i = headerIndex + 1; i < rows.length; i++) {
+      var row = rows[i] || [];
+      var code = normalizeDeviceCode(row[6]);
+      if (!code || code === "设备编号") continue;
+      devices.push({
+        code,
+        values: row.slice(0, maxDetailColumns).map(normalizeDeviceCode),
+        sourceRow: i + 1
+      });
+    }
+    recordUndoSnapshot("导入设备清单");
+    state.requiredDeviceHeaders = headers;
+    state.requiredDevices = normalizeRequiredDevices(devices);
+    state.batchCodeIndex = 0;
+    state.batchCodeActive = false;
+    syncBatchCodesFromRequiredDevices();
+    if (el.requiredDeviceFileInput) el.requiredDeviceFileInput.value = "";
+    saveData();
+    updateBatchCodePanel();
+    renderOverlay();
+    renderMinimapList();
+    updateEditor();
+    setStatus("已导入设备清单：" + state.requiredDevices.length + " 个必填设备。");
   }
 
   function batchCodeRemaining() {
@@ -861,34 +1464,45 @@
 
   function updateBatchCodePanel() {
     if (!el.batchCodeInput) return;
+    invalidateDeviceIssueCache();
     var parsedCount = parseBatchCodes(el.batchCodeInput.value).length;
     var remaining = batchCodeRemaining();
+    var stats = requiredCoverageStats();
+    var coverageText = stats.total > 0
+      ? "覆盖 " + stats.covered + "/" + stats.total + "，未覆盖 " + stats.missing + "，多余 " + stats.extra + "，特殊 " + stats.special + "。"
+      : "";
 
-    el.startBatchCodeButton.textContent = state.batchCodeActive ? "暂停批量" : "开始批量";
+    el.startBatchCodeButton.textContent = state.batchCodeActive ? "暂停轮询" : "开始轮询";
     el.startBatchCodeButton.classList.toggle("primary", state.batchCodeActive);
     el.startBatchCodeButton.disabled = !state.batchCodeActive && parsedCount === 0 && remaining === 0;
+    if (el.nextRequiredDeviceButton) el.nextRequiredDeviceButton.disabled = stats.total === 0 || stats.missing === 0;
 
     if (state.batchCodeActive) {
       if (remaining > 0) {
-        el.batchCodePreview.innerHTML = "批量中：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
+        el.batchCodePreview.innerHTML = coverageText + " 轮询中：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
       } else {
-        el.batchCodePreview.textContent = "批量编号已用完";
+        el.batchCodePreview.textContent = coverageText + " 轮询编号已用完";
       }
+      renderRequiredDeviceList();
+      renderDeviceIssuePanel();
       return;
     }
 
     if (remaining > 0) {
-      el.batchCodePreview.innerHTML = "已暂停：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
+      el.batchCodePreview.innerHTML = coverageText + " 已暂停：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
+      renderRequiredDeviceList();
+      renderDeviceIssuePanel();
       return;
     }
 
-    el.batchCodePreview.textContent = parsedCount > 0 ? "待开始：" + parsedCount + " 个编号" : "未导入编号";
+    el.batchCodePreview.textContent = coverageText || (parsedCount > 0 ? "待开始：" + parsedCount + " 个编号" : "未导入编号");
+    renderRequiredDeviceList();
+    renderDeviceIssuePanel();
   }
-
   function startOrPauseBatchCodes() {
     if (state.batchCodeActive) {
       state.batchCodeActive = false;
-      setStatus("已暂停批量点位。");
+      setStatus("已暂停设备轮询。");
       updateBatchCodePanel();
       updateModeHint();
       return;
@@ -896,41 +1510,51 @@
 
     if (batchCodeRemaining() === 0) {
       state.batchCodes = parseBatchCodes(el.batchCodeInput.value);
+      state.requiredDevices = normalizeRequiredDevices(state.batchCodes.map(function(code) {
+        return { code, details: { "设备编号": code } };
+      }));
+      state.requiredDeviceHeaders = ["设备编号"];
       state.batchCodeIndex = 0;
     }
 
     if (state.batchCodes.length === 0) {
-      setStatus("请先粘贴点位编号。");
+      setStatus("请先导入或粘贴设备编号。");
       updateBatchCodePanel();
       return;
     }
 
     state.batchCodeActive = true;
     setTool("point");
-    setStatus("已进入批量点位模式，请按顺序点击图纸。");
+    setStatus("已进入设备轮询模式，请按清单顺序点击图纸。");
     updateBatchCodePanel();
   }
 
   function clearBatchCodes() {
     state.batchCodes = [];
+    state.requiredDevices = [];
+    state.requiredDeviceHeaders = [];
     state.batchCodeIndex = 0;
     state.batchCodeActive = false;
     el.batchCodeInput.value = "";
     if (state.tool === "point") setTool("pan");
-    setStatus("批量点位编号已清空。");
+    setStatus("设备覆盖清单已清空。");
     updateBatchCodePanel();
     updateModeHint();
   }
 
   function consumeBatchCode() {
     if (!state.batchCodeActive) return "";
+    var actual = annotationCodeSet();
+    while (state.batchCodeIndex < state.batchCodes.length && actual.has(state.batchCodes[state.batchCodeIndex])) {
+      state.batchCodeIndex += 1;
+    }
     var code = previewBatchCode();
     if (!code) {
       state.batchCodeActive = false;
       if (state.tool === "point") setTool("pan");
       updateBatchCodePanel();
       updateModeHint();
-      setStatus("批量编号已用完。");
+      setStatus("设备清单已轮询完成。");
       return "";
     }
     state.batchCodeIndex += 1;
@@ -981,7 +1605,7 @@
           }
         }
       } else if (numIdx === 0 && segments.length > 1) {
-        // Number at beginning: match suffix (e.g., "#号卸载线")
+        // Number at beginning: match suffix (e.g., "#鍙峰嵏杞界嚎")
         var textSuffix = buildAutoName(segments.slice(1), separators.slice(1));
         for (var j = 0; j < state.annotations.length; j++) {
           var code2 = state.annotations[j].code || "";
@@ -1092,7 +1716,7 @@
 
       var badge = document.createElement("div");
       badge.className = "auto-name-seg-badge" + (seg.type === "text" ? " text-badge" : "");
-      badge.textContent = seg.type === "text" ? "文本" : (i === prim ? "递增" : "数字");
+      badge.textContent = seg.type === "text" ? "鏂囨湰" : (i === prim ? "閫掑" : "鏁板瓧");
       block.appendChild(badge);
 
       var valInput = document.createElement("input");
@@ -1121,14 +1745,14 @@
 
       var typeRow = document.createElement("div");
       typeRow.className = "auto-name-seg-type";
-      var tBtn = document.createElement("button"); tBtn.textContent = "T"; tBtn.title = "文本";
+      var tBtn = document.createElement("button"); tBtn.textContent = "T"; tBtn.title = "鏂囨湰";
       tBtn.classList.toggle("active", seg.type === "text");
       tBtn.addEventListener("click", (function(idx) { return function() {
         if (segs[idx].type === "text") return;
         segs[idx] = { type: "text", value: String(segs[idx].value) };
         fixPrimary(); syncTemplateFromSegments(); saveAutoNameSettings(); renderAutoNameAdvanced();
       }; })(i));
-      var nBtn = document.createElement("button"); nBtn.textContent = "N"; nBtn.title = "数字";
+      var nBtn = document.createElement("button"); nBtn.textContent = "N"; nBtn.title = "鏁板瓧";
       nBtn.classList.toggle("active", seg.type === "number");
       nBtn.addEventListener("click", (function(idx) { return function() {
         if (segs[idx].type === "number") return;
@@ -1153,12 +1777,12 @@
           }; })(i, key));
           lbl.appendChild(inp); setDiv.appendChild(lbl);
         }
-        addSet("步长", "step", 1);
+        addSet("姝ラ暱", "step", 1);
 
-        // Combined: "到 # 进 # 位"
+        // Combined: "鍒?# 杩?# 浣?
         (function() {
           var lbl = document.createElement("label"); lbl.style.whiteSpace = "nowrap";
-          lbl.appendChild(document.createTextNode("到"));
+          lbl.appendChild(document.createTextNode(""));
           var inpAt = document.createElement("input"); inpAt.type = "number"; inpAt.min = "0";
           inpAt.value = seg.carryAt != null ? seg.carryAt : "";
           inpAt.style.width = "38px";
@@ -1167,7 +1791,7 @@
             syncTemplateFromSegments(); saveAutoNameSettings(); updateAutoNamePreview();
           }; })(i));
           lbl.appendChild(inpAt);
-          lbl.appendChild(document.createTextNode("进"));
+          lbl.appendChild(document.createTextNode(""));
           var inpAmt = document.createElement("input"); inpAmt.type = "number"; inpAmt.min = "1";
           inpAmt.value = seg.carryAmount || 1;
           inpAmt.style.width = "38px";
@@ -1176,14 +1800,14 @@
             syncTemplateFromSegments(); saveAutoNameSettings(); updateAutoNamePreview();
           }; })(i));
           lbl.appendChild(inpAmt);
-          lbl.appendChild(document.createTextNode("位"));
+          lbl.appendChild(document.createTextNode(""));
           setDiv.appendChild(lbl);
         })();
 
-        // Combined row: 初始值 + 主递增
+        // Combined row: initial value + primary increment.
         (function() {
           var lbl = document.createElement("label"); lbl.style.whiteSpace = "nowrap";
-          lbl.appendChild(document.createTextNode("初始值"));
+          lbl.appendChild(document.createTextNode(""));
           var inpReset = document.createElement("input"); inpReset.type = "number"; inpReset.min = "0";
           inpReset.value = seg.resetTo != null ? seg.resetTo : 0;
           inpReset.style.width = "38px";
@@ -1200,7 +1824,7 @@
             updateAutoNamePreview();
           }; })(i));
           lbl.appendChild(primCheck);
-          lbl.appendChild(document.createTextNode("递增段"));
+          lbl.appendChild(document.createTextNode(""));
           setDiv.appendChild(lbl);
         })();
 
@@ -1230,7 +1854,7 @@
       row.appendChild(makeBlock(i, segs[i]));
       if (i < segs.length - 1) {
         var sepWrap = document.createElement("div"); sepWrap.className = "auto-name-sep";
-        var sepInput = document.createElement("input"); sepInput.value = seps[i] || ""; sepInput.placeholder = "分隔";
+        var sepInput = document.createElement("input"); sepInput.value = seps[i] || ""; sepInput.placeholder = "鍒嗛殧";
         sepInput.addEventListener("change", (function(idx) { return function() {
           seps[idx] = this.value; syncTemplateFromSegments(); saveAutoNameSettings();
         }; })(i));
@@ -1239,7 +1863,7 @@
     }
     container.appendChild(row);
 
-    var addBtn = document.createElement("button"); addBtn.className = "auto-name-add-seg"; addBtn.textContent = "+ 段";
+    var addBtn = "";
     addBtn.addEventListener("click", function() {
       segs.push({ type: "text", value: "new" }); seps.push(".");
       fixPrimary(); syncTemplateFromSegments(); saveAutoNameSettings(); renderAutoNameAdvanced();
@@ -1252,7 +1876,7 @@
     var bar = el.autoNameAdvanced.querySelector("div");
     if (bar) {
       var next = previewNextName();
-      bar.innerHTML = '<span style="color:var(--muted);">下次点击将生成：</span> <strong style="font-family:monospace;font-size:15px;color:var(--accent);">' + (next || "—") + '</strong>';
+      bar.innerHTML = "";
     }
 
     // Update 5-name preview below template input
@@ -1320,11 +1944,23 @@
 
   function toGroup(group) {
     if (!group || !group.id || !String(group.name || "").trim()) return null;
-    return {
+    const normalized = {
       id: String(group.id),
       name: String(group.name).trim(),
+      alias: String(group.alias || "").trim(),
+      autoKey: String(group.autoKey || "").trim(),
+      isAuto: Boolean(group.isAuto),
+      drawingId: group.drawingId || "",
       createdAt: group.createdAt || new Date().toISOString()
     };
+    if (!normalized.isAuto && firstFourDigits(normalized.name)) {
+      const prefix = firstFourDigits(normalized.name);
+      normalized.autoKey = prefix;
+      normalized.isAuto = true;
+      normalized.alias = normalized.name === prefix ? "" : normalized.name;
+      normalized.name = prefix;
+    }
+    return normalized;
   }
 
   function pointsBounds(points) {
@@ -1413,6 +2049,22 @@
     if (options.renderMinimap !== false) renderMinimap();
   }
 
+  function applyTransformFast() {
+    if (transformFrame) return;
+    transformFrame = requestAnimationFrame(() => {
+      transformFrame = 0;
+      const { x, y, scale } = state.transform;
+      el.stage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+    });
+  }
+
+  function scheduleInteractionOverlayRefresh() {
+    clearTimeout(overlayRefreshTimer);
+    overlayRefreshTimer = setTimeout(() => {
+      renderOverlay({ renderMinimap: false });
+    }, INTERACTION_OVERLAY_REFRESH_MS);
+  }
+
   function fitToViewport() {
     const rect = el.viewport.getBoundingClientRect();
     const scale = Math.min(
@@ -1456,8 +2108,8 @@
     if (state.batchCodeActive && state.tool === "point") {
       var nextCode = previewBatchCode();
       el.modeHint.textContent = nextCode
-        ? "批量点位中：下一点 " + nextCode + "，剩余 " + batchCodeRemaining() + " 个。"
-        : "批量编号已用完。";
+        ? "设备轮询中：下一点 " + nextCode + "，剩余 " + batchCodeRemaining() + " 个。"
+        : "设备清单已轮询完成。";
       return;
     }
     el.modeHint.textContent = {
@@ -1465,7 +2117,6 @@
       point: "点击画布添加点标注。Esc取消选择，Delete删除选中。"
     }[state.tool];
   }
-
   function renderDrawingList() {
     el.drawingList.innerHTML = "";
     for (const drawing of drawings) {
@@ -1497,7 +2148,7 @@
       clearTimeout(el.image._loadTimeout);
       el.image._loadTimeout = setTimeout(function() {
         if (el.viewport.classList.contains("loading")) {
-          el.currentDrawingTitle.textContent = drawing.title + " 加载较慢，请稍候...";
+          el.currentDrawingTitle.textContent = drawing.title + " 鍔犺浇杈冩參锛岃绋嶅€?..";
         }
       }, 10000);
     } else {
@@ -1652,6 +2303,8 @@
 
   function renderMinimapList() {
     if (!el.minimapList) return;
+    const autoChanged = syncAutoGroupsForDrawing();
+    if (autoChanged) saveData();
     const annotations = currentAnnotations();
     el.minimapList.innerHTML = "";
 
@@ -1666,7 +2319,7 @@
     var groupBuckets = new Map();
     groupBuckets.set("", []);
     for (var i = 0; i < annotations.length; i++) {
-      var gid = annotations[i].groupId || "";
+      var gid = annotationEffectiveGroupId(annotations[i]);
       if (gid && !state.groups.some(function(g) { return g.id === gid; })) gid = "";
       if (gid) usedGroupIds.add(gid);
       if (groupBuckets.has(gid)) groupBuckets.get(gid).push(annotations[i]);
@@ -1739,18 +2392,33 @@
       renderMinimapList();
     }
 
-    for (const [groupId, groupedAnnotations] of groupBuckets) {
+    const sortedGroupBuckets = Array.from(groupBuckets.entries()).sort((a, b) => {
+      if (a[0] === "") return 1;
+      if (b[0] === "") return -1;
+      const groupA = state.groups.find((group) => group.id === a[0]);
+      const groupB = state.groups.find((group) => group.id === b[0]);
+      const keyA = groupA?.autoKey || "";
+      const keyB = groupB?.autoKey || "";
+      if (keyA && keyB && keyA !== keyB) return keyA.localeCompare(keyB, undefined, { numeric: true });
+      return groupTitle(a[0]).localeCompare(groupTitle(b[0]), "zh-Hans-CN", { numeric: true });
+    });
+
+    for (const [groupId, groupedAnnotations] of sortedGroupBuckets) {
+      const groupMeta = state.groups.find((group) => group.id === groupId);
+      const isAutoGroup = Boolean(groupMeta?.isAuto);
       if (groupedAnnotations.length === 0 && groupId !== "") {
         const section = document.createElement("section");
         section.className = "minimap-group";
         const heading = document.createElement("div");
         heading.className = "minimap-group-title";
+        heading.classList.toggle("auto-group", isAutoGroup);
         heading.dataset.groupId = groupId;
         const groupInput = document.createElement("input");
         groupInput.type = "text";
         groupInput.className = "minimap-group-name";
         groupInput.value = groupTitle(groupId);
-        groupInput.setAttribute("aria-label", "分组名称");
+        groupInput.placeholder = isAutoGroup ? groupMeta.autoKey : "";
+        groupInput.setAttribute("aria-label", isAutoGroup ? "默认分组别名" : "分组名称");
         groupInput.addEventListener("pointerdown", function(ev) { ev.stopPropagation(); });
         groupInput.addEventListener("click", function(ev) { ev.stopPropagation(); });
         groupInput.addEventListener("dblclick", function(ev) { ev.stopPropagation(); groupInput.select(); });
@@ -1773,15 +2441,22 @@
         heading.appendChild(spacer);
         heading.appendChild(groupInput);
         const count = document.createElement("small");
-        count.textContent = "0 个点位";
+        count.textContent = "";
         heading.appendChild(count);
+        if (isAutoGroup) {
+          const badge = document.createElement("span");
+          badge.className = "minimap-group-badge";
+          badge.textContent = "默认";
+          heading.appendChild(badge);
+        }
 
         // Delete group button
         var delBtn = document.createElement("button");
         delBtn.type = "button";
         delBtn.className = "minimap-item-delete";
-        delBtn.textContent = "删";
-        delBtn.style.cssText = "min-height:22px;padding:0 5px;font-size:10px;";
+        delBtn.classList.add("group-delete");
+        delBtn.textContent = "×";
+        delBtn.setAttribute("aria-label", "删除分组");
         delBtn.addEventListener("pointerdown", function(ev) { ev.stopPropagation(); });
         delBtn.addEventListener("click", function(ev) {
           ev.stopPropagation();
@@ -1791,7 +2466,7 @@
             deleteGroup(groupId);
           }
         });
-        if (groupId) heading.appendChild(delBtn);
+        if (groupId && !isAutoGroup) heading.appendChild(delBtn);
 
         heading.addEventListener("pointerdown", (event) => event.stopPropagation());
         heading.addEventListener("click", (event) => {
@@ -1824,10 +2499,12 @@
 
       const section = document.createElement("section");
       section.className = "minimap-group";
+      section.classList.toggle("auto-group", isAutoGroup);
       section.classList.toggle("collapsed", Boolean(state.collapsedGroups[groupId]));
 
       const heading = document.createElement("div");
       heading.className = "minimap-group-title";
+      heading.classList.toggle("auto-group", isAutoGroup);
       heading.classList.toggle("active", state.activeGroupId === groupId);
       heading.dataset.groupId = groupId;
       const toggleButton = document.createElement("button");
@@ -1847,7 +2524,8 @@
       groupInput.type = "text";
       groupInput.className = "minimap-group-name";
       groupInput.value = groupTitle(groupId);
-      groupInput.setAttribute("aria-label", "分组名称");
+      groupInput.placeholder = isAutoGroup ? groupMeta.autoKey : "";
+      groupInput.setAttribute("aria-label", isAutoGroup ? "默认分组别名" : "分组名称");
       groupInput.addEventListener("pointerdown", function(ev) { ev.stopPropagation(); });
       groupInput.addEventListener("click", function(ev) { ev.stopPropagation(); });
       groupInput.addEventListener("dblclick", function(ev) { ev.stopPropagation(); groupInput.select(); });
@@ -1864,18 +2542,27 @@
       });
 
       const count = document.createElement("small");
-      count.textContent = `${groupedAnnotations.length} 个点位`;
+      count.textContent = isAutoGroup
+        ? `${groupMeta.autoKey} 路 ${groupedAnnotations.length} 个点位`
+        : `${groupedAnnotations.length} 个点位`;
 
       heading.appendChild(toggleButton);
       heading.appendChild(groupInput);
       heading.appendChild(count);
+      if (isAutoGroup) {
+        const badge = document.createElement("span");
+        badge.className = "minimap-group-badge";
+        badge.textContent = "默认";
+        heading.appendChild(badge);
+      }
 
       // Delete group button
       var delGrpBtn = document.createElement("button");
       delGrpBtn.type = "button";
       delGrpBtn.className = "minimap-item-delete";
-      delGrpBtn.textContent = "删";
-      delGrpBtn.style.cssText = "min-height:22px;padding:0 5px;font-size:10px;";
+      delGrpBtn.classList.add("group-delete");
+      delGrpBtn.textContent = "×";
+      delGrpBtn.setAttribute("aria-label", "删除分组");
       delGrpBtn.addEventListener("pointerdown", function(ev) { ev.stopPropagation(); });
       delGrpBtn.addEventListener("click", function(ev) {
         ev.stopPropagation();
@@ -1885,7 +2572,7 @@
           deleteGroup(groupId);
         }
       });
-      if (groupId) heading.appendChild(delGrpBtn);
+      if (groupId && !isAutoGroup) heading.appendChild(delGrpBtn);
 
       heading.addEventListener("pointerdown", (event) => event.stopPropagation());
       heading.addEventListener("click", (event) => {
@@ -1926,6 +2613,8 @@
       row.draggable = true;
       row.classList.toggle("active", annotation.id === state.selectedId);
       row.classList.toggle("checked", state.selectedForGroupMove.has(annotation.id));
+      row.classList.toggle("extra-device", isExtraAnnotation(annotation));
+      row.classList.toggle("special-device", isSpecialAnnotation(annotation));
       row.addEventListener("dragstart", (event) => {
         event.stopPropagation();
         if (state.selectedForGroupMove.has(annotation.id)) {
@@ -1984,24 +2673,29 @@
         if (state.selectedId === annotation.id) {
           el.pointCode.value = annotation.code;
         }
+        renderDeviceDetail(annotation);
+        updateBatchCodePanel();
       });
       title.addEventListener("change", () => {
         saveData();
         renderDrawingList();
         updateEditor();
         renderOverlayOnly();
+        updateBatchCodePanel();
       });
       title.addEventListener("blur", () => {
         saveData();
         renderDrawingList();
         updateEditor();
         renderOverlayOnly();
+        updateBatchCodePanel();
       });
 
       const deleteButton = document.createElement("button");
       deleteButton.type = "button";
       deleteButton.className = "minimap-item-delete";
-      deleteButton.textContent = "删";
+      deleteButton.textContent = "×";
+      deleteButton.setAttribute("aria-label", "删除点位");
       deleteButton.addEventListener("pointerdown", (event) => event.stopPropagation());
       deleteButton.addEventListener("click", (event) => {
         event.stopPropagation();
@@ -2012,6 +2706,18 @@
       row.appendChild(indexBadge);
       row.appendChild(title);
       row.appendChild(deleteButton);
+      if (isExtraAnnotation(annotation)) {
+        const badge = document.createElement("span");
+        badge.className = "extra-device-badge";
+        badge.textContent = "多余";
+        row.appendChild(badge);
+      }
+      if (isSpecialAnnotation(annotation)) {
+        const badge = document.createElement("span");
+        badge.className = "special-device-badge";
+        badge.textContent = "特殊";
+        row.appendChild(badge);
+      }
         section.appendChild(row);
       }
 
@@ -2046,6 +2752,8 @@
     shape.classList.toggle("selected", isSelected);
     shape.classList.toggle("highlight", isHighlighted);
     shape.classList.toggle("compact-focus", isCompactFocus);
+    shape.classList.toggle("extra-device", isExtraAnnotation(annotation));
+    shape.classList.toggle("special-device", isSpecialAnnotation(annotation));
     shape.classList.toggle("inactive", state.tool !== "pan");
     shape.dataset.id = annotation.id;
     shape.setAttribute("cx", center.x);
@@ -2076,7 +2784,7 @@
         label.style.fontSize = `${18 / state.transform.scale}px`;
         label.style.strokeWidth = `${5 / state.transform.scale}px`;
       }
-      label.textContent = annotation.code || "未命名";
+      label.textContent = "";
       el.overlay.appendChild(label);
     }
   }
@@ -2103,21 +2811,24 @@
     if (!state.draft) return false;
     state.draft = null;
     renderOverlay();
-    setStatus("已取消当前绘制。");
+    setStatus("已取消当前操作。");
     return true;
   }
 
   function deleteSelectedAnnotation() {
     if (!state.selectedId) return false;
+    recordUndoSnapshot("删除点位");
     state.selectedForGroupMove.delete(state.selectedId);
     if (state.groupMoveSelectionAnchorId === state.selectedId) state.groupMoveSelectionAnchorId = null;
     state.annotations = state.annotations.filter((annotation) => annotation.id !== state.selectedId);
     state.selectedId = null;
     state.highlightedId = null;
+    invalidateDeviceIssueCache();
     saveData();
     renderDrawingList();
     renderOverlay();
     updateEditor();
+    updateBatchCodePanel();
     resetAutoNameInit();
     initAutoNameFromExisting();
     setStatus("标注已删除。");
@@ -2128,15 +2839,18 @@
     const annotation = state.annotations.find((item) => item.id === id);
     if (!annotation) return false;
 
+    recordUndoSnapshot("删除点位");
     state.selectedForGroupMove.delete(id);
     if (state.groupMoveSelectionAnchorId === id) state.groupMoveSelectionAnchorId = null;
     state.annotations = state.annotations.filter((item) => item.id !== id);
     if (state.selectedId === id) state.selectedId = null;
     if (state.highlightedId === id) state.highlightedId = null;
+    invalidateDeviceIssueCache();
     saveData();
     renderDrawingList();
     renderOverlay();
     updateEditor();
+    updateBatchCodePanel();
     resetAutoNameInit();
     initAutoNameFromExisting();
     setStatus("标注已删除。");
@@ -2158,6 +2872,7 @@
       return;
     }
 
+    recordUndoSnapshot("新增分组");
     state.groups.push({
       id: groupUid(),
       name,
@@ -2174,26 +2889,30 @@
     if (!groupId) return;
     var group = state.groups.find(function(g) { return g.id === groupId; });
     if (!group) return;
+    if (group.isAuto) {
+      recordUndoSnapshot("清空默认分组别名");
+      group.alias = "";
+      saveData();
+      renderMinimapList();
+      setStatus("默认分组别名已清空。");
+      return;
+    }
 
     var count = state.annotations.filter(function(a) { return a.groupId === groupId; }).length;
     var msg = count > 0
       ? "删除分组 \"" + group.name + "\"？将保留 " + count + " 个标注并移入未分组。"
       : "删除空分组 \"" + group.name + "\"？";
-
     if (!window.confirm(msg)) return;
 
-    // Move annotations to ungrouped
+    recordUndoSnapshot("删除分组");
     for (var i = 0; i < state.annotations.length; i++) {
       if (state.annotations[i].groupId === groupId) {
         state.annotations[i].groupId = "";
         state.annotations[i].updatedAt = new Date().toISOString();
       }
     }
-
-    // Remove group
     state.groups = state.groups.filter(function(g) { return g.id !== groupId; });
     if (state.activeGroupId === groupId) state.activeGroupId = "";
-
     saveData();
     renderDrawingList();
     renderMinimapList();
@@ -2204,32 +2923,33 @@
     if (!groupId) return;
     var group = state.groups.find(function(g) { return g.id === groupId; });
     if (!group) return;
-
+    if (group.isAuto) {
+      setStatus("默认分组按点位编号自动生成，不能连同点位删除。");
+      return;
+    }
     var count = state.annotations.filter(function(a) { return a.groupId === groupId; }).length;
     var msg = "删除分组 \"" + group.name + "\" 及其中 " + count + " 个标注？此操作不可恢复。";
-
     if (!window.confirm(msg)) return;
 
-    // Delete annotations in group
+    recordUndoSnapshot("删除分组和点位");
     state.annotations = state.annotations.filter(function(a) { return a.groupId !== groupId; });
-
-    // Remove group
     state.groups = state.groups.filter(function(g) { return g.id !== groupId; });
     if (state.activeGroupId === groupId) state.activeGroupId = "";
-
     resetAutoNameInit();
     initAutoNameFromExisting();
     saveData();
     renderDrawingList();
     renderMinimapList();
     updateEditor();
-    setStatus("分组及 " + count + " 个标注已删除。");
+    setStatus("分组和 " + count + " 个标注已删除。");
   }
 
   function moveAnnotationToGroup(annotationId, groupId) {
     const annotation = state.annotations.find((item) => item.id === annotationId);
     if (!annotation) return;
+    if ((annotation.groupId || "") === (groupId || "")) return;
 
+    recordUndoSnapshot("移动点位分组");
     annotation.groupId = groupId;
     annotation.updatedAt = new Date().toISOString();
     saveData();
@@ -2248,6 +2968,18 @@
   function moveSelectedAnnotationsToGroup(groupId) {
     const ids = new Set(state.selectedForGroupMove);
     let moved = 0;
+    let changed = false;
+    for (const annotation of state.annotations) {
+      if (!ids.has(annotation.id)) continue;
+      if ((annotation.groupId || "") !== (groupId || "")) changed = true;
+    }
+    if (!changed) {
+      state.selectedForGroupMove.clear();
+      state.groupMoveSelectionAnchorId = null;
+      renderMinimapList();
+      return;
+    }
+    recordUndoSnapshot("批量移动点位分组");
     for (const annotation of state.annotations) {
       if (!ids.has(annotation.id)) continue;
       annotation.groupId = groupId;
@@ -2269,17 +3001,21 @@
       el.pointCode.value = selected.code || "";
       el.pointNote.value = selected.note || "";
     }
+    renderDeviceDetail(selected);
   }
 
   function createAnnotation(type, imagePoints) {
     var now = new Date().toISOString();
     var code = nextPointCode();
     if (code === null) return;
+    recordUndoSnapshot("新增点位");
+    var activeGroup = state.groups.find((group) => group.id === state.activeGroupId);
+    var autoGroup = firstFourDigits(code) ? ensureAutoGroup(firstFourDigits(code), state.currentDrawingId) : null;
     var annotation = {
       id: uid(),
       drawingId: state.currentDrawingId,
       type: type,
-      groupId: state.activeGroupId,
+      groupId: activeGroup && !activeGroup.isAuto ? state.activeGroupId : (autoGroup ? autoGroup.id : ""),
       code: code,
       note: "",
       points: imagePoints.map(normalize),
@@ -2287,14 +3023,15 @@
       updatedAt: now
     };
     state.annotations.push(annotation);
-    saveData();
-    renderDrawingList();
-    renderOverlay();
-    selectAnnotation(annotation.id);
+      saveData();
+      renderDrawingList();
+      renderOverlay();
+      updateBatchCodePanel();
+      selectAnnotation(annotation.id);
     if (code && state.lastPointCodeSource === "batch" && state.batchCodeIndex >= state.batchCodes.length) {
-      setStatus("已新增: " + code + "。批量编号已全部添加。");
+      setStatus("已新增 " + code + "。设备清单已全部添加。");
     } else {
-      setStatus(code ? "已新增: " + code : "已新增点位。");
+      setStatus(code ? "已新增 " + code + "。" : "已新增点位。");
     }
   }
 
@@ -2305,6 +3042,7 @@
       type: "move-annotation",
       id,
       start,
+      undoSnapshot: createUndoSnapshot("移动点位"),
       originalPoints: annotation.points.map((point) => ({ ...point }))
     };
     el.overlay.setPointerCapture(event.pointerId);
@@ -2372,15 +3110,15 @@
       state.transform.scale = clamp(nextScale, 0.08, 8);
       state.transform.x = center.x - el.viewport.getBoundingClientRect().left - state.drag.centerImage.x * state.transform.scale;
       state.transform.y = center.y - el.viewport.getBoundingClientRect().top - state.drag.centerImage.y * state.transform.scale;
-      applyTransform();
-      renderOverlay();
+      applyTransformFast();
+      scheduleInteractionOverlayRefresh();
       return;
     }
 
     if (state.drag.type === "pan") {
       state.transform.x = state.drag.originX + event.clientX - state.drag.startX;
       state.transform.y = state.drag.originY + event.clientY - state.drag.startY;
-      applyTransform();
+      applyTransformFast();
       return;
     }
 
@@ -2407,8 +3145,13 @@
     if (!state.drag) return;
 
     if (state.drag.type === "move-annotation") {
-      saveData();
-      renderDrawingList();
+      const annotation = state.annotations.find((item) => item.id === state.drag.id);
+      if (annotation && annotationPointsChanged(state.drag.originalPoints, annotation.points)) {
+        undoStack.push(state.drag.undoSnapshot);
+        if (undoStack.length > MAX_UNDO_STEPS) undoStack.shift();
+        saveData();
+        renderDrawingList();
+      }
     }
 
     if (state.drag.type === "pinch" && state.activePointers.size > 0) {
@@ -2434,6 +3177,12 @@
 
   function handleGlobalKeydown(event) {
     if (isTypingTarget(event.target)) return;
+
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !event.shiftKey) {
+      event.preventDefault();
+      undoLastAction();
+      return;
+    }
 
     if (event.key === "Escape") {
       event.preventDefault();
@@ -2491,13 +3240,13 @@
 
   function zoomAt(clientX, clientY, deltaY) {
     const before = screenToImage(clientX, clientY);
-    const factor = deltaY < 0 ? 1.12 : 0.88;
+    const factor = Math.exp(-deltaY * 0.0016);
     state.transform.scale = clamp(state.transform.scale * factor, 0.08, 8);
     const screen = imageToScreen(before);
     state.transform.x += clientX - screen.x;
     state.transform.y += clientY - screen.y;
-    applyTransform();
-    renderOverlay();
+    applyTransformFast();
+    scheduleInteractionOverlayRefresh();
   }
 
   function pointerCenter(points) {
@@ -2542,7 +3291,7 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "result-item";
-      button.innerHTML = `${escapeHtml(match.code || "未命名")}<small>${escapeHtml(drawing.title)} ${escapeHtml(match.note || "")}</small>`;
+      button.innerHTML = `${escapeHtml(match.code || "未命名")}<small>${escapeHtml(drawing?.title || "")} ${escapeHtml(match.note || "")}</small>`;
       button.addEventListener("click", () => focusAnnotation(match.id));
       el.searchResults.appendChild(button);
     }
@@ -2669,9 +3418,12 @@
         if (!Array.isArray(parsed.annotations)) {
           throw new Error("Invalid annotations");
         }
+        recordUndoSnapshot("瀵煎叆鏁版嵁");
         state.groups = Array.isArray(parsed.groups) ? parsed.groups.map(toGroup).filter(Boolean) : [];
         state.collapsedGroups = parsed.collapsedGroups && typeof parsed.collapsedGroups === "object" ? parsed.collapsedGroups : {};
         state.annotations = parsed.annotations.map(toPointAnnotation).filter(Boolean);
+        state.requiredDevices = Array.isArray(parsed.requiredDevices) ? normalizeRequiredDevices(parsed.requiredDevices) : [];
+        syncBatchCodesFromRequiredDevices();
         saveData();
         state.selectedId = null;
         state.highlightedId = null;
@@ -2933,7 +3685,7 @@
         deleteButton.className = "folder-delete";
         deleteButton.title = "删除目录";
         deleteButton.setAttribute("aria-label", `删除目录 ${folder.name}`);
-        deleteButton.textContent = "×";
+        deleteButton.textContent = "脳";
         deleteButton.addEventListener("click", () => deleteDocFolder(folder.id));
         row.append(button, deleteButton);
         el.folderTree.appendChild(row);
@@ -2955,7 +3707,7 @@
     if (docs.length === 0) {
       const empty = document.createElement("div");
       empty.className = "minimap-empty";
-      empty.textContent = "当前目录暂无文档";
+      empty.textContent = "褰撳墠鐩綍鏆傛棤鏂囨。";
       el.docList.appendChild(empty);
       return;
     }
@@ -2982,7 +3734,7 @@
     if (!doc) return;
 
     el.docTitleInput.value = doc.title;
-    el.docMeta.textContent = `${doc.sourceFileName || "DOCX"} · ${folderTitle(doc.folderId)} · ${new Date(doc.createdAt).toLocaleString()}`;
+    el.docMeta.textContent = `${doc.sourceFileName || "DOCX"} 路 ${folderTitle(doc.folderId)} 路 ${new Date(doc.createdAt).toLocaleString()}`;
     el.docBody.innerHTML = doc.htmlContent || `<div class="doc-body-placeholder">文档已加入资料库，但暂未解析出可显示正文。</div>`;
   }
 
@@ -3005,7 +3757,7 @@
       return f.name === name && (f.parentId || "") === parentId;
     });
     if (duplicate) {
-      setStatus("同级目录已存在同名文件夹 \"" + name + "\"，请更换名称。");
+      setStatus("同级目录已存在同名文件夹，请更换名称。");
       el.folderNameInput.select();
       return;
     }
@@ -3050,7 +3802,7 @@
   function deleteDocFolder(folderId) {
     const folder = state.docFolders.find((item) => item.id === folderId);
     if (!folder) return;
-    if (!confirm("删除目录 \"" + folder.name + "\" 及其子目录和文档？此操作不可恢复。")) return;
+    // repaired invalid text literal
     const ids = collectFolderIds(folderId);
 
     // Delete from server disk
@@ -3082,24 +3834,15 @@
 
     const now = new Date().toISOString();
     const folderByPath = new Map();
-
     const getFolder = (path) => {
       const parts = path.split("/").filter(Boolean);
       let parentId = "";
       let key = "";
       for (const part of parts) {
-        key = key ? `${key}/${part}` : part;
-        let folder = folderByPath.get(key);
+        key = key ? key + "/" + part : part;
+        let folder = folderByPath.get(key) || state.docFolders.find((item) => item.name === part && (item.parentId || "") === parentId);
         if (!folder) {
-          folder = state.docFolders.find((item) => item.name === part && (item.parentId || "") === parentId);
-        }
-        if (!folder) {
-          folder = {
-            id: folderUid(),
-            name: part,
-            parentId,
-            createdAt: now
-          };
+          folder = { id: folderUid(), name: part, parentId, createdAt: now };
           state.docFolders.push(folder);
         }
         folderByPath.set(key, folder);
@@ -3108,116 +3851,37 @@
       return parentId;
     };
 
-    const sampleFolders = [
+    [
       "机械系统/输送机结构/皮带机",
-      "机械系统/输送机结构/转弯机",
-      "机械系统/分拣机构/摆轮分拣",
-      "机械系统/分拣机构/滑槽与导流",
       "机械系统/维护保养/日检",
-      "机械系统/维护保养/月检",
       "电气系统/动力配电/MCC柜",
-      "电气系统/动力配电/变频器",
       "电气系统/控制回路/传感器",
-      "电气系统/控制回路/急停与安全",
-      "电气系统/故障排查",
-      "IT系统/PLC与网络/PLC点表",
       "IT系统/PLC与网络/工业交换机",
-      "IT系统/上位机与数据库/报警系统",
-      "IT系统/上位机与数据库/日志与追踪",
-      "IT系统/接口联动/航班与行李数据接口",
       "IT系统/接口联动/点位编号联动",
-      "运行培训/新员工入门",
-      "运行培训/应急处置"
-    ];
-    sampleFolders.forEach(getFolder);
+      "运行培训/新员工入门"
+    ].forEach(getFolder);
 
-    const makeDoc = ({ title, folderPath, tags, sections }) => {
-      const textContent = sections.map((section) => `${section.heading}\n${section.items.join("\n")}`).join("\n\n");
-      const htmlContent = sections.map((section) => {
-        const items = section.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
-        return `<section class="sample-doc-section"><h3>${escapeHtml(section.heading)}</h3><ul>${items}</ul></section>`;
-      }).join("");
-      return {
-        id: docUid(),
-        title,
-        folderId: getFolder(folderPath),
-        sourceFileName: `${title}.示例资料`,
-        size: 0,
-        type: "sample",
-        linkedPointIds: [],
-        tags: [seedTag].concat(tags || []),
-        createdAt: now,
-        updatedAt: now,
-        htmlContent,
-        textContent,
-        parseStatus: "sample"
-      };
-    };
+    const makeDoc = (title, folderPath, items) => ({
+      id: docUid(),
+      title,
+      folderId: getFolder(folderPath),
+      sourceFileName: title + ".示例资料",
+      size: 0,
+      type: "sample",
+      linkedPointIds: [],
+      tags: [seedTag],
+      createdAt: now,
+      updatedAt: now,
+      htmlContent: '<section class="sample-doc-section"><h3>参考内容</h3><ul>' + items.map((item) => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul></section>",
+      textContent: items.join("\n"),
+      parseStatus: "sample"
+    });
 
     const samples = [
-      makeDoc({
-        title: "皮带机日检流程",
-        folderPath: "机械系统/维护保养/日检",
-        tags: ["机械", "日检", "皮带机"],
-        sections: [
-          { heading: "检查重点", items: ["确认皮带无明显跑偏、撕裂、起毛。", "检查托辊转动是否顺畅，异常噪声需记录点位。", "观察张紧机构刻度，偏离基准线时提交维护单。"] },
-          { heading: "记录要求", items: ["巡检表记录设备编号、点位编号、发现时间。", "需要拍照时优先拍摄故障点和周边参照物。"] }
-        ]
-      }),
-      makeDoc({
-        title: "转弯机常见机械故障",
-        folderPath: "机械系统/输送机结构/转弯机",
-        tags: ["机械", "转弯机"],
-        sections: [
-          { heading: "常见现象", items: ["行李在内侧堆积，多与导向条磨损或速度差异常有关。", "转弯段抖动时先排查支撑脚、链条张力和轴承温度。"] },
-          { heading: "处理建议", items: ["停机后清理异物，再手动盘车确认无卡滞。", "重复故障需关联最近三次报警和现场点位。"] }
-        ]
-      }),
-      makeDoc({
-        title: "MCC柜送电检查",
-        folderPath: "电气系统/动力配电/MCC柜",
-        tags: ["电气", "MCC"],
-        sections: [
-          { heading: "送电前", items: ["核对柜号、回路名称、挂牌状态。", "确认断路器位置、接地状态、绝缘测试记录齐全。"] },
-          { heading: "送电后", items: ["观察三相电压、电流是否平衡。", "确认柜门指示灯与上位机状态一致。"] }
-        ]
-      }),
-      makeDoc({
-        title: "光电传感器清洁与校准",
-        folderPath: "电气系统/控制回路/传感器",
-        tags: ["电气", "传感器"],
-        sections: [
-          { heading: "清洁", items: ["使用无尘布清理镜面，避免直接刮擦。", "检查支架是否松动，光轴偏移会导致误触发。"] },
-          { heading: "校准", items: ["用标准行李箱通过测试，观察输入点变化。", "校准完成后在培训资料中记录对应点位。"] }
-        ]
-      }),
-      makeDoc({
-        title: "PLC网络排查步骤",
-        folderPath: "IT系统/PLC与网络/工业交换机",
-        tags: ["IT", "PLC", "网络"],
-        sections: [
-          { heading: "基础检查", items: ["确认交换机电源、端口灯、光纤收发状态。", "检查PLC、远程IO、上位机的IP规划是否冲突。"] },
-          { heading: "定位方法", items: ["先按区域隔离，再按链路逐段恢复。", "保留ping、日志截图和点位影响范围。"] }
-        ]
-      }),
-      makeDoc({
-        title: "上位机报警确认流程",
-        folderPath: "IT系统/上位机与数据库/报警系统",
-        tags: ["IT", "上位机", "报警"],
-        sections: [
-          { heading: "确认顺序", items: ["先确认报警等级，再确认影响区域。", "同一设备重复报警时，检查数据库写入和PLC通信状态。"] },
-          { heading: "交接要求", items: ["未恢复报警必须进入交接班记录。", "重大报警需关联现场点位和处置人员。"] }
-        ]
-      }),
-      makeDoc({
-        title: "点位编号与培训资料联动示例",
-        folderPath: "IT系统/接口联动/点位编号联动",
-        tags: ["联动", "点位"],
-        sections: [
-          { heading: "设计思路", items: ["培训资料可以绑定点位编号，点击资料时定位到图纸点位。", "点位详情页可反向显示相关操作规程、故障案例和巡检表。"] },
-          { heading: "示例字段", items: ["pointCode: BHS-MECH-CV-031", "docId: PLC网络排查步骤", "relationType: 故障排查"] }
-        ]
-      })
+      makeDoc("皮带机日检流程", "机械系统/维护保养/日检", ["检查皮带跑偏、托辊异响和张紧状态。", "记录设备编号、点位编号和发现时间。"]),
+      makeDoc("MCC柜送电检查", "电气系统/动力配电/MCC柜", ["核对柜号、回路名称和挂牌状态。", "送电后观察三相电压和上位机状态。"]),
+      makeDoc("PLC网络排查步骤", "IT系统/PLC与网络/工业交换机", ["检查交换机电源、端口灯和光纤状态。", "按区域隔离并记录影响点位。"]),
+      makeDoc("点位编号与培训资料联动示例", "IT系统/接口联动/点位编号联动", ["资料可绑定点位编号。", "点位详情可显示相关规程和故障案例。"])
     ];
 
     state.docs.push(...samples);
@@ -3262,7 +3926,7 @@
     el.docUploadInput.value = "";
     saveDocsData();
     renderDocsModule();
-    setStatus("上传完成。");
+    setStatus("文档已上传。");
   }
 
   async function addTrainingDoc(file, folderId, sourcePath = "") {
@@ -3304,14 +3968,14 @@
       if (ext === "xlsx" || ext === "xls" || ext === "csv") return await parseSpreadsheetFile(file);
       if (ext === "pdf") return await parsePdfFile(file);
       return {
-        html: `<div class="doc-body-placeholder">暂不支持解析 ${escapeHtml(ext)} 文件，但已保存文件条目。</div>`,
+        html: `<div class="doc-body-placeholder">鏆備笉鏀寔瑙ｆ瀽 ${escapeHtml(ext)} 鏂囦欢锛屼絾宸蹭繚瀛樻枃浠舵潯鐩€?/div>`,
         text: "",
         status: "unsupported"
       };
     } catch (error) {
       console.warn("File parse failed:", file.name, error);
       return {
-        html: `<div class="doc-body-placeholder">解析失败：${escapeHtml(error.message || "未知错误")}。文件条目已保存。</div>`,
+        html: `<div class="doc-body-placeholder">瑙ｆ瀽澶辫触锛?{escapeHtml(error.message || "鏈煡閿欒")}銆傛枃浠舵潯鐩凡淇濆瓨銆?/div>`,
         text: "",
         status: "failed"
       };
@@ -3319,7 +3983,7 @@
   }
 
   async function parseDocxFile(file) {
-    if (!window.JSZip) throw new Error("JSZip 未加载");
+    // repaired invalid text literal
     var zip, documentXml;
     try {
       zip = await window.JSZip.loadAsync(await file.arrayBuffer());
@@ -3336,7 +4000,7 @@
     }
     if (!documentXml) {
       var allFiles = Object.keys(zip.files).slice(0, 20).join(", ");
-      throw new Error("未找到 Word 正文。（文件内容: " + allFiles + "）");
+      // repaired invalid text literal
     }
 
     // Extract images from word/media/
@@ -3364,7 +4028,7 @@
     var text = paragraphs.join("\n");
     var html = paragraphs.length
       ? paragraphs.map(function(line) { return "<p>" + escapeHtml(line) + "</p>"; }).join("")
-      : "<div class=\"doc-body-placeholder\">Word 文件已读取，但没有提取到正文。</div>";
+      : "<div class=\"doc-body-placeholder\">Word 鏂囦欢宸茶鍙栵紝浣嗘病鏈夋彁鍙栧埌姝ｆ枃銆?/div>";
 
     // Replace image references with base64 img tags
     for (var key in imageMap) {
@@ -3383,7 +4047,7 @@
   }
 
   async function parsePptxFile(file) {
-    if (!window.JSZip) throw new Error("JSZip 未加载");
+    // repaired invalid text literal
     const zip = await window.JSZip.loadAsync(await file.arrayBuffer());
     const slideFiles = Object.keys(zip.files)
       .filter((name) => /^ppt\/slides\/slide\d+\.xml$/.test(name))
@@ -3397,15 +4061,15 @@
     const filtered = slides.filter(Boolean);
     return {
       html: filtered.length
-        ? filtered.map((text, index) => `<section class="doc-slide"><h3>第 ${index + 1} 页</h3><p>${escapeHtml(text)}</p></section>`).join("")
-        : `<div class="doc-body-placeholder">PPT 文件已读取，但没有提取到文字。</div>`,
+        ? filtered.map((text, index) => `<section class="doc-slide"><h3>绗?${index + 1} 椤?/h3><p>${escapeHtml(text)}</p></section>`).join("")
+        : `<div class="doc-body-placeholder">PPT 鏂囦欢宸茶鍙栵紝浣嗘病鏈夋彁鍙栧埌鏂囧瓧銆?/div>`,
       text: filtered.join("\n"),
       status: "parsed"
     };
   }
 
   async function parseSpreadsheetFile(file) {
-    if (!window.XLSX) throw new Error("XLSX 未加载");
+    // repaired invalid text literal
     const workbook = window.XLSX.read(await file.arrayBuffer(), { type: "array" });
     const parts = [];
     const textParts = [];
@@ -3415,7 +4079,7 @@
       parts.push(`<section class="doc-sheet"><h3>${escapeHtml(sheetName)}</h3>${rowsToTable(rows)}</section>`);
     }
     return {
-      html: parts.join("") || `<div class="doc-body-placeholder">表格文件已读取，但没有提取到内容。</div>`,
+      html: parts.join("") || `<div class="doc-body-placeholder">琛ㄦ牸鏂囦欢宸茶鍙栵紝浣嗘病鏈夋彁鍙栧埌鍐呭銆?/div>`,
       text: textParts.join("\n"),
       status: "parsed"
     };
@@ -3435,8 +4099,8 @@
     const filtered = pages.filter(Boolean);
     return {
       html: filtered.length
-        ? filtered.map((text, index) => `<section class="doc-pdf-page"><h3>第 ${index + 1} 页</h3><p>${escapeHtml(text)}</p></section>`).join("")
-        : `<div class="doc-body-placeholder">PDF 已读取，但没有提取到文字。</div>`,
+        ? filtered.map((text, index) => `<section class="doc-pdf-page"><h3>绗?${index + 1} 椤?/h3><p>${escapeHtml(text)}</p></section>`).join("")
+        : `<div class="doc-body-placeholder">PDF 宸茶鍙栵紝浣嗘病鏈夋彁鍙栧埌鏂囧瓧銆?/div>`,
       text: filtered.join("\n"),
       status: "parsed"
     };
@@ -3459,7 +4123,7 @@
   }
 
   function rowsToTable(rows) {
-    if (!rows.length) return `<div class="doc-body-placeholder">空工作表</div>`;
+    if (!rows.length) return `<div class="doc-body-placeholder">绌哄伐浣滆〃</div>`;
     return `<div class="doc-table-wrap"><table class="doc-table">${rows.map((row) => {
       return `<tr>${row.map((cell) => `<td>${escapeHtml(cell == null ? "" : cell)}</td>`).join("")}</tr>`;
     }).join("")}</table></div>`;
@@ -3468,7 +4132,7 @@
   function updateSelectedDocTitle() {
     const doc = state.docs.find((item) => item.id === state.selectedDocId);
     if (!doc) return;
-    doc.title = el.docTitleInput.value.trim() || doc.sourceFileName || "未命名文档";
+    // repaired invalid text literal
     doc.updatedAt = new Date().toISOString();
     saveDocsData();
     renderDocsModule();
@@ -3478,7 +4142,7 @@
     if (!state.selectedDocId) return;
     var doc = state.docs.find(function(d) { return d.id === state.selectedDocId; });
     if (!doc) return;
-    if (!confirm("删除文档 \"" + doc.title + "\"？此操作不可恢复。")) return;
+    // repaired invalid text literal
 
     // Delete from server disk
     if (syncState.enabled) {
@@ -3593,7 +4257,7 @@
       var advanced = el.autoNameAdvanced;
       var isHidden = advanced.hidden;
       advanced.hidden = !isHidden;
-      el.autoNameExpandBtn.textContent = isHidden ? "▲" : "⚙";
+      el.autoNameExpandBtn.textContent = isHidden ? "收起" : "设置";
       if (isHidden) renderAutoNameAdvanced();
     });
 
@@ -3602,12 +4266,28 @@
     el.batchCodeInput.addEventListener("input", function() {
       if (!state.batchCodeActive) {
         state.batchCodes = [];
+        state.requiredDevices = normalizeRequiredDevices(parseBatchCodes(el.batchCodeInput.value).map(function(code) {
+          return { code, details: { "设备编号": code } };
+        }));
+        state.requiredDeviceHeaders = ["设备编号"];
         state.batchCodeIndex = 0;
       }
       updateBatchCodePanel();
     });
     el.startBatchCodeButton.addEventListener("click", startOrPauseBatchCodes);
     el.clearBatchCodeButton.addEventListener("click", clearBatchCodes);
+    if (el.nextRequiredDeviceButton) el.nextRequiredDeviceButton.addEventListener("click", jumpToNextMissingRequiredDevice);
+    if (el.requiredDeviceFileInput) {
+      el.requiredDeviceFileInput.addEventListener("change", function() {
+        importRequiredDeviceWorkbook(el.requiredDeviceFileInput.files && el.requiredDeviceFileInput.files[0]);
+      });
+    }
+    if (el.requiredDeviceFilter) {
+      el.requiredDeviceFilter.addEventListener("input", function() {
+        state.requiredDeviceFilter = el.requiredDeviceFilter.value;
+        renderRequiredDeviceList();
+      });
+    }
     [el.viewport, el.stage, el.image, el.minimapImage].forEach((target) => {
       target.addEventListener("dragstart", (event) => event.preventDefault());
       target.addEventListener("dragover", (event) => event.preventDefault());
@@ -3657,12 +4337,23 @@
       event.preventDefault();
       const selected = getSelected();
       if (!selected) return;
-      selected.code = el.pointCode.value.trim();
-      selected.note = el.pointNote.value.trim();
+      const oldAutoGroup = state.groups.find((group) => group.id === selected.groupId)?.isAuto;
+      const nextCode = el.pointCode.value.trim();
+      const nextNote = el.pointNote.value.trim();
+      if (selected.code === nextCode && selected.note === nextNote) return;
+      recordUndoSnapshot("编辑点位");
+      selected.code = nextCode;
+      selected.note = nextNote;
+      if (!selected.groupId || oldAutoGroup) {
+        const autoGroup = autoGroupForAnnotation(selected);
+        selected.groupId = autoGroup ? autoGroup.id : "";
+      }
       selected.updatedAt = new Date().toISOString();
+      invalidateDeviceIssueCache();
       saveData();
       renderDrawingList();
       renderOverlay();
+      updateBatchCodePanel();
       setStatus("标注已保存。");
     });
     el.deleteAnnotation.addEventListener("click", deleteSelectedAnnotation);
@@ -3697,9 +4388,9 @@
     el.image.addEventListener("error", () => {
       clearTimeout(el.image._loadTimeout);
       el.viewport.classList.remove("loading");
-      el.currentDrawingTitle.textContent = (currentDrawing()?.title || "") + " 加载失败";
+      el.currentDrawingTitle.textContent = (currentDrawing()?.title || "") + " 鍔犺浇澶辫触";
       setTimeout(function() {
-        if (el.currentDrawingTitle.textContent.indexOf("加载失败") >= 0) {
+        if (el.currentDrawingTitle.textContent.indexOf("鍔犺浇澶辫触") >= 0) {
           el.currentDrawingTitle.textContent = currentDrawing()?.title || "";
         }
       }, 5000);
@@ -3729,6 +4420,7 @@
   bindEvents();
   startManifestSync();
   await initSync();
+  syncAllAutoGroups();
   renderDrawingList();
   renderDocsModule();
 
