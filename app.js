@@ -914,6 +914,7 @@
     state.batchCodeIndex = 0;
     state.batchCodeActive = false;
     el.batchCodeInput.value = "";
+    if (state.tool === "point") setTool("pan");
     setStatus("批量点位编号已清空。");
     updateBatchCodePanel();
     updateModeHint();
@@ -924,6 +925,7 @@
     var code = previewBatchCode();
     if (!code) {
       state.batchCodeActive = false;
+      if (state.tool === "point") setTool("pan");
       updateBatchCodePanel();
       updateModeHint();
       setStatus("批量编号已用完。");
@@ -932,6 +934,7 @@
     state.batchCodeIndex += 1;
     if (state.batchCodeIndex >= state.batchCodes.length) {
       state.batchCodeActive = false;
+      if (state.tool === "point") setTool("pan");
     }
     updateBatchCodePanel();
     updateModeHint();
