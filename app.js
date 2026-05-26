@@ -299,7 +299,7 @@
 
   async function loadStaticPointBackup() {
     try {
-      var staticUrl = new URL("data-backup.json?v=20260526", document.baseURI).href;
+      var staticUrl = new URL("data-backup.json?v=" + Date.now(), document.baseURI).href;
       var staticResp = await fetch(staticUrl, { cache: "no-store" });
       if (!staticResp.ok) return false;
       var staticData = await staticResp.json();
@@ -331,7 +331,7 @@
       }
     }
 
-    if (!hasPointData()) {
+    if (!loaded) {
       loaded = await loadStaticPointBackup() || loaded;
     }
 
