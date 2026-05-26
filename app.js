@@ -2408,6 +2408,7 @@
 
     if (event.key === "Escape") {
       event.preventDefault();
+      hideSearchResults();
       if (!cancelDraft()) clearSelection();
       return;
     }
@@ -2518,6 +2519,10 @@
     }
 
     if (matches.length === 1) focusAnnotation(matches[0].id);
+  }
+
+  function hideSearchResults() {
+    el.searchResults.innerHTML = "";
   }
 
   function focusAnnotation(id) {
@@ -3514,6 +3519,17 @@
         addGroup();
       }
     }, true);
+    document.addEventListener("pointerdown", (event) => {
+      if (
+        event.target instanceof Element &&
+        (event.target === el.searchInput ||
+          event.target === el.searchButton ||
+          event.target.closest("#searchResults"))
+      ) {
+        return;
+      }
+      hideSearchResults();
+    });
     el.setBackupButton.addEventListener("click", setBackupFile);
     el.groupNameInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
