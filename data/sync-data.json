@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-05-27T09:55:35.872Z",
+  "updatedAt": "2026-05-27T17:19:47.157Z",
   "data": {
     "version": 1,
     "points": {
       "version": 1,
-      "currentDrawingId": "f4",
+      "currentDrawingId": "f3",
       "drawings": [
         {
           "id": "f4",
@@ -29,7 +29,7 @@
         {
           "id": "b1",
           "title": "B1层",
-          "image": "assets/floors/b1.jpg"
+          "image": "assets/floors/b1.png"
         },
         {
           "id": "f3-transfer",
@@ -379,6 +379,11 @@
           "autoKey": "3382",
           "isAuto": true,
           "drawingId": "f4"
+        },
+        {
+          "id": "auto-b1-3407",
+          "name": "3407",
+          "createdAt": "2026-05-27T12:46:47.456Z"
         }
       ],
       "collapsedGroups": {
@@ -19226,6 +19231,91 @@
           ],
           "createdAt": "2026-05-27T09:16:26.632Z",
           "updatedAt": "2026-05-27T09:16:26.632Z"
+        },
+        {
+          "id": "ann-mpo263sb-375l65",
+          "drawingId": "b1",
+          "type": "point",
+          "groupId": "",
+          "code": "",
+          "note": "",
+          "special": false,
+          "points": [
+            {
+              "x": 0.5911681846965736,
+              "y": 0.5609492786647617
+            }
+          ],
+          "createdAt": "2026-05-27T12:46:40.806Z",
+          "updatedAt": "2026-05-27T12:46:40.806Z"
+        },
+        {
+          "id": "ann-mpo263yz-rejmkd",
+          "drawingId": "b1",
+          "type": "point",
+          "groupId": "",
+          "code": "",
+          "note": "",
+          "special": false,
+          "points": [
+            {
+              "x": 0.5826253340672816,
+              "y": 0.5631336300947148
+            }
+          ],
+          "createdAt": "2026-05-27T12:46:41.044Z",
+          "updatedAt": "2026-05-27T12:46:41.044Z"
+        },
+        {
+          "id": "ann-mpo26464-gbsacm",
+          "drawingId": "b1",
+          "type": "point",
+          "groupId": "",
+          "code": "",
+          "note": "",
+          "special": false,
+          "points": [
+            {
+              "x": 0.575335094017203,
+              "y": 0.5653114120466831
+            }
+          ],
+          "createdAt": "2026-05-27T12:46:41.305Z",
+          "updatedAt": "2026-05-27T12:46:41.305Z"
+        },
+        {
+          "id": "ann-mpo264f8-7eubed",
+          "drawingId": "b1",
+          "type": "point",
+          "groupId": "",
+          "code": "",
+          "note": "",
+          "special": false,
+          "points": [
+            {
+              "x": 0.5713053597976185,
+              "y": 0.5673840823508943
+            }
+          ],
+          "createdAt": "2026-05-27T12:46:41.632Z",
+          "updatedAt": "2026-05-27T12:46:41.632Z"
+        },
+        {
+          "id": "ann-mpo264mm-tk4a5l",
+          "drawingId": "b1",
+          "type": "point",
+          "groupId": "",
+          "code": "",
+          "note": "",
+          "special": false,
+          "points": [
+            {
+              "x": 0.5640406832287485,
+              "y": 0.5681132944072095
+            }
+          ],
+          "createdAt": "2026-05-27T12:46:41.898Z",
+          "updatedAt": "2026-05-27T12:46:41.898Z"
         }
       ],
       "batchCodes": [],

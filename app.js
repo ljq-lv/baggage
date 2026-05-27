@@ -1352,6 +1352,17 @@
     return String(value == null ? "" : value).trim();
   }
 
+  function allKnownAnnotations() {
+    var items = state.annotations.slice();
+    if (Array.isArray(lazyPoints.searchItems)) {
+      var seenIds = new Set(items.map(function(annotation) { return annotation.id; }));
+      lazyPoints.searchItems.forEach(function(annotation) {
+        if (!seenIds.has(annotation.id)) items.push(annotation);
+      });
+    }
+    return items;
+  }
+
   function batchCodeRemaining() {
     var remaining = 0;
     for (var i = Math.max(0, state.batchCodeIndex || 0); i < state.batchCodes.length; i++) {
@@ -1371,10 +1382,43 @@
   function findBatchCodeAnnotation(code) {
     var normalized = normalizeDeviceCode(code);
     if (!normalized) return null;
-    return state.annotations.find(function(annotation) {
-      return annotation.drawingId === state.currentDrawingId &&
-        normalizeDeviceCode(annotation.code) === normalized;
+    return allKnownAnnotations().find(function(annotation) {
+      return normalizeDeviceCode(annotation.code) === normalized;
     }) || null;
+  }
+
+  function annotationInBatchList(annotation) {
+    var normalized = normalizeDeviceCode(annotation && annotation.code);
+    if (!normalized || !state.batchCodes.length) return false;
+    return state.batchCodes.some(function(code) {
+      return normalizeDeviceCode(code) === normalized;
+    });
+  }
+
+  function batchCodeSet() {
+    return new Set(state.batchCodes.map(normalizeDeviceCode).filter(Boolean));
+  }
+
+  function batchPrefixSet() {
+    return new Set(state.batchCodes.map(firstFourDigits).filter(Boolean));
+  }
+
+  function annotationIsBatchExtra(annotation) {
+    var normalized = normalizeDeviceCode(annotation && annotation.code);
+    if (!normalized || !state.batchCodes.length) return false;
+    var prefix = firstFourDigits(normalized);
+    return Boolean(prefix) && batchPrefixSet().has(prefix) && !batchCodeSet().has(normalized);
+  }
+
+  function batchExtraAnnotations() {
+    var codes = batchCodeSet();
+    var prefixes = batchPrefixSet();
+    if (!codes.size || !prefixes.size) return [];
+    return allKnownAnnotations().filter(function(annotation) {
+      var normalized = normalizeDeviceCode(annotation.code);
+      var prefix = firstFourDigits(normalized);
+      return normalized && prefix && prefixes.has(prefix) && !codes.has(normalized);
+    });
   }
 
   function firstMissingBatchIndex(startIndex) {
@@ -1404,7 +1448,7 @@
     updateModeHint();
     setStatus(nextMissing >= 0
       ? "批量点位从 " + state.batchCodes[state.batchCodeIndex] + " 开始。"
-      : "当前图层已包含粘贴列表中的点位。");
+      : "全部图层已包含粘贴列表中的点位。");
   }
 
   function syncBatchCodesFromInput(options = {}) {
@@ -1418,6 +1462,12 @@
     if (!state.batchCodes.length) {
       state.batchCodeIndex = 0;
       state.batchCodeActive = false;
+    }
+    if (lazyPoints.enabled && !lazyPoints.searchItems) {
+      loadSearchIndex().then(function() {
+        updateBatchCodePanel();
+        renderOverlay();
+      });
     }
     saveData();
   }
@@ -1436,7 +1486,9 @@
     }
     var remaining = batchCodeRemaining();
     var stats = batchCodeStats();
-    var coverageText = stats.total > 0 ? "当前图层已匹配 " + stats.covered + "/" + stats.total + "，待补 " + stats.missing + "。" : "";
+    var extraCount = batchExtraAnnotations().length;
+    var extraText = extraCount > 0 ? " 清单外 " + extraCount + " 个。" : "";
+    var coverageText = stats.total > 0 ? "全部图层已标注 " + stats.covered + "/" + stats.total + "，未标注 " + stats.missing + "。" + extraText : "";
     el.startBatchCodeButton.textContent = state.batchCodeActive ? "暂停批量" : "开始批量";
     el.startBatchCodeButton.classList.toggle("primary", state.batchCodeActive);
     el.startBatchCodeButton.disabled = !state.batchCodeActive && parsedCount === 0 && remaining === 0;
@@ -1473,15 +1525,17 @@
     for (var i = 0; i < state.batchCodes.length; i++) {
       var code = state.batchCodes[i];
       var existing = findBatchCodeAnnotation(code);
+      var drawing = existing ? drawings.find(function(item) { return item.id === existing.drawingId; }) : null;
       var item = document.createElement("button");
       item.type = "button";
       item.className = "batch-code-item";
       item.classList.toggle("covered", Boolean(existing));
       item.classList.toggle("pending", !existing);
+      item.classList.toggle("missing", !existing);
       item.classList.toggle("current", i === state.batchCodeIndex);
       item.dataset.index = String(i);
       item.innerHTML = "<strong>" + escapeHtml(code) + "</strong><small>" +
-        (existing ? "已在本图层" : "从这里开始") + "</small>";
+        (existing ? "已标注：" + escapeHtml(drawing ? drawing.title : "未知图层") : "未标注，点这里补") + "</small>";
       if (i === state.batchCodeIndex) currentItem = item;
       item.addEventListener("click", function(event) {
         var index = Number(event.currentTarget.dataset.index);
@@ -1494,6 +1548,18 @@
       });
       el.batchCodeQueue.appendChild(item);
     }
+    batchExtraAnnotations().forEach(function(annotation) {
+      var drawing = drawings.find(function(item) { return item.id === annotation.drawingId; });
+      var item = document.createElement("button");
+      item.type = "button";
+      item.className = "batch-code-item extra";
+      item.innerHTML = "<strong>" + escapeHtml(annotationTitle(annotation)) + "</strong><small>清单外：" +
+        escapeHtml(drawing ? drawing.title : "未知图层") + "</small>";
+      item.addEventListener("click", function() {
+        focusSearchMatch(annotation);
+      });
+      el.batchCodeQueue.appendChild(item);
+    });
     if (currentItem) centerBatchQueueItem(currentItem);
   }
 
@@ -1533,7 +1599,7 @@
     var firstMissing = firstMissingBatchIndex(state.batchCodeIndex);
     if (firstMissing < 0) {
       state.batchCodeActive = false;
-      setStatus("当前图层已包含粘贴列表中的点位。");
+      setStatus("全部图层已包含粘贴列表中的点位。");
       updateBatchCodePanel();
       updateModeHint();
       return;
@@ -1594,6 +1660,17 @@
       return consumeBatchCode() || null;
     }
     return "";
+  }
+
+  function requestPointCode() {
+    var code = window.prompt("请输入点位编号");
+    if (code === null) return null;
+    code = code.trim();
+    if (!code) {
+      setStatus("点位编号不能为空。");
+      return null;
+    }
+    return code;
   }
 
   function initSegmentsFromExisting(segments, separators, primaryIdx) {
@@ -1936,6 +2013,7 @@
     if (!annotation || !annotation.id || !annotation.drawingId || !Array.isArray(annotation.points)) {
       return null;
     }
+    if (!String(annotation.code || "").trim()) return null;
 
     const validPoints = annotation.points.filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
     if (validPoints.length === 0) return null;
@@ -2769,6 +2847,7 @@
       title.addEventListener("pointerdown", (event) => event.stopPropagation());
       title.addEventListener("dblclick", (event) => {
         event.stopPropagation();
+        title.dataset.originalCode = annotation.code || "";
         title.select();
       });
       title.addEventListener("click", (event) => {
@@ -2780,13 +2859,22 @@
         selectAnnotationFromList(annotation.id);
       });
       title.addEventListener("input", () => {
-        annotation.code = title.value.trim();
+        var nextCode = title.value.trim();
+        title.classList.toggle("invalid", !nextCode);
+        if (!nextCode) return;
+        annotation.code = nextCode;
         annotation.updatedAt = new Date().toISOString();
         if (state.selectedId === annotation.id) {
           el.pointCode.value = annotation.code;
         }
       });
       title.addEventListener("change", () => {
+        if (!title.value.trim()) {
+          title.value = annotation.code || title.dataset.originalCode || "";
+          title.classList.remove("invalid");
+          setStatus("点位编号不能为空。");
+          return;
+        }
         syncAutoGroupsForAllDrawings();
         saveData();
         renderDrawingList();
@@ -2794,6 +2882,12 @@
         renderOverlay();
       });
       title.addEventListener("blur", () => {
+        if (!title.value.trim()) {
+          title.value = annotation.code || title.dataset.originalCode || "";
+          title.classList.remove("invalid");
+          setStatus("点位编号不能为空。");
+          return;
+        }
         syncAutoGroupsForAllDrawings();
         saveData();
         renderDrawingList();
@@ -2919,6 +3013,8 @@
     shape.classList.toggle("selected", isSelected);
     shape.classList.toggle("highlight", isHighlighted);
     shape.classList.toggle("special-device", Boolean(annotation.special));
+    shape.classList.toggle("batch-match", annotationInBatchList(annotation));
+    shape.classList.toggle("batch-extra", annotationIsBatchExtra(annotation));
     shape.classList.toggle("compact-focus", isCompactFocus);
     shape.classList.toggle("inactive", state.tool !== "pan");
     shape.dataset.id = annotation.id;
@@ -2987,6 +3083,13 @@
 
   function deleteSelectedAnnotation() {
     if (!state.selectedId) return false;
+    if (!state.annotations.some((annotation) => annotation.id === state.selectedId)) {
+      var indexMatch = lazyPoints.searchItems && lazyPoints.searchItems.find(function(item) { return item.id === state.selectedId; });
+      if (indexMatch && indexMatch.drawingId) {
+        loadLazyDrawing(indexMatch.drawingId).then(deleteSelectedAnnotation);
+      }
+      return false;
+    }
     recordUndoSnapshot("删除点位");
     state.selectedForGroupMove.delete(state.selectedId);
     if (state.groupMoveSelectionAnchorId === state.selectedId) state.groupMoveSelectionAnchorId = null;
@@ -2996,6 +3099,7 @@
     saveData();
     renderDrawingList();
     renderOverlay();
+    updateBatchCodePanel();
     updateEditor();
     resetAutoNameInit();
     initAutoNameFromExisting();
@@ -3016,6 +3120,7 @@
     saveData();
     renderDrawingList();
     renderOverlay();
+    updateBatchCodePanel();
     updateEditor();
     resetAutoNameInit();
     initAutoNameFromExisting();
@@ -3162,7 +3267,14 @@
   function createAnnotation(type, imagePoints) {
     var now = new Date().toISOString();
     var code = nextPointCode();
-    if (code === null) return;
+    if (!code && state.lastPointCodeSource !== "batch") {
+      code = requestPointCode();
+    }
+    if (!code) {
+      setStatus("点位必须命名后才能添加。");
+      updateBatchCodePanel();
+      return;
+    }
     var autoGroup = ensureAutoGroup(firstFourDigits(code), state.currentDrawingId);
     recordUndoSnapshot("新增点位");
     var annotation = {
@@ -4465,6 +4577,11 @@
       if (!selected) return;
       const nextCode = el.pointCode.value.trim();
       const nextNote = el.pointNote.value.trim();
+      if (!nextCode) {
+        el.pointCode.focus();
+        setStatus("点位编号不能为空。");
+        return;
+      }
       if (selected.code === nextCode && selected.note === nextNote) return;
       recordUndoSnapshot("编辑点位");
       selected.code = nextCode;

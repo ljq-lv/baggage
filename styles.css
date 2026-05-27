@@ -503,13 +503,33 @@ textarea {
 }
 
 .batch-code-item.pending {
-  border-color: #f3c98b;
-  background: #fff8ec;
+  border-color: #f3a5b5;
+  background: #fff1f4;
+}
+
+.batch-code-item.missing strong,
+.batch-code-item.missing small {
+  color: #b42318;
+}
+
+.batch-code-item.extra {
+  border-color: #c4b5fd;
+  background: #f5f3ff;
+}
+
+.batch-code-item.extra strong,
+.batch-code-item.extra small {
+  color: #6d28d9;
 }
 
 .batch-code-item.current {
   border-color: var(--highlight);
   box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.14);
+}
+
+.minimap-item-title.invalid {
+  border-color: var(--danger);
+  background: #fff1f4;
 }
 
 .batch-code-actions {
@@ -1267,6 +1287,28 @@ input.minimap-group-name.editing:focus {
 
 .annotation-shape.special-device {
   fill: #e11d48;
+}
+
+.annotation-shape.batch-match {
+  fill: #2563eb;
+  stroke: #f8fafc;
+  stroke-width: 2.5;
+}
+
+.annotation-shape.batch-match.selected,
+.annotation-shape.batch-match.highlight {
+  fill: var(--highlight);
+}
+
+.annotation-shape.batch-extra {
+  fill: #7c3aed;
+  stroke: #fff7ed;
+  stroke-width: 3;
+}
+
+.annotation-shape.batch-extra.selected,
+.annotation-shape.batch-extra.highlight {
+  fill: var(--highlight);
 }
 
 .annotation-shape.compact-focus {
