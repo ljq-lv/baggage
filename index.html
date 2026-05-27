@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>行李输送机点位查找</title>
-    <link rel="stylesheet" href="styles.css?v=20260527-compact-minimap">
+    <link rel="stylesheet" href="styles.css?v=20260527-compact-groups">
   </head>
   <body>
     <header class="module-nav" aria-label="培训网站模块">
@@ -55,21 +55,11 @@
             <span>显示点位名称</span>
           </label>
           <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--line);">
-          <label class="toggle-row">
-            <input id="autoNameToggle" type="checkbox">
-            <span>自动命名</span>
-            <button id="autoNameExpandBtn" type="button" class="mini-icon-btn" hidden title="展开高级配置">⚙</button>
-          </label>
-          <div id="autoNameCompact" hidden>
-            <input id="autoNameTemplate" type="text" placeholder="如 3103.21.# 或 E# 或 #号卸载线" autocomplete="off" style="margin-top: 6px;">
-            <div id="autoNamePreview" style="margin-top: 6px; font-size: 12px; color: var(--accent);"></div>
-          </div>
-          <div id="autoNameAdvanced" hidden></div>
-          <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--line);">
           <div class="batch-code-panel">
             <label class="field-label" for="batchCodeInput">批量点位编号</label>
             <textarea id="batchCodeInput" rows="4" placeholder="从 Excel 复制后粘贴，一行一个编号"></textarea>
             <div id="batchCodePreview" class="batch-code-preview">未导入编号</div>
+            <div id="batchCodeQueue" class="batch-code-queue" aria-label="批量点位匹配列表"></div>
             <div class="batch-code-actions">
               <button id="startBatchCodeButton" type="button">开始批量</button>
               <button id="clearBatchCodeButton" type="button" class="secondary-action">清空</button>
@@ -202,6 +192,6 @@
 
     <script src="node_modules/jszip/dist/jszip.min.js"></script>
     <script src="node_modules/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="app.js?v=20260527-drawing-drag"></script>
+    <script src="app.js?v=20260527-fixed-drawing-order"></script>
   </body>
 </html>

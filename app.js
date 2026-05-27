@@ -2,14 +2,16 @@
   const STORAGE_KEY = "baggage-point-finder-v1";
   const DOCS_KEY = "baggage-training-docs-v1";
   const SVG_NS = "http://www.w3.org/2000/svg";
+  const RENDER_LIMIT = 200;
+  const FIXED_DRAWING_ORDER = ["f4", "f3", "f2", "f1", "b1", "f3-transfer", "overview-2d", "overview-3d"];
 
   const defaultDrawings = [
-    { id: "b1", title: "B1层", image: "assets/floors/b1.jpg" },
-    { id: "f1", title: "1层", image: "assets/floors/f1.jpg" },
-    { id: "f2", title: "2层", image: "assets/floors/f2.jpg" },
-    { id: "f3", title: "3层", image: "assets/floors/f3.jpg" },
-    { id: "f3-transfer", title: "3层开包间", image: "assets/floors/f3-transfer.jpg" },
     { id: "f4", title: "4层", image: "assets/floors/f4.jpg" },
+    { id: "f3", title: "3层", image: "assets/floors/f3.jpg" },
+    { id: "f2", title: "2层", image: "assets/floors/f2.jpg" },
+    { id: "f1", title: "1层", image: "assets/floors/f1.jpg" },
+    { id: "b1", title: "B1层", image: "assets/floors/b1.jpg" },
+    { id: "f3-transfer", title: "3层开包间", image: "assets/floors/f3-transfer.jpg" },
     { id: "overview-2d", title: "2D总览", image: "assets/floors/overview-2d.jpg" },
     { id: "overview-3d", title: "3D总览", image: "assets/floors/overview-3d.jpg" }
   ];
@@ -82,14 +84,9 @@
     minimapList: document.getElementById("minimapList"),
     minimapOverlay: document.getElementById("minimapOverlay"),
     setBackupButton: document.getElementById("setBackupButton"),
-    autoNameToggle: document.getElementById("autoNameToggle"),
-    autoNameExpandBtn: document.getElementById("autoNameExpandBtn"),
-    autoNameCompact: document.getElementById("autoNameCompact"),
-    autoNameTemplate: document.getElementById("autoNameTemplate"),
-    autoNameAdvanced: document.getElementById("autoNameAdvanced"),
-    autoNamePreview: document.getElementById("autoNamePreview"),
     batchCodeInput: document.getElementById("batchCodeInput"),
     batchCodePreview: document.getElementById("batchCodePreview"),
+    batchCodeQueue: document.getElementById("batchCodeQueue"),
     startBatchCodeButton: document.getElementById("startBatchCodeButton"),
     clearBatchCodeButton: document.getElementById("clearBatchCodeButton"),
     moduleTabs: document.querySelectorAll(".module-tab"),
@@ -196,8 +193,7 @@
     return {
       version: 1,
       points: getPointsPayload(),
-      docs: getDocsPayload(),
-      autoName: getAutoNamePayload()
+      docs: getDocsPayload()
     };
   }
 
@@ -238,16 +234,15 @@
   }
 
   function applyDrawingOrder(orderIds) {
-    if (!Array.isArray(orderIds) || orderIds.length === 0) return;
     var orderMap = new Map();
-    orderIds.forEach(function(id, index) {
+    FIXED_DRAWING_ORDER.forEach(function(id, index) {
       if (id && !orderMap.has(id)) orderMap.set(id, index);
     });
     drawings.sort(function(a, b) {
       var aIndex = orderMap.has(a.id) ? orderMap.get(a.id) : Number.MAX_SAFE_INTEGER;
       var bIndex = orderMap.has(b.id) ? orderMap.get(b.id) : Number.MAX_SAFE_INTEGER;
       if (aIndex !== bIndex) return aIndex - bIndex;
-      return 0;
+      return String(a.title || a.id).localeCompare(String(b.title || b.id), "zh-CN");
     });
   }
 
@@ -297,10 +292,6 @@
     syncState.applyingRemote = true;
     try {
       if (remoteData.points && typeof remoteData.points === "object") {
-        if (Array.isArray(remoteData.points.drawings)) {
-          customDrawingOrder = remoteData.points.drawings.map(function(drawing) { return drawing && drawing.id; }).filter(Boolean);
-          applyDrawingOrder(customDrawingOrder);
-        }
         if (Array.isArray(remoteData.points.groups)) {
           state.groups = remoteData.points.groups.map(toGroup).filter(Boolean);
         }
@@ -321,16 +312,10 @@
         state.activeFolderId = remoteData.docs.activeFolderId || "";
         state.selectedDocId = remoteData.docs.selectedDocId || null;
       }
-      if (remoteData.autoName && typeof remoteData.autoName === "object") {
-        if (typeof remoteData.autoName.enabled === "boolean") state.autoNameEnabled = remoteData.autoName.enabled;
-        if (Array.isArray(remoteData.autoName.segments)) state.autoNameSegments = remoteData.autoName.segments;
-        if (Array.isArray(remoteData.autoName.separators)) state.autoNameSeparators = remoteData.autoName.separators;
-        if (typeof remoteData.autoName.primaryIdx === "number") state.autoNamePrimaryIdx = remoteData.autoName.primaryIdx;
-      }
+      applyDrawingOrder();
       syncAutoGroupsForAllDrawings();
       savePointsLocal();
       saveDocsLocal();
-      saveAutoNameLocal();
     } finally {
       syncState.applyingRemote = false;
     }
@@ -338,11 +323,7 @@
     renderDocsModule();
     switchDrawing(state.currentDrawingId);
     setTool(state.tool || "pan");
-    el.autoNameToggle.checked = state.autoNameEnabled;
-    el.autoNameCompact.hidden = !state.autoNameEnabled;
-    el.autoNameExpandBtn.hidden = !state.autoNameEnabled;
-    el.autoNameTemplate.value = segmentsToTemplate(state.autoNameSegments, state.autoNameSeparators);
-    updateAutoNamePreview();
+    updateBatchCodePanel();
   }
 
   async function loadStaticPointBackup() {
@@ -425,10 +406,7 @@
     if (typeof parsed.currentDrawingId === "string") {
       state.currentDrawingId = parsed.currentDrawingId;
     }
-    if (Array.isArray(parsed.drawings)) {
-      customDrawingOrder = parsed.drawings.map(function(drawing) { return drawing && drawing.id; }).filter(Boolean);
-      applyDrawingOrder(customDrawingOrder);
-    }
+    applyDrawingOrder();
     if (parsed.collapsedGroups && typeof parsed.collapsedGroups === "object") {
       state.collapsedGroups = parsed.collapsedGroups;
     }
@@ -493,7 +471,7 @@
         width: item.width,
         height: item.height
       })).filter((item) => item.id && item.image);
-      applyDrawingOrder(customDrawingOrder);
+      applyDrawingOrder();
 
       if (!drawings.some((drawing) => drawing.id === state.currentDrawingId)) {
         state.currentDrawingId = drawings[0].id;
@@ -882,7 +860,7 @@
           annotation.id === state.highlightedId;
       });
     }
-    if (annotations.length > 500) {
+    if (annotations.length > RENDER_LIMIT) {
       return annotations.filter(function(annotation) {
         return annotation.id === state.selectedId || annotation.id === state.highlightedId;
       });
@@ -1153,19 +1131,7 @@
   }
 
   function initAutoNameFromExisting() {
-    var segs = state.autoNameSegments;
-    var seps = state.autoNameSeparators;
-    var prim = state.autoNamePrimaryIdx;
-    if (segs.length === 0 || prim < 0) return;
-    if (!segs[prim] || segs[prim].type !== "number") return;
-
-    initSegmentsFromExisting(segs, seps, prim);
-
-    // Sync editor if advanced panel is open
-    if (!el.autoNameAdvanced.hidden) renderAutoNameAdvanced();
-    el.autoNameTemplate.value = segmentsToTemplate(segs, seps);
-    updateAutoNamePreview();
-    saveAutoNameSettings();
+    return;
   }
 
   function generateAutoName() {
@@ -1210,7 +1176,11 @@
   }
 
   function batchCodeRemaining() {
-    return Math.max(0, state.batchCodes.length - state.batchCodeIndex);
+    var remaining = 0;
+    for (var i = Math.max(0, state.batchCodeIndex || 0); i < state.batchCodes.length; i++) {
+      if (!batchCodeExists(state.batchCodes[i])) remaining += 1;
+    }
+    return remaining;
   }
 
   function previewBatchCode() {
@@ -1218,18 +1188,23 @@
   }
 
   function batchCodeExists(code) {
-    var normalized = normalizeDeviceCode(code);
-    if (!normalized) return false;
-    return state.annotations.some(function(annotation) {
-      return normalizeDeviceCode(annotation.code) === normalized;
-    });
+    return Boolean(findBatchCodeAnnotation(code));
   }
 
-  function firstMissingBatchIndex() {
-    for (var i = 0; i < state.batchCodes.length; i++) {
+  function findBatchCodeAnnotation(code) {
+    var normalized = normalizeDeviceCode(code);
+    if (!normalized) return null;
+    return state.annotations.find(function(annotation) {
+      return annotation.drawingId === state.currentDrawingId &&
+        normalizeDeviceCode(annotation.code) === normalized;
+    }) || null;
+  }
+
+  function firstMissingBatchIndex(startIndex) {
+    for (var i = Math.max(0, startIndex || 0); i < state.batchCodes.length; i++) {
       if (!batchCodeExists(state.batchCodes[i])) return i;
     }
-    return state.batchCodes.length > 0 ? 0 : -1;
+    return -1;
   }
 
   function setBatchStartIndex(index, activate) {
@@ -1240,15 +1215,19 @@
       updateBatchCodePanel();
       return;
     }
-    state.batchCodeIndex = clamp(index, 0, state.batchCodes.length - 1);
+    var targetIndex = clamp(index, 0, state.batchCodes.length - 1);
+    var nextMissing = firstMissingBatchIndex(targetIndex);
+    state.batchCodeIndex = nextMissing >= 0 ? nextMissing : targetIndex;
     if (activate) {
-      state.batchCodeActive = true;
-      setTool("point");
+      state.batchCodeActive = nextMissing >= 0;
+      if (state.batchCodeActive) setTool("point");
     }
     saveData();
     updateBatchCodePanel();
     updateModeHint();
-    setStatus("批量点位从 " + state.batchCodes[state.batchCodeIndex] + " 开始。");
+    setStatus(nextMissing >= 0
+      ? "批量点位从 " + state.batchCodes[state.batchCodeIndex] + " 开始。"
+      : "当前图层已包含粘贴列表中的点位。");
   }
 
   function syncBatchCodesFromInput(options = {}) {
@@ -1269,27 +1248,90 @@
   function updateBatchCodePanel() {
     if (!el.batchCodeInput) return;
     var parsedCount = parseBatchCodes(el.batchCodeInput.value).length;
+    if (state.batchCodes.length) {
+      var searchStart = state.batchCodeIndex >= state.batchCodes.length ? 0 : state.batchCodeIndex;
+      var nextMissing = firstMissingBatchIndex(searchStart);
+      state.batchCodeIndex = nextMissing >= 0 ? nextMissing : state.batchCodes.length;
+      if (state.batchCodeActive && nextMissing < 0) {
+        state.batchCodeActive = false;
+        if (state.tool === "point") setTool("pan");
+      }
+    }
     var remaining = batchCodeRemaining();
-    var stats = typeof requiredCoverageStats === "function" ? requiredCoverageStats() : { total: 0, covered: 0, missing: 0, extra: 0 };
-    var coverageText = stats.total > 0 ? "覆盖 " + stats.covered + "/" + stats.total + "，未覆盖 " + stats.missing + "，多余 " + stats.extra + "。" : "";
+    var stats = batchCodeStats();
+    var coverageText = stats.total > 0 ? "当前图层已匹配 " + stats.covered + "/" + stats.total + "，待补 " + stats.missing + "。" : "";
     el.startBatchCodeButton.textContent = state.batchCodeActive ? "暂停批量" : "开始批量";
     el.startBatchCodeButton.classList.toggle("primary", state.batchCodeActive);
     el.startBatchCodeButton.disabled = !state.batchCodeActive && parsedCount === 0 && remaining === 0;
-    if (el.nextRequiredDeviceButton) el.nextRequiredDeviceButton.disabled = stats.total === 0 || stats.missing === 0;
     if (state.batchCodeActive) {
       el.batchCodePreview.innerHTML = remaining > 0
         ? coverageText + " 批量中：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个"
         : coverageText + " 批量编号已用完";
-      if (typeof renderRequiredDeviceList === "function") renderRequiredDeviceList();
+      renderBatchCodeQueue();
       return;
     }
     if (remaining > 0) {
       el.batchCodePreview.innerHTML = coverageText + " 已暂停：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
-      if (typeof renderRequiredDeviceList === "function") renderRequiredDeviceList();
+      renderBatchCodeQueue();
       return;
     }
     el.batchCodePreview.textContent = coverageText || (parsedCount > 0 ? "待开始：" + parsedCount + " 个编号" : "未导入编号");
-    if (typeof renderRequiredDeviceList === "function") renderRequiredDeviceList();
+    renderBatchCodeQueue();
+  }
+
+  function batchCodeStats() {
+    var total = state.batchCodes.length;
+    var covered = 0;
+    for (var i = 0; i < state.batchCodes.length; i++) {
+      if (batchCodeExists(state.batchCodes[i])) covered += 1;
+    }
+    return { total: total, covered: covered, missing: Math.max(0, total - covered) };
+  }
+
+  function renderBatchCodeQueue() {
+    if (!el.batchCodeQueue) return;
+    el.batchCodeQueue.innerHTML = "";
+    if (!state.batchCodes.length) return;
+    var currentItem = null;
+    for (var i = 0; i < state.batchCodes.length; i++) {
+      var code = state.batchCodes[i];
+      var existing = findBatchCodeAnnotation(code);
+      var item = document.createElement("button");
+      item.type = "button";
+      item.className = "batch-code-item";
+      item.classList.toggle("covered", Boolean(existing));
+      item.classList.toggle("pending", !existing);
+      item.classList.toggle("current", i === state.batchCodeIndex);
+      item.dataset.index = String(i);
+      item.innerHTML = "<strong>" + escapeHtml(code) + "</strong><small>" +
+        (existing ? "已在本图层" : "从这里开始") + "</small>";
+      if (i === state.batchCodeIndex) currentItem = item;
+      item.addEventListener("click", function(event) {
+        var index = Number(event.currentTarget.dataset.index);
+        var annotation = findBatchCodeAnnotation(state.batchCodes[index]);
+        if (annotation) {
+          focusAnnotation(annotation.id);
+          return;
+        }
+        setBatchStartIndex(index, true);
+      });
+      el.batchCodeQueue.appendChild(item);
+    }
+    if (currentItem) centerBatchQueueItem(currentItem);
+  }
+
+  function centerBatchQueueItem(item) {
+    if (!item || !el.batchCodeQueue) return;
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        var queue = el.batchCodeQueue;
+        var queueRect = queue.getBoundingClientRect();
+        var itemRect = item.getBoundingClientRect();
+        var itemTopInQueue = itemRect.top - queueRect.top + queue.scrollTop;
+        var targetTop = itemTopInQueue - (queue.clientHeight - itemRect.height) / 2;
+        queue.scrollTop = clamp(targetTop, 0, queue.scrollHeight - queue.clientHeight);
+      });
+    });
   }
 
   function startOrPauseBatchCodes() {
@@ -1311,6 +1353,15 @@
       return;
     }
 
+    var firstMissing = firstMissingBatchIndex(state.batchCodeIndex);
+    if (firstMissing < 0) {
+      state.batchCodeActive = false;
+      setStatus("当前图层已包含粘贴列表中的点位。");
+      updateBatchCodePanel();
+      updateModeHint();
+      return;
+    }
+    state.batchCodeIndex = firstMissing;
     state.batchCodeActive = true;
     setTool("point");
     setStatus("已进入批量点位模式，请按顺序点击图纸。");
@@ -1331,6 +1382,8 @@
 
   function consumeBatchCode() {
     if (!state.batchCodeActive) return "";
+    var missingIndex = firstMissingBatchIndex(state.batchCodeIndex);
+    if (missingIndex >= 0) state.batchCodeIndex = missingIndex;
     var code = previewBatchCode();
     if (!code) {
       state.batchCodeActive = false;
@@ -1341,6 +1394,12 @@
       return "";
     }
     state.batchCodeIndex += 1;
+    var nextMissing = firstMissingBatchIndex(state.batchCodeIndex);
+    if (nextMissing >= 0) {
+      state.batchCodeIndex = nextMissing;
+    } else {
+      state.batchCodeIndex = state.batchCodes.length;
+    }
     if (state.batchCodeIndex >= state.batchCodes.length) {
       state.batchCodeActive = false;
       if (state.tool === "point") setTool("pan");
@@ -1357,8 +1416,7 @@
       state.lastPointCodeSource = "batch";
       return consumeBatchCode() || null;
     }
-    state.lastPointCodeSource = state.autoNameEnabled ? "auto" : "";
-    return generateAutoName();
+    return "";
   }
 
   function initSegmentsFromExisting(segments, separators, primaryIdx) {
@@ -1457,20 +1515,11 @@
   }
 
   function saveAutoNameSettings() {
-    saveAutoNameLocal();
-    scheduleSyncPush();
+    return;
   }
 
   function loadAutoNameSettings() {
-    var raw = localStorage.getItem(AUTONAME_KEY);
-    if (!raw) return;
-    try {
-      var settings = JSON.parse(raw);
-      if (typeof settings.enabled === "boolean") state.autoNameEnabled = settings.enabled;
-      if (Array.isArray(settings.segments)) state.autoNameSegments = settings.segments;
-      if (Array.isArray(settings.separators)) state.autoNameSeparators = settings.separators;
-      if (typeof settings.primaryIdx === "number") state.autoNamePrimaryIdx = settings.primaryIdx;
-    } catch (e) {}
+    return;
   }
 
   function renderAutoNameAdvanced() {
@@ -1986,37 +2035,6 @@
       button.dataset.id = drawing.id;
       button.innerHTML = `${escapeHtml(drawing.title)}<small>${countLabel}</small>`;
       button.classList.toggle("active", drawing.id === state.currentDrawingId);
-      button.addEventListener("dragstart", (event) => {
-        event.dataTransfer.setData("text/plain", drawing.id);
-        event.dataTransfer.effectAllowed = "move";
-        button.classList.add("dragging");
-      });
-      button.addEventListener("dragend", () => {
-        button.classList.remove("dragging");
-        el.drawingList.querySelectorAll(".drop-before, .drop-after").forEach((item) => {
-          item.classList.remove("drop-before", "drop-after");
-        });
-      });
-      button.addEventListener("dragover", (event) => {
-        event.preventDefault();
-        var rect = button.getBoundingClientRect();
-        var insertAfter = event.clientY > rect.top + rect.height / 2;
-        event.dataTransfer.dropEffect = "move";
-        button.classList.toggle("drop-before", !insertAfter);
-        button.classList.toggle("drop-after", insertAfter);
-      });
-      button.addEventListener("dragleave", () => {
-        button.classList.remove("drop-before", "drop-after");
-      });
-      button.addEventListener("drop", (event) => {
-        event.preventDefault();
-        button.classList.remove("drop-before", "drop-after");
-        var sourceId = event.dataTransfer.getData("text/plain");
-        var rect = button.getBoundingClientRect();
-        reorderDrawing(sourceId, drawing.id, event.clientY > rect.top + rect.height / 2);
-      });
-      button.addEventListener("pointerdown", (event) => beginDrawingPointerDrag(event, drawing.id, button));
-      button.addEventListener("mousedown", (event) => beginDrawingPointerDrag(event, drawing.id, button));
       button.addEventListener("click", (event) => {
         if (suppressDrawingClick) {
           event.preventDefault();
@@ -2090,6 +2108,7 @@
     }
     renderDrawingList();
     renderMinimapList();
+    updateBatchCodePanel();
     updateEditor();
     if (changedDrawing && options.save !== false) saveData();
     saveCurrentDrawingLocal();
@@ -2362,10 +2381,7 @@
         spacer.setAttribute("aria-hidden", "true");
         heading.appendChild(spacer);
         heading.appendChild(groupInput);
-        const count = document.createElement("small");
-        count.textContent = groupSubtitle(groupMeta, 0);
-        heading.appendChild(count);
-        if (isAutoGroup && hasGroupAlias(groupMeta)) {
+        if (isAutoGroup && groupMeta && groupMeta.autoKey) {
           const badge = document.createElement("span");
           badge.className = "minimap-group-badge";
           badge.textContent = groupMeta.autoKey;
@@ -2464,13 +2480,9 @@
         }
       });
 
-      const count = document.createElement("small");
-      count.textContent = groupSubtitle(groupMeta, groupedAnnotations.length);
-
       heading.appendChild(toggleButton);
       heading.appendChild(groupInput);
-      heading.appendChild(count);
-      if (isAutoGroup && groupMeta && hasGroupAlias(groupMeta)) {
+      if (isAutoGroup && groupMeta && groupMeta.autoKey) {
         const badge = document.createElement("span");
         badge.className = "minimap-group-badge";
         badge.textContent = groupMeta.autoKey;
@@ -2984,6 +2996,7 @@
     renderDrawingList();
     renderOverlay();
     selectAnnotation(annotation.id);
+    updateBatchCodePanel();
     if (code && state.lastPointCodeSource === "batch" && state.batchCodeIndex >= state.batchCodes.length) {
       setStatus("已新增 " + code + "。批量编号已全部添加。");
     } else {
@@ -4187,38 +4200,6 @@
       }
     });
 
-    // Auto-name bindings
-    el.autoNameToggle.addEventListener("change", function() {
-      state.autoNameEnabled = el.autoNameToggle.checked;
-      el.autoNameCompact.hidden = !state.autoNameEnabled;
-      el.autoNameExpandBtn.hidden = !state.autoNameEnabled;
-      el.autoNameAdvanced.hidden = true;
-      if (state.autoNameEnabled) {
-        if (state.autoNameSegments.length === 0) {
-          var parsed = parseTemplateToSegments("3103.21.#");
-          state.autoNameSegments = parsed.segments;
-          state.autoNameSeparators = parsed.separators;
-          state.autoNamePrimaryIdx = parsed.primaryIdx;
-          el.autoNameTemplate.value = "3103.21.#";
-        }
-        resetAutoNameInit();
-        initAutoNameFromExisting();
-      } else {
-        el.autoNamePreview.innerHTML = "";
-      }
-      saveAutoNameSettings();
-    });
-
-    el.autoNameExpandBtn.addEventListener("click", function() {
-      var advanced = el.autoNameAdvanced;
-      var isHidden = advanced.hidden;
-      advanced.hidden = !isHidden;
-      el.autoNameExpandBtn.textContent = isHidden ? "Hide" : "Settings";
-      if (isHidden) renderAutoNameAdvanced();
-    });
-
-    el.autoNameTemplate.addEventListener("change", applyTemplateChange);
-    el.autoNameTemplate.addEventListener("blur", applyTemplateChange);
     el.batchCodeInput.addEventListener("input", function() {
       syncBatchCodesFromInput({ pickFirstMissing: true });
       updateBatchCodePanel();
@@ -4344,7 +4325,6 @@
   await loadDrawingManifest();
   loadData();
   restoreCurrentDrawingLocal();
-  loadAutoNameSettings();
   loadDocsData();
   await loadRepoTrainingDocs();
   bindEvents();
@@ -4357,14 +4337,5 @@
 
   switchDrawing(state.currentDrawingId);
   setTool("pan");
-
-  // Sync auto-name UI
-  if (state.autoNameEnabled) {
-    el.autoNameToggle.checked = true;
-    el.autoNameCompact.hidden = false;
-    el.autoNameExpandBtn.hidden = false;
-    el.autoNameTemplate.value = segmentsToTemplate(state.autoNameSegments, state.autoNameSeparators);
-    updateAutoNamePreview();
-  }
   updateBatchCodePanel();
 })();
