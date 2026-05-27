@@ -7,6 +7,7 @@
     "start": "node server.mjs",
     "dev": "node server.mjs",
     "render:pdfs": "node scripts/render-pdfs.mjs",
+    "build:points": "node scripts/build-point-shards.mjs",
     "scan:docs": "node scripts/scan-training-docs.mjs"
   },
   "dependencies": {

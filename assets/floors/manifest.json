@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T14:31:31.152Z",
+  "generatedAt": "2026-05-27T09:58:04.103Z",
   "drawings": [
     {
       "id": "f1",
@@ -68,7 +68,7 @@
       "id": "b1",
       "title": "B1层",
       "pdf": "B1层布局图.pdf",
-      "image": "b1.jpg",
+      "image": "b1.png",
       "pages": 1,
       "width": 3600,
       "height": 2547

@@ -128,6 +128,14 @@
     pushTimer: null,
     syncedAt: ""
   };
+  var lazyPoints = {
+    enabled: false,
+    manifest: null,
+    searchItems: null,
+    loadedDrawingIds: new Set(),
+    loadingDrawings: new Map(),
+    backgroundStarted: false
+  };
   var undoStack = [];
 
   try {
@@ -342,6 +350,102 @@
     }
   }
 
+  function mergeDrawingAnnotations(drawingId, annotations) {
+    var valid = Array.isArray(annotations)
+      ? annotations.map(toPointAnnotation).filter(Boolean)
+      : [];
+    state.annotations = state.annotations.filter(function(annotation) {
+      return annotation.drawingId !== drawingId;
+    }).concat(valid);
+    lazyPoints.loadedDrawingIds.add(drawingId);
+    return valid.length;
+  }
+
+  async function loadLazyDrawing(drawingId) {
+    if (!lazyPoints.enabled || !drawingId) return false;
+    if (lazyPoints.loadedDrawingIds.has(drawingId)) return true;
+    if (lazyPoints.loadingDrawings.has(drawingId)) return lazyPoints.loadingDrawings.get(drawingId);
+    var task = (async function() {
+      try {
+        var url = "data/drawings/" + encodeURIComponent(drawingId) + ".json";
+        var response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) return false;
+        var payload = await response.json();
+        mergeDrawingAnnotations(drawingId, payload.annotations || []);
+        renderDrawingList();
+        if (drawingId === state.currentDrawingId) {
+          renderOverlay();
+          renderMinimapList();
+        }
+        return true;
+      } catch (error) {
+        console.warn("Lazy drawing load failed:", drawingId, error.message);
+        return false;
+      } finally {
+        lazyPoints.loadingDrawings.delete(drawingId);
+      }
+    })();
+    lazyPoints.loadingDrawings.set(drawingId, task);
+    return task;
+  }
+
+  async function loadSearchIndex() {
+    if (lazyPoints.searchItems) return lazyPoints.searchItems;
+    try {
+      var response = await fetch("data/search-index.json", { cache: "no-store" });
+      if (!response.ok) return [];
+      var payload = await response.json();
+      lazyPoints.searchItems = Array.isArray(payload.items) ? payload.items : [];
+      return lazyPoints.searchItems;
+    } catch (error) {
+      console.warn("Search index load failed:", error.message);
+      lazyPoints.searchItems = [];
+      return lazyPoints.searchItems;
+    }
+  }
+
+  function startLazyBackgroundLoad() {
+    if (!lazyPoints.enabled || lazyPoints.backgroundStarted) return;
+    lazyPoints.backgroundStarted = true;
+    var ids = FIXED_DRAWING_ORDER.filter(function(id) {
+      return drawings.some(function(drawing) { return drawing.id === id; });
+    });
+    var index = 0;
+    function loadNext() {
+      while (index < ids.length && lazyPoints.loadedDrawingIds.has(ids[index])) index += 1;
+      if (index >= ids.length) return;
+      var drawingId = ids[index++];
+      loadLazyDrawing(drawingId).finally(function() {
+        window.setTimeout(loadNext, 450);
+      });
+    }
+    window.setTimeout(loadNext, 800);
+  }
+
+  async function loadLazyPointData() {
+    try {
+      var response = await fetch("data/points-manifest.json", { cache: "no-store" });
+      if (!response.ok) return false;
+      var manifest = await response.json();
+      if (!manifest || !manifest.counts) return false;
+      lazyPoints.enabled = true;
+      lazyPoints.manifest = manifest;
+      state.groups = Array.isArray(manifest.groups) ? manifest.groups.map(toGroup).filter(Boolean) : [];
+      state.collapsedGroups = manifest.collapsedGroups && typeof manifest.collapsedGroups === "object" ? manifest.collapsedGroups : {};
+      if (typeof manifest.currentDrawingId === "string" && manifest.currentDrawingId && drawings.some(function(drawing) { return drawing.id === manifest.currentDrawingId; })) {
+        state.currentDrawingId = manifest.currentDrawingId;
+      }
+      applyDrawingOrder();
+      await loadLazyDrawing(state.currentDrawingId);
+      loadSearchIndex();
+      startLazyBackgroundLoad();
+      return true;
+    } catch (error) {
+      console.warn("Lazy point data load failed:", error.message);
+      return false;
+    }
+  }
+
   async function initSync() {
     var loaded = false;
 
@@ -359,6 +463,10 @@
       } catch (e) {
         console.warn("Sync API unavailable, trying static JSON:", e.message);
       }
+    }
+
+    if (!loaded) {
+      loaded = await loadLazyPointData() || loaded;
     }
 
     if (!loaded) {
@@ -845,11 +953,19 @@
   }
 
   function drawingAnnotationCount(drawingId) {
+    if (lazyPoints.enabled && lazyPoints.manifest && lazyPoints.manifest.counts && !lazyPoints.loadedDrawingIds.has(drawingId)) {
+      return lazyPoints.manifest.counts[drawingId] || 0;
+    }
     return state.annotations.filter((annotation) => annotation.drawingId === drawingId).length;
   }
 
   function drawingPrefixAnnotationCount(drawingId, prefix) {
     if (!prefix) return 0;
+    if (lazyPoints.searchItems && !lazyPoints.loadedDrawingIds.has(drawingId)) {
+      return lazyPoints.searchItems.filter(function(annotation) {
+        return annotation.drawingId === drawingId && annotationMatchesPrefix(annotation, prefix);
+      }).length;
+    }
     return state.annotations.filter(function(annotation) {
       return annotation.drawingId === drawingId && annotationMatchesPrefix(annotation, prefix);
     }).length;
@@ -3301,7 +3417,7 @@
     return Math.max(1, Math.hypot(dx, dy));
   }
 
-  function search() {
+  async function search() {
     const query = el.searchInput.value.trim().toLowerCase();
     el.searchResults.innerHTML = "";
     if (!query) {
@@ -3321,7 +3437,15 @@
 
     const startsWithMatches = [];
     const includesMatches = [];
-    for (const annotation of state.annotations) {
+    var searchableAnnotations = state.annotations.slice();
+    if (lazyPoints.enabled) {
+      var indexItems = await loadSearchIndex();
+      var seenIds = new Set(searchableAnnotations.map(function(annotation) { return annotation.id; }));
+      indexItems.forEach(function(item) {
+        if (!seenIds.has(item.id)) searchableAnnotations.push(item);
+      });
+    }
+    for (const annotation of searchableAnnotations) {
       const code = (annotation.code || "").toLowerCase();
       const note = (annotation.note || "").toLowerCase();
       const haystack = `${code} ${note}`;
@@ -3344,11 +3468,19 @@
       button.type = "button";
       button.className = "result-item";
       button.innerHTML = `${escapeHtml(match.code || "未命名")}<small>${escapeHtml(drawing ? drawing.title : "")} ${escapeHtml(match.note || "")}</small>`;
-      button.addEventListener("click", () => focusAnnotation(match.id));
+      button.addEventListener("click", () => focusSearchMatch(match));
       el.searchResults.appendChild(button);
     }
 
-    if (matches.length === 1) focusAnnotation(matches[0].id);
+    if (matches.length === 1) focusSearchMatch(matches[0]);
+  }
+
+  async function focusSearchMatch(match) {
+    if (!match) return;
+    if (lazyPoints.enabled && match.drawingId) {
+      await loadLazyDrawing(match.drawingId);
+    }
+    focusAnnotation(match.id);
   }
 
   function hideSearchResults() {
@@ -3357,7 +3489,13 @@
 
   function focusAnnotation(id) {
     const annotation = state.annotations.find((item) => item.id === id);
-    if (!annotation) return;
+    if (!annotation) {
+      var indexMatch = lazyPoints.searchItems && lazyPoints.searchItems.find(function(item) { return item.id === id; });
+      if (indexMatch && indexMatch.drawingId) {
+        loadLazyDrawing(indexMatch.drawingId).then(function() { focusAnnotation(id); });
+      }
+      return;
+    }
     state.selectedId = id;
     state.highlightedId = id;
     state.renderPrefix = renderPrefixForAnnotation(annotation);
