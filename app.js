@@ -1,4 +1,4 @@
-(async function () {
+﻿(async function () {
   const STORAGE_KEY = "baggage-point-finder-v1";
   const DOCS_KEY = "baggage-training-docs-v1";
   const SVG_NS = "http://www.w3.org/2000/svg";
@@ -26,6 +26,7 @@
     selectedForGroupMove: new Set(),
     groupMoveSelectionAnchorId: null,
     activeGroupId: "",
+    renderPrefix: "",
     selectedId: null,
     highlightedId: null,
     transform: { x: 0, y: 0, scale: 1 },
@@ -50,6 +51,7 @@
 
   const el = {
     drawingList: document.getElementById("drawingList"),
+    drawingTotalCount: document.getElementById("drawingTotalCount"),
     searchInput: document.getElementById("searchInput"),
     searchButton: document.getElementById("searchButton"),
     searchResults: document.getElementById("searchResults"),
@@ -115,14 +117,20 @@
   var drawingManifestSignature = "";
   var trainingManifestSignature = "";
   var AUTONAME_KEY = "baggage-autoname";
+  var CURRENT_DRAWING_KEY = STORAGE_KEY + "-current-drawing";
   var SYNC_META_KEY = STORAGE_KEY + "-sync-meta";
   var SYNC_ENDPOINT = "/api/data";
+  var MAX_UNDO_STEPS = 50;
+  var customDrawingOrder = [];
+  var drawingPointerDrag = null;
+  var suppressDrawingClick = false;
   var syncState = {
     enabled: location.protocol === "http:" || location.protocol === "https:",
     applyingRemote: false,
     pushTimer: null,
     syncedAt: ""
   };
+  var undoStack = [];
 
   try {
     var syncMeta = JSON.parse(localStorage.getItem(SYNC_META_KEY) || "{}");
@@ -132,10 +140,14 @@
   function getPointsPayload() {
     return {
       version: 1,
+      currentDrawingId: state.currentDrawingId,
       drawings: drawings.map(function(d) { return { id: d.id, title: d.title, image: d.image }; }),
       groups: state.groups,
       collapsedGroups: state.collapsedGroups,
-      annotations: state.annotations
+      annotations: state.annotations,
+      batchCodes: state.batchCodes,
+      batchCodeIndex: state.batchCodeIndex,
+      batchCodeActive: state.batchCodeActive
     };
   }
 
@@ -145,7 +157,7 @@
       localStorage.setItem(STORAGE_KEY, json);
       localStorage.setItem(BACKUP_KEY, json);
     } catch (error) {
-      setStatus("淇濆瓨澶辫触锛屽彲鑳藉瓨鍌ㄧ┖闂翠笉瓒炽€傝瀵煎嚭鏁版嵁澶囦唤銆?");
+      setStatus("保存失败，请导出数据备份。");
       console.error("Save failed:", error);
     }
     writeBackupFile(json);
@@ -225,6 +237,37 @@
     } catch (error) {}
   }
 
+  function applyDrawingOrder(orderIds) {
+    if (!Array.isArray(orderIds) || orderIds.length === 0) return;
+    var orderMap = new Map();
+    orderIds.forEach(function(id, index) {
+      if (id && !orderMap.has(id)) orderMap.set(id, index);
+    });
+    drawings.sort(function(a, b) {
+      var aIndex = orderMap.has(a.id) ? orderMap.get(a.id) : Number.MAX_SAFE_INTEGER;
+      var bIndex = orderMap.has(b.id) ? orderMap.get(b.id) : Number.MAX_SAFE_INTEGER;
+      if (aIndex !== bIndex) return aIndex - bIndex;
+      return 0;
+    });
+  }
+
+  function saveCurrentDrawingLocal() {
+    try {
+      localStorage.setItem(CURRENT_DRAWING_KEY, state.currentDrawingId || "");
+    } catch (error) {}
+  }
+
+  function restoreCurrentDrawingLocal() {
+    try {
+      var drawingId = localStorage.getItem(CURRENT_DRAWING_KEY);
+      if (drawingId && drawings.some(function(drawing) { return drawing.id === drawingId; })) {
+        state.currentDrawingId = drawingId;
+        return true;
+      }
+    } catch (error) {}
+    return false;
+  }
+
   function scheduleSyncPush() {
     if (!syncState.enabled || syncState.applyingRemote) return;
     window.clearTimeout(syncState.pushTimer);
@@ -242,10 +285,10 @@
       if (!response.ok) throw new Error("Sync save failed: " + response.status);
       const result = await response.json();
       saveSyncMeta(result.updatedAt);
-      setStatus("宸插悓姝ュ埌鏈嶅姟鍣ㄣ€?");
+      setStatus("已同步到服务器。");
     } catch (error) {
       console.warn("Sync push failed:", error);
-      setStatus("鏈湴宸蹭繚瀛橈紝鏈嶅姟鍣ㄥ悓姝ュけ璐ャ€?");
+      setStatus("本地已保存，服务器同步失败。");
     }
   }
 
@@ -254,6 +297,10 @@
     syncState.applyingRemote = true;
     try {
       if (remoteData.points && typeof remoteData.points === "object") {
+        if (Array.isArray(remoteData.points.drawings)) {
+          customDrawingOrder = remoteData.points.drawings.map(function(drawing) { return drawing && drawing.id; }).filter(Boolean);
+          applyDrawingOrder(customDrawingOrder);
+        }
         if (Array.isArray(remoteData.points.groups)) {
           state.groups = remoteData.points.groups.map(toGroup).filter(Boolean);
         }
@@ -280,13 +327,13 @@
         if (Array.isArray(remoteData.autoName.separators)) state.autoNameSeparators = remoteData.autoName.separators;
         if (typeof remoteData.autoName.primaryIdx === "number") state.autoNamePrimaryIdx = remoteData.autoName.primaryIdx;
       }
+      syncAutoGroupsForAllDrawings();
       savePointsLocal();
       saveDocsLocal();
       saveAutoNameLocal();
     } finally {
       syncState.applyingRemote = false;
     }
-    selectFirstAnnotatedDrawingIfNeeded();
     renderDrawingList();
     renderDocsModule();
     switchDrawing(state.currentDrawingId);
@@ -351,7 +398,7 @@
     var raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       raw = localStorage.getItem(BACKUP_KEY);
-      if (raw) setStatus("已从备份恢复数据。");
+      setStatus("已从本地备份恢复。");
     }
     if (!raw) return;
 
@@ -375,6 +422,13 @@
     if (Array.isArray(parsed.groups)) {
       state.groups = parsed.groups.map(toGroup).filter(Boolean);
     }
+    if (typeof parsed.currentDrawingId === "string") {
+      state.currentDrawingId = parsed.currentDrawingId;
+    }
+    if (Array.isArray(parsed.drawings)) {
+      customDrawingOrder = parsed.drawings.map(function(drawing) { return drawing && drawing.id; }).filter(Boolean);
+      applyDrawingOrder(customDrawingOrder);
+    }
     if (parsed.collapsedGroups && typeof parsed.collapsedGroups === "object") {
       state.collapsedGroups = parsed.collapsedGroups;
     }
@@ -397,12 +451,19 @@
       }
     }
 
+    if (Array.isArray(parsed.batchCodes)) {
+      state.batchCodes = parseBatchCodes(parsed.batchCodes.join("\n"));
+      state.batchCodeIndex = clamp(Number(parsed.batchCodeIndex) || 0, 0, state.batchCodes.length);
+      state.batchCodeActive = Boolean(parsed.batchCodeActive && state.batchCodeIndex < state.batchCodes.length);
+      if (el.batchCodeInput) el.batchCodeInput.value = state.batchCodes.join("\n");
+    }
+
     var totalAnnotations = Array.isArray(parsed.annotations) ? parsed.annotations.length : 0;
     console.log(
       "Data loaded: " + state.annotations.length + "/" + totalAnnotations + " annotations, " +
       state.groups.length + " groups"
     );
-    selectFirstAnnotatedDrawingIfNeeded();
+    syncAutoGroupsForAllDrawings();
   }
 
   async function loadDrawingManifest() {
@@ -432,6 +493,7 @@
         width: item.width,
         height: item.height
       })).filter((item) => item.id && item.image);
+      applyDrawingOrder(customDrawingOrder);
 
       if (!drawings.some((drawing) => drawing.id === state.currentDrawingId)) {
         state.currentDrawingId = drawings[0].id;
@@ -475,7 +537,7 @@
 
   function setBackupFile() {
     if (!window.showSaveFilePicker) {
-      setStatus("当前浏览器不支持文件系统访问，请使用 Chrome 或 Edge。");
+      setStatus("当前浏览器不支持自动备份文件句柄。");
       return;
     }
     window.showSaveFilePicker({
@@ -488,12 +550,12 @@
       req.onsuccess = function(e) {
         var tx = e.target.result.transaction("handles", "readwrite");
         tx.objectStore("handles").put(handle, "backupFile");
-        setStatus("备份文件已设置。数据将自动保存到该文件。");
+        setStatus("自动备份文件已设置。");
       };
     }).catch(function(e) {
       if (e.name !== "AbortError") {
         console.error("File picker error:", e);
-        setStatus("设置备份文件失败。");
+        setStatus("设置自动备份失败。");
       }
     });
   }
@@ -532,7 +594,7 @@
       localStorage.setItem(STORAGE_KEY, json);
       localStorage.setItem(BACKUP_KEY, json);
     } catch (error) {
-      setStatus("保存失败，可能存储空间不足。请导出数据备份。");
+      setStatus("保存失败，请导出数据备份。");
       console.error("Save failed:", error);
     }
     writeBackupFile(json);
@@ -546,6 +608,91 @@
         el.statusText.textContent = "";
       }, 3500);
     }
+  }
+
+  function clonePlain(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function createUndoSnapshot(label) {
+    return {
+      label: label || "操作",
+      currentDrawingId: state.currentDrawingId,
+      groups: clonePlain(state.groups),
+      collapsedGroups: clonePlain(state.collapsedGroups),
+      annotations: clonePlain(state.annotations),
+      activeGroupId: state.activeGroupId,
+      renderPrefix: state.renderPrefix,
+      selectedId: state.selectedId,
+      highlightedId: state.highlightedId,
+      selectedForGroupMove: Array.from(state.selectedForGroupMove),
+      groupMoveSelectionAnchorId: state.groupMoveSelectionAnchorId,
+      batchCodes: clonePlain(state.batchCodes),
+      batchCodeIndex: state.batchCodeIndex,
+      batchCodeActive: state.batchCodeActive
+    };
+  }
+
+  function recordUndoSnapshot(label) {
+    undoStack.push(createUndoSnapshot(label));
+    if (undoStack.length > MAX_UNDO_STEPS) undoStack.shift();
+  }
+
+  function restoreUndoSnapshot(snapshot) {
+    const previousDrawingId = state.currentDrawingId;
+    const previousTransform = { ...state.transform };
+    state.currentDrawingId = snapshot.currentDrawingId;
+    state.groups = clonePlain(snapshot.groups || []);
+    state.collapsedGroups = clonePlain(snapshot.collapsedGroups || {});
+    state.annotations = clonePlain(snapshot.annotations || []);
+    state.activeGroupId = snapshot.activeGroupId || "";
+    state.renderPrefix = snapshot.renderPrefix || "";
+    state.selectedId = snapshot.selectedId || null;
+    state.highlightedId = snapshot.highlightedId || null;
+    state.selectedForGroupMove = new Set(snapshot.selectedForGroupMove || []);
+    state.groupMoveSelectionAnchorId = snapshot.groupMoveSelectionAnchorId || null;
+    state.batchCodes = clonePlain(snapshot.batchCodes || []);
+    state.batchCodeIndex = snapshot.batchCodeIndex || 0;
+    state.batchCodeActive = Boolean(snapshot.batchCodeActive);
+    if (el.batchCodeInput) el.batchCodeInput.value = state.batchCodes.join("\n");
+    saveData();
+    renderDrawingList();
+    renderMinimapList();
+    updateBatchCodePanel();
+    updateEditor();
+    resetAutoNameInit();
+    initAutoNameFromExisting();
+    const drawing = currentDrawing();
+    if (drawing) {
+      if (el.image.getAttribute("src") !== drawing.image) el.image.src = drawing.image;
+      if (el.minimapImage.getAttribute("src") !== drawing.image) el.minimapImage.src = drawing.image;
+      el.currentDrawingTitle.textContent = drawing.title || "";
+    }
+    if (previousDrawingId === state.currentDrawingId) {
+      state.transform = previousTransform;
+      applyTransform();
+    }
+    renderOverlay();
+  }
+
+  function undoLastAction() {
+    const snapshot = undoStack.pop();
+    if (!snapshot) {
+      setStatus("没有可撤回的操作。");
+      return false;
+    }
+    restoreUndoSnapshot(snapshot);
+    setStatus("已撤回：" + snapshot.label + "。");
+    return true;
+  }
+
+  function pointsChanged(before, after) {
+    if (!Array.isArray(before) || !Array.isArray(after) || before.length !== after.length) return true;
+    for (let i = 0; i < before.length; i++) {
+      if (Math.abs((before[i].x || 0) - (after[i].x || 0)) > 0.000001) return true;
+      if (Math.abs((before[i].y || 0) - (after[i].y || 0)) > 0.000001) return true;
+    }
+    return false;
   }
 
   function isTypingTarget(target) {
@@ -562,6 +709,114 @@
     return `grp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
+  function firstFourDigits(value) {
+    var match = String(value || "").match(/\d{4}/);
+    return match ? match[0] : "";
+  }
+
+  function autoGroupUid(drawingId, prefix) {
+    return "auto-" + String(drawingId || "").replace(/[^a-z0-9_-]/gi, "-") + "-" + prefix;
+  }
+
+  function groupDisplayName(group) {
+    if (!group) return "未分组";
+    return (hasGroupAlias(group) ? group.alias : (group.autoKey || group.name || "")).trim() || "未分组";
+  }
+
+  function hasGroupAlias(group) {
+    if (!group || !group.alias) return false;
+    var alias = String(group.alias).trim();
+    var key = String(group.autoKey || group.name || "").trim();
+    return alias !== key && alias !== firstFourDigits(alias);
+  }
+
+  function groupSubtitle(group, count) {
+    if (group && group.isAuto && group.autoKey) return group.autoKey + " 路 " + count + " 个点位";
+    return count + " 个点位";
+  }
+
+  function normalizeAutoGroup(group, prefix, drawingId) {
+    if (!group || !prefix) return null;
+    var oldName = String(group.name || "").trim();
+    group.autoKey = prefix;
+    group.isAuto = true;
+    group.drawingId = group.drawingId || drawingId || state.currentDrawingId;
+    if (!group.alias && oldName && oldName !== prefix) group.alias = oldName;
+    group.name = prefix;
+    return group;
+  }
+
+  function ensureAutoGroup(prefix, drawingId) {
+    if (!prefix) return null;
+    drawingId = drawingId || state.currentDrawingId;
+    var group = state.groups.find(function(item) {
+      return item.isAuto && item.autoKey === prefix && item.drawingId === drawingId;
+    });
+    if (group) return group;
+
+    var id = autoGroupUid(drawingId, prefix);
+    if (state.groups.some(function(item) { return item.id === id; })) id = groupUid();
+    group = {
+      id: id,
+      name: prefix,
+      alias: "",
+      autoKey: prefix,
+      isAuto: true,
+      drawingId: drawingId,
+      createdAt: new Date().toISOString()
+    };
+    state.groups.push(group);
+    return group;
+  }
+
+  function syncAutoGroupsForDrawing(drawingId) {
+    drawingId = drawingId || state.currentDrawingId;
+    var changed = false;
+    var byGroup = new Map();
+    state.annotations.forEach(function(annotation) {
+      if (annotation.drawingId !== drawingId || !annotation.groupId) return;
+      if (!byGroup.has(annotation.groupId)) byGroup.set(annotation.groupId, []);
+      byGroup.get(annotation.groupId).push(annotation);
+    });
+
+    state.groups.forEach(function(group) {
+      if ((group.drawingId || drawingId) !== drawingId || group.isAuto) return;
+      var items = byGroup.get(group.id) || [];
+      if (!items.length) return;
+      var prefixes = new Set(items.map(function(annotation) {
+        return firstFourDigits(annotation.code);
+      }).filter(Boolean));
+      if (prefixes.size === 1) {
+        normalizeAutoGroup(group, Array.from(prefixes)[0], drawingId);
+        changed = true;
+      }
+    });
+
+    state.annotations.forEach(function(annotation) {
+      if (annotation.drawingId !== drawingId) return;
+      var prefix = firstFourDigits(annotation.code);
+      if (!prefix) return;
+      var autoGroup = ensureAutoGroup(prefix, drawingId);
+      if (autoGroup && annotation.groupId !== autoGroup.id) {
+        annotation.groupId = autoGroup.id;
+        changed = true;
+      }
+    });
+    return changed;
+  }
+
+  function syncAutoGroupsForAllDrawings() {
+    var changed = false;
+    var drawingIds = new Set(drawings.map(function(drawing) { return drawing.id; }));
+    state.annotations.forEach(function(annotation) {
+      if (annotation.drawingId) drawingIds.add(annotation.drawingId);
+    });
+    drawingIds.forEach(function(drawingId) {
+      changed = syncAutoGroupsForDrawing(drawingId) || changed;
+    });
+    return changed;
+  }
+
   function docUid() {
     return `doc-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   }
@@ -572,20 +827,26 @@
 
   function renameGroup(groupId, newName) {
     var name = String(newName || "").trim();
-    if (!name) return false;
     var group = state.groups.find(function(g) { return g.id === groupId; });
     if (!group) return false;
-    if (state.groups.some(function(g) {
+    if (!name && !group.isAuto) return false;
+    if (!group.isAuto && state.groups.some(function(g) {
       return g.id !== groupId && g.name === name && groupVisibleInDrawing(g.id, state.currentDrawingId);
     })) {
       setStatus("分组名已存在。");
       return false;
     }
-    group.name = name;
+    if (group.isAuto) {
+      recordUndoSnapshot("编辑默认分组别名");
+      group.alias = name === group.autoKey ? "" : name;
+    } else {
+      recordUndoSnapshot("重命名分组");
+      group.name = name;
+    }
     saveData();
     renderDrawingList();
     updateEditor();
-    setStatus("分组已重命名。");
+    setStatus(group.isAuto ? "默认分组别名已保存。" : "分组已重命名。");
     return true;
   }
 
@@ -593,8 +854,62 @@
     return drawings.find((drawing) => drawing.id === state.currentDrawingId) || drawings[0];
   }
 
-  function currentAnnotations() {
+  function currentDrawingAnnotations() {
     return state.annotations.filter((annotation) => annotation.drawingId === state.currentDrawingId);
+  }
+
+  function annotationMatchesPrefix(annotation, prefix) {
+    return Boolean(prefix) && firstFourDigits(annotation && annotation.code) === prefix;
+  }
+
+  function drawingAnnotationCount(drawingId) {
+    return state.annotations.filter((annotation) => annotation.drawingId === drawingId).length;
+  }
+
+  function drawingPrefixAnnotationCount(drawingId, prefix) {
+    if (!prefix) return 0;
+    return state.annotations.filter(function(annotation) {
+      return annotation.drawingId === drawingId && annotationMatchesPrefix(annotation, prefix);
+    }).length;
+  }
+
+  function currentAnnotations() {
+    var annotations = currentDrawingAnnotations();
+    if (state.renderPrefix) {
+      return annotations.filter(function(annotation) {
+        return annotationMatchesPrefix(annotation, state.renderPrefix) ||
+          annotation.id === state.selectedId ||
+          annotation.id === state.highlightedId;
+      });
+    }
+    if (annotations.length > 500) {
+      return annotations.filter(function(annotation) {
+        return annotation.id === state.selectedId || annotation.id === state.highlightedId;
+      });
+    }
+    return annotations;
+  }
+
+  function setRenderPrefix(prefix) {
+    state.renderPrefix = firstFourDigits(prefix);
+    renderDrawingList();
+    renderOverlay();
+    renderMinimapList();
+  }
+
+  function viewAutoGroupAcrossDrawings(groupId) {
+    var group = state.groups.find(function(item) { return item.id === groupId; });
+    if (!group || !group.isAuto || !group.autoKey) return;
+    state.activeGroupId = group.id;
+    state.renderPrefix = group.autoKey;
+    renderDrawingList();
+    renderOverlay();
+    renderMinimapList();
+    setStatus("正在查看 " + groupTitle(group.id) + " 在所有图层的点位数量。");
+  }
+
+  function renderPrefixForAnnotation(annotation) {
+    return firstFourDigits(annotation && annotation.code);
   }
 
   function selectFirstAnnotatedDrawingIfNeeded() {
@@ -607,7 +922,26 @@
 
   function groupTitle(groupId) {
     if (!groupId) return "未分组";
-    return state.groups.find((group) => group.id === groupId)?.name || "未分组";
+    return groupDisplayName(state.groups.find((group) => group.id === groupId));
+  }
+
+  function enableGroupRename(input) {
+    input.readOnly = false;
+    input.classList.add("editing");
+    input.focus();
+    input.select();
+  }
+
+  function finishGroupRename(groupId, input) {
+    if (!input.classList.contains("editing")) {
+      input.value = groupTitle(groupId);
+      return;
+    }
+    if (renameGroup(groupId, input.value)) {
+      input.value = groupTitle(groupId);
+    }
+    input.readOnly = true;
+    input.classList.remove("editing");
   }
 
   function groupVisibleInDrawing(groupId, drawingId) {
@@ -616,6 +950,26 @@
     if (!group) return false;
     if (group.drawingId === drawingId) return true;
     return state.annotations.some((annotation) => annotation.drawingId === drawingId && annotation.groupId === groupId);
+  }
+
+  function collapseGroupsInDrawing(drawingId) {
+    var groupIds = new Set();
+    state.annotations.forEach(function(annotation) {
+      if (annotation.drawingId === drawingId) groupIds.add(annotation.groupId || "");
+    });
+    state.groups.forEach(function(group) {
+      if (groupVisibleInDrawing(group.id, drawingId)) groupIds.add(group.id);
+    });
+    groupIds.forEach(function(groupId) {
+      state.collapsedGroups[groupId] = true;
+    });
+  }
+
+  function matchingAutoGroupInDrawing(group, drawingId) {
+    if (!group || !group.isAuto || !group.autoKey) return null;
+    return state.groups.find(function(item) {
+      return item.isAuto && item.autoKey === group.autoKey && groupVisibleInDrawing(item.id, drawingId);
+    }) || null;
   }
 
   function getSelected() {
@@ -679,7 +1033,7 @@
         sep = lastChar;
         prefix = prefix.slice(0, -1);
       } else {
-        sep = ""; // No separator, e.g., "E#" or "#号卸载线"
+        sep = ""; // No separator, e.g., "E#" or "#鍙峰嵏杞界嚎"
       }
     } else if (suffix.length > 0) {
       var firstChar = suffix.charAt(0);
@@ -846,9 +1200,13 @@
 
   function parseBatchCodes(text) {
     return String(text || "")
-      .split(/[\n\r\t,，;；]+/)
+      .split(/[\n\r\t,，；;]+/)
       .map(function(item) { return item.trim(); })
       .filter(Boolean);
+  }
+
+  function normalizeDeviceCode(value) {
+    return String(value == null ? "" : value).trim();
   }
 
   function batchCodeRemaining() {
@@ -859,30 +1217,79 @@
     return state.batchCodes[state.batchCodeIndex] || "";
   }
 
+  function batchCodeExists(code) {
+    var normalized = normalizeDeviceCode(code);
+    if (!normalized) return false;
+    return state.annotations.some(function(annotation) {
+      return normalizeDeviceCode(annotation.code) === normalized;
+    });
+  }
+
+  function firstMissingBatchIndex() {
+    for (var i = 0; i < state.batchCodes.length; i++) {
+      if (!batchCodeExists(state.batchCodes[i])) return i;
+    }
+    return state.batchCodes.length > 0 ? 0 : -1;
+  }
+
+  function setBatchStartIndex(index, activate) {
+    if (!state.batchCodes.length) {
+      state.batchCodes = parseBatchCodes(el.batchCodeInput.value);
+    }
+    if (!state.batchCodes.length) {
+      updateBatchCodePanel();
+      return;
+    }
+    state.batchCodeIndex = clamp(index, 0, state.batchCodes.length - 1);
+    if (activate) {
+      state.batchCodeActive = true;
+      setTool("point");
+    }
+    saveData();
+    updateBatchCodePanel();
+    updateModeHint();
+    setStatus("批量点位从 " + state.batchCodes[state.batchCodeIndex] + " 开始。");
+  }
+
+  function syncBatchCodesFromInput(options = {}) {
+    state.batchCodes = parseBatchCodes(el.batchCodeInput.value);
+    if (options.pickFirstMissing) {
+      var firstMissing = firstMissingBatchIndex();
+      state.batchCodeIndex = firstMissing >= 0 ? firstMissing : 0;
+    } else {
+      state.batchCodeIndex = clamp(state.batchCodeIndex, 0, Math.max(0, state.batchCodes.length - 1));
+    }
+    if (!state.batchCodes.length) {
+      state.batchCodeIndex = 0;
+      state.batchCodeActive = false;
+    }
+    saveData();
+  }
+
   function updateBatchCodePanel() {
     if (!el.batchCodeInput) return;
     var parsedCount = parseBatchCodes(el.batchCodeInput.value).length;
     var remaining = batchCodeRemaining();
-
+    var stats = typeof requiredCoverageStats === "function" ? requiredCoverageStats() : { total: 0, covered: 0, missing: 0, extra: 0 };
+    var coverageText = stats.total > 0 ? "覆盖 " + stats.covered + "/" + stats.total + "，未覆盖 " + stats.missing + "，多余 " + stats.extra + "。" : "";
     el.startBatchCodeButton.textContent = state.batchCodeActive ? "暂停批量" : "开始批量";
     el.startBatchCodeButton.classList.toggle("primary", state.batchCodeActive);
     el.startBatchCodeButton.disabled = !state.batchCodeActive && parsedCount === 0 && remaining === 0;
-
+    if (el.nextRequiredDeviceButton) el.nextRequiredDeviceButton.disabled = stats.total === 0 || stats.missing === 0;
     if (state.batchCodeActive) {
-      if (remaining > 0) {
-        el.batchCodePreview.innerHTML = "批量中：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
-      } else {
-        el.batchCodePreview.textContent = "批量编号已用完";
-      }
+      el.batchCodePreview.innerHTML = remaining > 0
+        ? coverageText + " 批量中：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个"
+        : coverageText + " 批量编号已用完";
+      if (typeof renderRequiredDeviceList === "function") renderRequiredDeviceList();
       return;
     }
-
     if (remaining > 0) {
-      el.batchCodePreview.innerHTML = "已暂停：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
+      el.batchCodePreview.innerHTML = coverageText + " 已暂停：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
+      if (typeof renderRequiredDeviceList === "function") renderRequiredDeviceList();
       return;
     }
-
-    el.batchCodePreview.textContent = parsedCount > 0 ? "待开始：" + parsedCount + " 个编号" : "未导入编号";
+    el.batchCodePreview.textContent = coverageText || (parsedCount > 0 ? "待开始：" + parsedCount + " 个编号" : "未导入编号");
+    if (typeof renderRequiredDeviceList === "function") renderRequiredDeviceList();
   }
 
   function startOrPauseBatchCodes() {
@@ -894,9 +1301,8 @@
       return;
     }
 
-    if (batchCodeRemaining() === 0) {
-      state.batchCodes = parseBatchCodes(el.batchCodeInput.value);
-      state.batchCodeIndex = 0;
+    if (batchCodeRemaining() === 0 || state.batchCodes.length === 0) {
+      syncBatchCodesFromInput({ pickFirstMissing: true });
     }
 
     if (state.batchCodes.length === 0) {
@@ -917,6 +1323,7 @@
     state.batchCodeActive = false;
     el.batchCodeInput.value = "";
     if (state.tool === "point") setTool("pan");
+    saveData();
     setStatus("批量点位编号已清空。");
     updateBatchCodePanel();
     updateModeHint();
@@ -938,6 +1345,7 @@
       state.batchCodeActive = false;
       if (state.tool === "point") setTool("pan");
     }
+    saveData();
     updateBatchCodePanel();
     updateModeHint();
     return code;
@@ -981,7 +1389,7 @@
           }
         }
       } else if (numIdx === 0 && segments.length > 1) {
-        // Number at beginning: match suffix (e.g., "#号卸载线")
+        // Number at beginning: match suffix (e.g., "#鍙峰嵏杞界嚎")
         var textSuffix = buildAutoName(segments.slice(1), separators.slice(1));
         for (var j = 0; j < state.annotations.length; j++) {
           var code2 = state.annotations[j].code || "";
@@ -1074,7 +1482,7 @@
     // Preview bar
     var previewBar = document.createElement("div");
     previewBar.style.cssText = "padding:6px 10px;margin-bottom:8px;border-radius:6px;background:#e8f5f3;font-size:13px;text-align:center;";
-    previewBar.innerHTML = '<span style="color:var(--muted);">下次点击将生成：</span> <strong style="font-family:monospace;font-size:15px;color:var(--accent);">' + previewNextName() + '</strong>';
+    previewBar.innerHTML = '<span style="color:var(--muted);">下一次点击将生成：</span> <strong style="font-family:monospace;font-size:15px;color:var(--accent);">' + previewNextName() + '</strong>';
     container.appendChild(previewBar);
 
     var segs = state.autoNameSegments;
@@ -1153,12 +1561,12 @@
           }; })(i, key));
           lbl.appendChild(inp); setDiv.appendChild(lbl);
         }
-        addSet("步长", "step", 1);
+        addSet("姝ラ暱", "step", 1);
 
-        // Combined: "到 # 进 # 位"
+        // repaired invalid text literal
         (function() {
           var lbl = document.createElement("label"); lbl.style.whiteSpace = "nowrap";
-          lbl.appendChild(document.createTextNode("到"));
+          lbl.appendChild(document.createTextNode(""));
           var inpAt = document.createElement("input"); inpAt.type = "number"; inpAt.min = "0";
           inpAt.value = seg.carryAt != null ? seg.carryAt : "";
           inpAt.style.width = "38px";
@@ -1167,7 +1575,7 @@
             syncTemplateFromSegments(); saveAutoNameSettings(); updateAutoNamePreview();
           }; })(i));
           lbl.appendChild(inpAt);
-          lbl.appendChild(document.createTextNode("进"));
+          lbl.appendChild(document.createTextNode(""));
           var inpAmt = document.createElement("input"); inpAmt.type = "number"; inpAmt.min = "1";
           inpAmt.value = seg.carryAmount || 1;
           inpAmt.style.width = "38px";
@@ -1176,14 +1584,14 @@
             syncTemplateFromSegments(); saveAutoNameSettings(); updateAutoNamePreview();
           }; })(i));
           lbl.appendChild(inpAmt);
-          lbl.appendChild(document.createTextNode("位"));
+          lbl.appendChild(document.createTextNode(""));
           setDiv.appendChild(lbl);
         })();
 
-        // Combined row: 初始值 + 主递增
+        // Combined row: initial value + primary increment
         (function() {
           var lbl = document.createElement("label"); lbl.style.whiteSpace = "nowrap";
-          lbl.appendChild(document.createTextNode("初始值"));
+          lbl.appendChild(document.createTextNode(""));
           var inpReset = document.createElement("input"); inpReset.type = "number"; inpReset.min = "0";
           inpReset.value = seg.resetTo != null ? seg.resetTo : 0;
           inpReset.style.width = "38px";
@@ -1200,7 +1608,7 @@
             updateAutoNamePreview();
           }; })(i));
           lbl.appendChild(primCheck);
-          lbl.appendChild(document.createTextNode("递增段"));
+          lbl.appendChild(document.createTextNode(""));
           setDiv.appendChild(lbl);
         })();
 
@@ -1239,7 +1647,7 @@
     }
     container.appendChild(row);
 
-    var addBtn = document.createElement("button"); addBtn.className = "auto-name-add-seg"; addBtn.textContent = "+ 段";
+    var addBtn = "";
     addBtn.addEventListener("click", function() {
       segs.push({ type: "text", value: "new" }); seps.push(".");
       fixPrimary(); syncTemplateFromSegments(); saveAutoNameSettings(); renderAutoNameAdvanced();
@@ -1252,7 +1660,7 @@
     var bar = el.autoNameAdvanced.querySelector("div");
     if (bar) {
       var next = previewNextName();
-      bar.innerHTML = '<span style="color:var(--muted);">下次点击将生成：</span> <strong style="font-family:monospace;font-size:15px;color:var(--accent);">' + (next || "—") + '</strong>';
+      bar.innerHTML = "";
     }
 
     // Update 5-name preview below template input
@@ -1310,6 +1718,7 @@
     return {
       ...annotation,
       type: "point",
+      special: false,
       groupId: state.groups.some((group) => group.id === annotation.groupId) ? annotation.groupId : "",
       points: [{
         x: clamp((bounds.minX + bounds.maxX) / 2, 0, 1),
@@ -1456,8 +1865,8 @@
     if (state.batchCodeActive && state.tool === "point") {
       var nextCode = previewBatchCode();
       el.modeHint.textContent = nextCode
-        ? "批量点位中：下一点 " + nextCode + "，剩余 " + batchCodeRemaining() + " 个。"
-        : "批量编号已用完。";
+        ? "设备轮询中：下一点 " + nextCode + "，剩余 " + batchCodeRemaining() + " 个。"
+        : "设备清单已轮询完成。";
       return;
     }
     el.modeHint.textContent = {
@@ -1466,27 +1875,186 @@
     }[state.tool];
   }
 
+  function ensureDrawingTotalCount() {
+    if (el.drawingTotalCount) return el.drawingTotalCount;
+    var title = el.drawingList && el.drawingList.previousElementSibling;
+    if (!title) return null;
+    title.classList.add("drawing-section-title");
+    var total = document.createElement("small");
+    total.id = "drawingTotalCount";
+    title.appendChild(total);
+    el.drawingTotalCount = total;
+    return total;
+  }
+
+  function reorderDrawing(sourceId, targetId, insertAfter) {
+    if (!sourceId || !targetId || sourceId === targetId) return;
+    var sourceIndex = drawings.findIndex(function(drawing) { return drawing.id === sourceId; });
+    if (sourceIndex === -1) return;
+    var moved = drawings.splice(sourceIndex, 1)[0];
+    var targetIndex = drawings.findIndex(function(drawing) { return drawing.id === targetId; });
+    if (targetIndex === -1) {
+      drawings.splice(sourceIndex, 0, moved);
+      return;
+    }
+    drawings.splice(targetIndex + (insertAfter ? 1 : 0), 0, moved);
+    customDrawingOrder = drawings.map(function(drawing) { return drawing.id; });
+    saveData();
+    renderDrawingList();
+    setStatus("图纸顺序已调整。");
+  }
+
+  function clearDrawingDropHints() {
+    if (!el.drawingList) return;
+    el.drawingList.querySelectorAll(".dragging, .drop-before, .drop-after").forEach((item) => {
+      item.classList.remove("dragging", "drop-before", "drop-after");
+    });
+  }
+
+  function updateDrawingDropTarget(clientX, clientY) {
+    clearDrawingDropHints();
+    if (!drawingPointerDrag) return;
+    drawingPointerDrag.sourceButton.classList.add("dragging");
+    var target = document.elementFromPoint(clientX, clientY);
+    var item = target && target.closest ? target.closest(".drawing-item") : null;
+    if (!item || !el.drawingList.contains(item) || item.dataset.id === drawingPointerDrag.id) {
+      drawingPointerDrag.targetId = "";
+      return;
+    }
+    var rect = item.getBoundingClientRect();
+    drawingPointerDrag.targetId = item.dataset.id;
+    drawingPointerDrag.insertAfter = clientY > rect.top + rect.height / 2;
+    item.classList.toggle("drop-before", !drawingPointerDrag.insertAfter);
+    item.classList.toggle("drop-after", drawingPointerDrag.insertAfter);
+  }
+
+  function beginDrawingPointerDrag(event, drawingId, button) {
+    if (event.button !== 0) return;
+    if (drawingPointerDrag) return;
+    var moveEventName = event.type === "mousedown" ? "mousemove" : "pointermove";
+    var upEventName = event.type === "mousedown" ? "mouseup" : "pointerup";
+    drawingPointerDrag = {
+      id: drawingId,
+      sourceButton: button,
+      startX: event.clientX,
+      startY: event.clientY,
+      active: false,
+      targetId: "",
+      insertAfter: false
+    };
+
+    function onMove(moveEvent) {
+      if (!drawingPointerDrag) return;
+      var dx = moveEvent.clientX - drawingPointerDrag.startX;
+      var dy = moveEvent.clientY - drawingPointerDrag.startY;
+      if (!drawingPointerDrag.active && Math.hypot(dx, dy) < 6) return;
+      drawingPointerDrag.active = true;
+      moveEvent.preventDefault();
+      updateDrawingDropTarget(moveEvent.clientX, moveEvent.clientY);
+    }
+
+    function onUp(upEvent) {
+      window.removeEventListener(moveEventName, onMove);
+      window.removeEventListener(upEventName, onUp);
+      var drag = drawingPointerDrag;
+      drawingPointerDrag = null;
+      clearDrawingDropHints();
+      if (!drag || !drag.active) return;
+      upEvent.preventDefault();
+      suppressDrawingClick = true;
+      window.setTimeout(function() { suppressDrawingClick = false; }, 0);
+      reorderDrawing(drag.id, drag.targetId, drag.insertAfter);
+    }
+
+    window.addEventListener(moveEventName, onMove);
+    window.addEventListener(upEventName, onUp);
+  }
+
   function renderDrawingList() {
     el.drawingList.innerHTML = "";
+    let totalVisibleCount = 0;
     for (const drawing of drawings) {
-      const count = state.annotations.filter((item) => item.drawingId === drawing.id).length;
+      const count = drawingAnnotationCount(drawing.id);
+      const prefixCount = state.renderPrefix ? drawingPrefixAnnotationCount(drawing.id, state.renderPrefix) : 0;
+      totalVisibleCount += state.renderPrefix ? prefixCount : count;
+      const countLabel = state.renderPrefix
+        ? `${prefixCount} 个标注`
+        : `${count} 个标注`;
       const button = document.createElement("button");
       button.type = "button";
       button.className = "drawing-item";
       button.dataset.id = drawing.id;
-      button.innerHTML = `${escapeHtml(drawing.title)}<small>${count} 个标注</small>`;
+      button.innerHTML = `${escapeHtml(drawing.title)}<small>${countLabel}</small>`;
       button.classList.toggle("active", drawing.id === state.currentDrawingId);
-      button.addEventListener("click", () => switchDrawing(drawing.id));
+      button.addEventListener("dragstart", (event) => {
+        event.dataTransfer.setData("text/plain", drawing.id);
+        event.dataTransfer.effectAllowed = "move";
+        button.classList.add("dragging");
+      });
+      button.addEventListener("dragend", () => {
+        button.classList.remove("dragging");
+        el.drawingList.querySelectorAll(".drop-before, .drop-after").forEach((item) => {
+          item.classList.remove("drop-before", "drop-after");
+        });
+      });
+      button.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        var rect = button.getBoundingClientRect();
+        var insertAfter = event.clientY > rect.top + rect.height / 2;
+        event.dataTransfer.dropEffect = "move";
+        button.classList.toggle("drop-before", !insertAfter);
+        button.classList.toggle("drop-after", insertAfter);
+      });
+      button.addEventListener("dragleave", () => {
+        button.classList.remove("drop-before", "drop-after");
+      });
+      button.addEventListener("drop", (event) => {
+        event.preventDefault();
+        button.classList.remove("drop-before", "drop-after");
+        var sourceId = event.dataTransfer.getData("text/plain");
+        var rect = button.getBoundingClientRect();
+        reorderDrawing(sourceId, drawing.id, event.clientY > rect.top + rect.height / 2);
+      });
+      button.addEventListener("pointerdown", (event) => beginDrawingPointerDrag(event, drawing.id, button));
+      button.addEventListener("mousedown", (event) => beginDrawingPointerDrag(event, drawing.id, button));
+      button.addEventListener("click", (event) => {
+        if (suppressDrawingClick) {
+          event.preventDefault();
+          return;
+        }
+        switchDrawing(drawing.id);
+      });
       el.drawingList.appendChild(button);
     }
+    const total = ensureDrawingTotalCount();
+    if (total) total.textContent = `总计 ${totalVisibleCount} 个`;
   }
 
   function switchDrawing(drawingId, options = {}) {
     if (!drawings.some((drawing) => drawing.id === drawingId)) drawingId = drawings[0]?.id || "";
+    var changedDrawing = state.currentDrawingId !== drawingId;
+    var previousActiveGroup = state.groups.find(function(group) {
+      return group.id === state.activeGroupId;
+    }) || null;
     state.currentDrawingId = drawingId;
     state.selectedId = options.selectedId || null;
     state.highlightedId = options.highlightedId || null;
-    if (!groupVisibleInDrawing(state.activeGroupId, drawingId)) state.activeGroupId = "";
+    if (!options.selectedId && !options.highlightedId) state.renderPrefix = "";
+    if (changedDrawing) {
+      syncAutoGroupsForDrawing(drawingId);
+      collapseGroupsInDrawing(drawingId);
+      var matchingGroup = !options.selectedId && !options.highlightedId
+        ? matchingAutoGroupInDrawing(previousActiveGroup, drawingId)
+        : null;
+      if (matchingGroup) {
+        state.activeGroupId = matchingGroup.id;
+        state.renderPrefix = matchingGroup.autoKey || "";
+      } else {
+        state.activeGroupId = "";
+      }
+    } else if (!groupVisibleInDrawing(state.activeGroupId, drawingId)) {
+      state.activeGroupId = "";
+    }
     const drawing = currentDrawing();
     if (!drawing) return;
     var prevSrc = el.image.getAttribute("src") || "";
@@ -1523,6 +2091,8 @@
     renderDrawingList();
     renderMinimapList();
     updateEditor();
+    if (changedDrawing && options.save !== false) saveData();
+    saveCurrentDrawingLocal();
   }
 
   function renderOverlay(options = {}) {
@@ -1544,8 +2114,11 @@
       drawAnnotation(annotation);
     }
 
-    const count = currentAnnotations().length;
-    el.annotationCount.textContent = `${count} 个标注`;
+    const visibleCount = currentAnnotations().length;
+    const totalCount = currentDrawingAnnotations().length;
+    el.annotationCount.textContent = state.renderPrefix
+      ? `${state.renderPrefix} ${visibleCount}/${totalCount} 个标注`
+      : `${visibleCount}/${totalCount} 个标注`;
     if (options.renderMinimap !== false) renderMinimap();
   }
 
@@ -1556,8 +2129,11 @@
   function renderMinimap(options = {}) {
     if (!state.imageSize.width || !el.minimapBody) return;
     const annotations = currentAnnotations();
+    const totalAnnotations = currentDrawingAnnotations();
     if (el.minimapCount) {
-      el.minimapCount.textContent = `${annotations.length} 个点位`;
+      el.minimapCount.textContent = state.renderPrefix
+        ? `${state.renderPrefix} ${annotations.length}/${totalAnnotations.length} 个点位`
+        : `${annotations.length}/${totalAnnotations.length} 个点位`;
     }
 
     el.minimap.classList.toggle("empty", annotations.length === 0);
@@ -1652,7 +2228,8 @@
 
   function renderMinimapList() {
     if (!el.minimapList) return;
-    const annotations = currentAnnotations();
+    if (syncAutoGroupsForAllDrawings()) saveData();
+    const annotations = currentDrawingAnnotations();
     el.minimapList.innerHTML = "";
 
     var usedGroupIds = new Set();
@@ -1740,32 +2317,45 @@
     }
 
     for (const [groupId, groupedAnnotations] of groupBuckets) {
+      const groupMeta = state.groups.find((group) => group.id === groupId);
+      const isAutoGroup = Boolean(groupMeta && groupMeta.isAuto);
       if (groupedAnnotations.length === 0 && groupId !== "") {
         const section = document.createElement("section");
         section.className = "minimap-group";
         const heading = document.createElement("div");
         heading.className = "minimap-group-title";
+        heading.classList.toggle("auto-group", isAutoGroup);
         heading.dataset.groupId = groupId;
         const groupInput = document.createElement("input");
         groupInput.type = "text";
         groupInput.className = "minimap-group-name";
         groupInput.value = groupTitle(groupId);
-        groupInput.setAttribute("aria-label", "分组名称");
-        groupInput.addEventListener("pointerdown", function(ev) { ev.stopPropagation(); });
-        groupInput.addEventListener("click", function(ev) { ev.stopPropagation(); });
-        groupInput.addEventListener("dblclick", function(ev) { ev.stopPropagation(); groupInput.select(); });
+        groupInput.readOnly = true;
+        groupInput.placeholder = isAutoGroup ? groupMeta.autoKey : "";
+        groupInput.setAttribute("aria-label", isAutoGroup ? "默认分组别名" : "分组名称");
+        groupInput.addEventListener("pointerdown", function(ev) {
+          if (groupInput.readOnly) return;
+          ev.stopPropagation();
+        });
+        groupInput.addEventListener("click", function(ev) {
+          if (!groupInput.readOnly) ev.stopPropagation();
+        });
+        groupInput.addEventListener("dblclick", function(ev) { ev.stopPropagation(); enableGroupRename(groupInput); });
         groupInput.addEventListener("change", function() {
-          if (renameGroup(groupId, groupInput.value)) {
-            groupInput.value = groupTitle(groupId);
-          }
+          finishGroupRename(groupId, groupInput);
         });
         groupInput.addEventListener("blur", function() {
-          if (renameGroup(groupId, groupInput.value)) {
-            groupInput.value = groupTitle(groupId);
-          }
+          finishGroupRename(groupId, groupInput);
         });
         groupInput.addEventListener("keydown", function(ev) {
           if (ev.key === "Enter") { ev.preventDefault(); groupInput.blur(); }
+          if (ev.key === "Escape") {
+            ev.preventDefault();
+            groupInput.value = groupTitle(groupId);
+            groupInput.readOnly = true;
+            groupInput.classList.remove("editing");
+            groupInput.blur();
+          }
         });
         const spacer = document.createElement("span");
         spacer.className = "minimap-group-spacer";
@@ -1773,27 +2363,21 @@
         heading.appendChild(spacer);
         heading.appendChild(groupInput);
         const count = document.createElement("small");
-        count.textContent = "0 个点位";
+        count.textContent = groupSubtitle(groupMeta, 0);
         heading.appendChild(count);
-
-        // Delete group button
-        var delBtn = document.createElement("button");
-        delBtn.type = "button";
-        delBtn.className = "minimap-item-delete";
-        delBtn.textContent = "删";
-        delBtn.style.cssText = "min-height:22px;padding:0 5px;font-size:10px;";
-        delBtn.addEventListener("pointerdown", function(ev) { ev.stopPropagation(); });
-        delBtn.addEventListener("click", function(ev) {
-          ev.stopPropagation();
-          if (ev.shiftKey) {
-            deleteGroupWithAnnotations(groupId);
-          } else {
-            deleteGroup(groupId);
-          }
-        });
-        if (groupId) heading.appendChild(delBtn);
+        if (isAutoGroup && hasGroupAlias(groupMeta)) {
+          const badge = document.createElement("span");
+          badge.className = "minimap-group-badge";
+          badge.textContent = groupMeta.autoKey;
+          heading.appendChild(badge);
+        }
 
         heading.addEventListener("pointerdown", (event) => event.stopPropagation());
+        heading.addEventListener("contextmenu", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          showGroupContextMenu(event, groupId, groupInput);
+        });
         heading.addEventListener("click", (event) => {
           event.stopPropagation();
           if (state.selectedForGroupMove.size > 0) {
@@ -1801,6 +2385,9 @@
             return;
           }
           state.activeGroupId = groupId;
+          state.renderPrefix = groupMeta && groupMeta.autoKey ? groupMeta.autoKey : "";
+          renderDrawingList();
+          renderOverlay();
           renderMinimapList();
           setStatus("当前分组：" + groupTitle(groupId));
         });
@@ -1824,10 +2411,12 @@
 
       const section = document.createElement("section");
       section.className = "minimap-group";
+      section.classList.toggle("auto-group", isAutoGroup);
       section.classList.toggle("collapsed", Boolean(state.collapsedGroups[groupId]));
 
       const heading = document.createElement("div");
       heading.className = "minimap-group-title";
+      heading.classList.toggle("auto-group", isAutoGroup);
       heading.classList.toggle("active", state.activeGroupId === groupId);
       heading.dataset.groupId = groupId;
       const toggleButton = document.createElement("button");
@@ -1847,47 +2436,53 @@
       groupInput.type = "text";
       groupInput.className = "minimap-group-name";
       groupInput.value = groupTitle(groupId);
-      groupInput.setAttribute("aria-label", "分组名称");
-      groupInput.addEventListener("pointerdown", function(ev) { ev.stopPropagation(); });
-      groupInput.addEventListener("click", function(ev) { ev.stopPropagation(); });
-      groupInput.addEventListener("dblclick", function(ev) { ev.stopPropagation(); groupInput.select(); });
+      groupInput.readOnly = true;
+      groupInput.placeholder = isAutoGroup && groupMeta ? groupMeta.autoKey : "";
+      groupInput.setAttribute("aria-label", isAutoGroup ? "默认分组别名" : "分组名称");
+      groupInput.addEventListener("pointerdown", function(ev) {
+        if (groupInput.readOnly) return;
+        ev.stopPropagation();
+      });
+      groupInput.addEventListener("click", function(ev) {
+        if (!groupInput.readOnly) ev.stopPropagation();
+      });
+      groupInput.addEventListener("dblclick", function(ev) { ev.stopPropagation(); enableGroupRename(groupInput); });
       groupInput.addEventListener("change", function() {
-        renameGroup(groupId, groupInput.value);
+        finishGroupRename(groupId, groupInput);
       });
       groupInput.addEventListener("blur", function() {
-        if (renameGroup(groupId, groupInput.value)) {
-          groupInput.value = groupTitle(groupId);
-        }
+        finishGroupRename(groupId, groupInput);
       });
       groupInput.addEventListener("keydown", function(ev) {
         if (ev.key === "Enter") { ev.preventDefault(); groupInput.blur(); }
+        if (ev.key === "Escape") {
+          ev.preventDefault();
+          groupInput.value = groupTitle(groupId);
+          groupInput.readOnly = true;
+          groupInput.classList.remove("editing");
+          groupInput.blur();
+        }
       });
 
       const count = document.createElement("small");
-      count.textContent = `${groupedAnnotations.length} 个点位`;
+      count.textContent = groupSubtitle(groupMeta, groupedAnnotations.length);
 
       heading.appendChild(toggleButton);
       heading.appendChild(groupInput);
       heading.appendChild(count);
-
-      // Delete group button
-      var delGrpBtn = document.createElement("button");
-      delGrpBtn.type = "button";
-      delGrpBtn.className = "minimap-item-delete";
-      delGrpBtn.textContent = "删";
-      delGrpBtn.style.cssText = "min-height:22px;padding:0 5px;font-size:10px;";
-      delGrpBtn.addEventListener("pointerdown", function(ev) { ev.stopPropagation(); });
-      delGrpBtn.addEventListener("click", function(ev) {
-        ev.stopPropagation();
-        if (ev.shiftKey) {
-          deleteGroupWithAnnotations(groupId);
-        } else {
-          deleteGroup(groupId);
-        }
-      });
-      if (groupId) heading.appendChild(delGrpBtn);
+      if (isAutoGroup && groupMeta && hasGroupAlias(groupMeta)) {
+        const badge = document.createElement("span");
+        badge.className = "minimap-group-badge";
+        badge.textContent = groupMeta.autoKey;
+        heading.appendChild(badge);
+      }
 
       heading.addEventListener("pointerdown", (event) => event.stopPropagation());
+      heading.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        showGroupContextMenu(event, groupId, groupInput);
+      });
       heading.addEventListener("click", (event) => {
         event.stopPropagation();
         if (state.selectedForGroupMove.size > 0) {
@@ -1895,6 +2490,9 @@
           return;
         }
         state.activeGroupId = groupId;
+        state.renderPrefix = groupMeta && groupMeta.autoKey ? groupMeta.autoKey : "";
+        renderDrawingList();
+        renderOverlay();
         renderMinimapList();
         setStatus(groupId ? `当前分组：${groupTitle(groupId)}` : "当前分组：未分组");
       });
@@ -1917,6 +2515,11 @@
         continue;
       }
 
+      if (state.renderPrefix && (!groupMeta || groupMeta.autoKey !== state.renderPrefix)) {
+        el.minimapList.appendChild(section);
+        continue;
+      }
+
       for (const annotation of groupedAnnotations) {
         runningIndex += 1;
         visibleAnnotationIds.push(annotation.id);
@@ -1926,6 +2529,7 @@
       row.draggable = true;
       row.classList.toggle("active", annotation.id === state.selectedId);
       row.classList.toggle("checked", state.selectedForGroupMove.has(annotation.id));
+      row.classList.toggle("special-device", Boolean(annotation.special));
       row.addEventListener("dragstart", (event) => {
         event.stopPropagation();
         if (state.selectedForGroupMove.has(annotation.id)) {
@@ -1986,22 +2590,24 @@
         }
       });
       title.addEventListener("change", () => {
+        syncAutoGroupsForAllDrawings();
         saveData();
         renderDrawingList();
         updateEditor();
-        renderOverlayOnly();
+        renderOverlay();
       });
       title.addEventListener("blur", () => {
+        syncAutoGroupsForAllDrawings();
         saveData();
         renderDrawingList();
         updateEditor();
-        renderOverlayOnly();
+        renderOverlay();
       });
 
       const deleteButton = document.createElement("button");
       deleteButton.type = "button";
       deleteButton.className = "minimap-item-delete";
-      deleteButton.textContent = "删";
+      deleteButton.textContent = "";
       deleteButton.addEventListener("pointerdown", (event) => event.stopPropagation());
       deleteButton.addEventListener("click", (event) => {
         event.stopPropagation();
@@ -2012,11 +2618,81 @@
       row.appendChild(indexBadge);
       row.appendChild(title);
       row.appendChild(deleteButton);
+      if (annotation.special) {
+        const badge = document.createElement("span");
+        badge.className = "special-device-badge";
+        badge.textContent = "特殊";
+        row.appendChild(badge);
+      }
         section.appendChild(row);
       }
 
       el.minimapList.appendChild(section);
     }
+  }
+
+  function hideGroupContextMenu() {
+    var old = document.querySelector(".group-context-menu");
+    if (old) old.remove();
+  }
+
+  function showGroupContextMenu(event, groupId, groupInput) {
+    hideGroupContextMenu();
+    if (!groupId) return;
+    var group = state.groups.find(function(item) { return item.id === groupId; });
+    if (!group) return;
+
+    var menu = document.createElement("div");
+    menu.className = "group-context-menu";
+    menu.style.left = event.clientX + "px";
+    menu.style.top = event.clientY + "px";
+
+    function addItem(label, handler, danger, disabled) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.textContent = label;
+      if (danger) button.className = "danger";
+      button.disabled = Boolean(disabled);
+      button.addEventListener("click", function(ev) {
+        ev.stopPropagation();
+        if (button.disabled) return;
+        hideGroupContextMenu();
+        handler();
+      });
+      menu.appendChild(button);
+    }
+
+    addItem(group.isAuto ? "编辑别名" : "重命名分组", function() {
+      enableGroupRename(groupInput);
+    });
+
+    if (group.isAuto) {
+      addItem("查看当前所有点位", function() {
+        viewAutoGroupAcrossDrawings(groupId);
+      }, false, !group.autoKey);
+      addItem("清空别名", function() {
+        if (!group.alias) return;
+        group.alias = "";
+        saveData();
+        renderMinimapList();
+        setStatus("默认分组别名已清空。");
+      }, false, !hasGroupAlias(group));
+      addItem("删除本组点位", function() {
+        deleteGroupWithAnnotations(groupId);
+      }, true);
+    } else {
+      addItem("删除分组，保留点位", function() {
+        deleteGroup(groupId);
+      });
+      addItem("删除分组和点位", function() {
+        deleteGroupWithAnnotations(groupId);
+      }, true);
+    }
+
+    document.body.appendChild(menu);
+    var rect = menu.getBoundingClientRect();
+    if (rect.right > window.innerWidth) menu.style.left = Math.max(8, window.innerWidth - rect.width - 8) + "px";
+    if (rect.bottom > window.innerHeight) menu.style.top = Math.max(8, window.innerHeight - rect.height - 8) + "px";
   }
 
   function markActiveMinimapItem(id) {
@@ -2045,6 +2721,7 @@
     shape.classList.add("annotation-shape", "point-shape");
     shape.classList.toggle("selected", isSelected);
     shape.classList.toggle("highlight", isHighlighted);
+    shape.classList.toggle("special-device", Boolean(annotation.special));
     shape.classList.toggle("compact-focus", isCompactFocus);
     shape.classList.toggle("inactive", state.tool !== "pan");
     shape.dataset.id = annotation.id;
@@ -2076,18 +2753,21 @@
         label.style.fontSize = `${18 / state.transform.scale}px`;
         label.style.strokeWidth = `${5 / state.transform.scale}px`;
       }
-      label.textContent = annotation.code || "未命名";
+      label.textContent = annotationTitle(annotation);
       el.overlay.appendChild(label);
     }
   }
 
   function selectAnnotation(id) {
+    const selected = state.annotations.find((item) => item.id === id);
+    if (!selected) return;
+    window.clearTimeout(focusAnnotation.timer);
     state.selectedId = id;
-    const selected = getSelected();
-    if (selected) {
-      el.pointCode.value = selected.code || "";
-      el.pointNote.value = selected.note || "";
-    }
+    state.highlightedId = null;
+    state.renderPrefix = renderPrefixForAnnotation(selected);
+    renderDrawingList();
+    el.pointCode.value = selected.code || "";
+    el.pointNote.value = selected.note || "";
     updateEditor();
     renderOverlay();
   }
@@ -2109,6 +2789,7 @@
 
   function deleteSelectedAnnotation() {
     if (!state.selectedId) return false;
+    recordUndoSnapshot("删除点位");
     state.selectedForGroupMove.delete(state.selectedId);
     if (state.groupMoveSelectionAnchorId === state.selectedId) state.groupMoveSelectionAnchorId = null;
     state.annotations = state.annotations.filter((annotation) => annotation.id !== state.selectedId);
@@ -2128,6 +2809,7 @@
     const annotation = state.annotations.find((item) => item.id === id);
     if (!annotation) return false;
 
+    recordUndoSnapshot("删除点位");
     state.selectedForGroupMove.delete(id);
     if (state.groupMoveSelectionAnchorId === id) state.groupMoveSelectionAnchorId = null;
     state.annotations = state.annotations.filter((item) => item.id !== id);
@@ -2154,10 +2836,11 @@
     const existing = state.groups.find((group) => group.name === name && groupVisibleInDrawing(group.id, state.currentDrawingId));
     if (existing) {
       el.groupNameInput.value = "";
-      setStatus("分组已存在。");
+      setStatus("分组名已存在。");
       return;
     }
 
+    recordUndoSnapshot("新增分组");
     state.groups.push({
       id: groupUid(),
       name,
@@ -2174,67 +2857,72 @@
     if (!groupId) return;
     var group = state.groups.find(function(g) { return g.id === groupId; });
     if (!group) return;
+    if (group.isAuto) {
+      recordUndoSnapshot("Clear default group alias");
+      group.alias = "";
+      saveData();
+      renderMinimapList();
+      setStatus("Default group alias cleared.");
+      return;
+    }
 
     var count = state.annotations.filter(function(a) { return a.groupId === groupId; }).length;
     var msg = count > 0
-      ? "删除分组 \"" + group.name + "\"？将保留 " + count + " 个标注并移入未分组。"
-      : "删除空分组 \"" + group.name + "\"？";
-
+      ? "Delete group " + group.name + "? " + count + " annotations will move to ungrouped."
+      : "Delete empty group " + group.name + "?";
     if (!window.confirm(msg)) return;
 
-    // Move annotations to ungrouped
+    recordUndoSnapshot("Delete group");
     for (var i = 0; i < state.annotations.length; i++) {
       if (state.annotations[i].groupId === groupId) {
         state.annotations[i].groupId = "";
         state.annotations[i].updatedAt = new Date().toISOString();
       }
     }
-
-    // Remove group
     state.groups = state.groups.filter(function(g) { return g.id !== groupId; });
     if (state.activeGroupId === groupId) state.activeGroupId = "";
-
     saveData();
     renderDrawingList();
     renderMinimapList();
-    setStatus("分组已删除。" + (count > 0 ? " 标注已移入未分组。" : ""));
+    setStatus("Group deleted." + (count > 0 ? " Annotations moved to ungrouped." : ""));
   }
 
   function deleteGroupWithAnnotations(groupId) {
     if (!groupId) return;
     var group = state.groups.find(function(g) { return g.id === groupId; });
     if (!group) return;
-
+    if (group.isAuto) {
+      setStatus("Default groups are generated from point codes.");
+      return;
+    }
     var count = state.annotations.filter(function(a) { return a.groupId === groupId; }).length;
-    var msg = "删除分组 \"" + group.name + "\" 及其中 " + count + " 个标注？此操作不可恢复。";
-
+    var msg = "Delete group " + group.name + " and " + count + " annotations? This cannot be undone.";
     if (!window.confirm(msg)) return;
 
-    // Delete annotations in group
+    recordUndoSnapshot("Delete group and annotations");
     state.annotations = state.annotations.filter(function(a) { return a.groupId !== groupId; });
-
-    // Remove group
     state.groups = state.groups.filter(function(g) { return g.id !== groupId; });
     if (state.activeGroupId === groupId) state.activeGroupId = "";
-
     resetAutoNameInit();
     initAutoNameFromExisting();
     saveData();
     renderDrawingList();
     renderMinimapList();
     updateEditor();
-    setStatus("分组及 " + count + " 个标注已删除。");
+    setStatus("Group and " + count + " annotations deleted.");
   }
 
   function moveAnnotationToGroup(annotationId, groupId) {
     const annotation = state.annotations.find((item) => item.id === annotationId);
     if (!annotation) return;
+    if ((annotation.groupId || "") === (groupId || "")) return;
 
+    recordUndoSnapshot("移动点位分组");
     annotation.groupId = groupId;
     annotation.updatedAt = new Date().toISOString();
     saveData();
     renderMinimapList();
-    setStatus(groupId ? `已移入 ${groupTitle(groupId)}。` : "已移入未分组。");
+    setStatus("点位已移动到分组。");
   }
 
   function moveDraggedAnnotationsToGroup(annotationId, groupId) {
@@ -2247,6 +2935,8 @@
 
   function moveSelectedAnnotationsToGroup(groupId) {
     const ids = new Set(state.selectedForGroupMove);
+    if (ids.size === 0) return;
+    recordUndoSnapshot("批量移动点位分组");
     let moved = 0;
     for (const annotation of state.annotations) {
       if (!ids.has(annotation.id)) continue;
@@ -2258,7 +2948,7 @@
     state.groupMoveSelectionAnchorId = null;
     saveData();
     renderMinimapList();
-    setStatus(groupId ? `已将 ${moved} 个点位移入 ${groupTitle(groupId)}。` : `已将 ${moved} 个点位移入未分组。`);
+    setStatus(groupId ? `Moved ${moved} points to ${groupTitle(groupId)}.` : `Moved ${moved} points to ungrouped.`);
   }
 
   function updateEditor() {
@@ -2275,13 +2965,16 @@
     var now = new Date().toISOString();
     var code = nextPointCode();
     if (code === null) return;
+    var autoGroup = ensureAutoGroup(firstFourDigits(code), state.currentDrawingId);
+    recordUndoSnapshot("新增点位");
     var annotation = {
       id: uid(),
       drawingId: state.currentDrawingId,
       type: type,
-      groupId: state.activeGroupId,
+      groupId: autoGroup ? autoGroup.id : state.activeGroupId,
       code: code,
       note: "",
+      special: false,
       points: imagePoints.map(normalize),
       createdAt: now,
       updatedAt: now
@@ -2292,9 +2985,9 @@
     renderOverlay();
     selectAnnotation(annotation.id);
     if (code && state.lastPointCodeSource === "batch" && state.batchCodeIndex >= state.batchCodes.length) {
-      setStatus("已新增: " + code + "。批量编号已全部添加。");
+      setStatus("已新增 " + code + "。批量编号已全部添加。");
     } else {
-      setStatus(code ? "已新增: " + code : "已新增点位。");
+      setStatus(code ? "已新增 " + code : "已新增点位。");
     }
   }
 
@@ -2305,7 +2998,8 @@
       type: "move-annotation",
       id,
       start,
-      originalPoints: annotation.points.map((point) => ({ ...point }))
+      originalPoints: annotation.points.map((point) => ({ ...point })),
+      undoSnapshot: createUndoSnapshot("移动点位")
     };
     el.overlay.setPointerCapture(event.pointerId);
   }
@@ -2407,6 +3101,11 @@
     if (!state.drag) return;
 
     if (state.drag.type === "move-annotation") {
+      const annotation = state.annotations.find((item) => item.id === state.drag.id);
+      if (annotation && pointsChanged(state.drag.originalPoints, annotation.points)) {
+        undoStack.push(state.drag.undoSnapshot);
+        if (undoStack.length > MAX_UNDO_STEPS) undoStack.shift();
+      }
       saveData();
       renderDrawingList();
     }
@@ -2434,6 +3133,12 @@
 
   function handleGlobalKeydown(event) {
     if (isTypingTarget(event.target)) return;
+
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
+      event.preventDefault();
+      undoLastAction();
+      return;
+    }
 
     if (event.key === "Escape") {
       event.preventDefault();
@@ -2516,7 +3221,20 @@
   function search() {
     const query = el.searchInput.value.trim().toLowerCase();
     el.searchResults.innerHTML = "";
-    if (!query) return;
+    if (!query) {
+      state.renderPrefix = "";
+      renderDrawingList();
+      renderOverlay();
+      renderMinimapList();
+      return;
+    }
+    const queryPrefix = firstFourDigits(query);
+    if (queryPrefix && queryPrefix !== state.renderPrefix) {
+      state.renderPrefix = queryPrefix;
+      renderDrawingList();
+      renderOverlay();
+      renderMinimapList();
+    }
 
     const startsWithMatches = [];
     const includesMatches = [];
@@ -2542,7 +3260,7 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "result-item";
-      button.innerHTML = `${escapeHtml(match.code || "未命名")}<small>${escapeHtml(drawing.title)} ${escapeHtml(match.note || "")}</small>`;
+      button.innerHTML = `${escapeHtml(match.code || "未命名")}<small>${escapeHtml(drawing ? drawing.title : "")} ${escapeHtml(match.note || "")}</small>`;
       button.addEventListener("click", () => focusAnnotation(match.id));
       el.searchResults.appendChild(button);
     }
@@ -2559,16 +3277,16 @@
     if (!annotation) return;
     state.selectedId = id;
     state.highlightedId = id;
+    state.renderPrefix = renderPrefixForAnnotation(annotation);
+    renderDrawingList();
     if (annotation.drawingId !== state.currentDrawingId) {
       switchDrawing(annotation.drawingId, { selectedId: id, highlightedId: id });
       return;
     }
+    zoomToAnnotation(annotation);
     if (isCompactViewport()) {
-      zoomToAnnotation(annotation);
       el.searchInput.blur();
       el.searchResults.innerHTML = "";
-    } else {
-      centerOnAnnotation(annotation);
     }
     updateEditor();
     renderOverlay();
@@ -2608,6 +3326,8 @@
 
     state.selectedId = id;
     state.highlightedId = id;
+    state.renderPrefix = renderPrefixForAnnotation(annotation);
+    renderDrawingList();
     zoomToAnnotation(annotation);
     updateEditor();
     renderOverlay();
@@ -2622,8 +3342,11 @@
     const annotation = state.annotations.find((item) => item.id === id);
     if (!annotation) return;
 
+    window.clearTimeout(focusAnnotation.timer);
     state.selectedId = id;
-    state.highlightedId = id;
+    state.highlightedId = null;
+    state.renderPrefix = renderPrefixForAnnotation(annotation);
+    renderDrawingList();
 
     const bounds = annotationBounds(annotation);
     const center = annotationCenter(annotation);
@@ -2669,6 +3392,7 @@
         if (!Array.isArray(parsed.annotations)) {
           throw new Error("Invalid annotations");
         }
+        recordUndoSnapshot("导入数据");
         state.groups = Array.isArray(parsed.groups) ? parsed.groups.map(toGroup).filter(Boolean) : [];
         state.collapsedGroups = parsed.collapsedGroups && typeof parsed.collapsedGroups === "object" ? parsed.collapsedGroups : {};
         state.annotations = parsed.annotations.map(toPointAnnotation).filter(Boolean);
@@ -2681,7 +3405,7 @@
         updateEditor();
         resetAutoNameInit();
         initAutoNameFromExisting();
-        setStatus("导入完成。");
+        setStatus("数据已导入。");
       } catch (error) {
         setStatus("导入失败，请检查 JSON 文件。");
       }
@@ -2950,12 +3674,12 @@
     });
     el.docList.innerHTML = "";
     el.docsCurrentFolder.textContent = folderTitle(state.activeFolderId);
-    el.docsCount.textContent = `${docs.length} 篇文档`;
+    el.docsCount.textContent = `${docs.length} docs`;
 
     if (docs.length === 0) {
       const empty = document.createElement("div");
       empty.className = "minimap-empty";
-      empty.textContent = "当前目录暂无文档";
+      empty.textContent = "No documents in this folder.";
       el.docList.appendChild(empty);
       return;
     }
@@ -2982,7 +3706,7 @@
     if (!doc) return;
 
     el.docTitleInput.value = doc.title;
-    el.docMeta.textContent = `${doc.sourceFileName || "DOCX"} · ${folderTitle(doc.folderId)} · ${new Date(doc.createdAt).toLocaleString()}`;
+    el.docMeta.textContent = `${doc.sourceFileName || "DOCX"} / ${folderTitle(doc.folderId)} / ${new Date(doc.createdAt).toLocaleString()}`;
     el.docBody.innerHTML = doc.htmlContent || `<div class="doc-body-placeholder">文档已加入资料库，但暂未解析出可显示正文。</div>`;
   }
 
@@ -3005,7 +3729,7 @@
       return f.name === name && (f.parentId || "") === parentId;
     });
     if (duplicate) {
-      setStatus("同级目录已存在同名文件夹 \"" + name + "\"，请更换名称。");
+      setStatus("同级目录已存在。");
       el.folderNameInput.select();
       return;
     }
@@ -3029,7 +3753,7 @@
     el.folderNameInput.value = "";
     saveDocsData();
     renderDocsModule();
-    setStatus("目录 \"" + name + "\" 已创建。");
+    setStatus("目录已新增。");
   }
 
   function collectFolderIds(folderId) {
@@ -3050,7 +3774,7 @@
   function deleteDocFolder(folderId) {
     const folder = state.docFolders.find((item) => item.id === folderId);
     if (!folder) return;
-    if (!confirm("删除目录 \"" + folder.name + "\" 及其子目录和文档？此操作不可恢复。")) return;
+    // repaired invalid text literal
     const ids = collectFolderIds(folderId);
 
     // Delete from server disk
@@ -3076,30 +3800,20 @@
       state.selectedDocId = existingSample.id;
       saveDocsData();
       renderDocsModule();
-      setStatus("示例资料已存在。");
+      setStatus("Sample docs already exist.");
       return;
     }
-
     const now = new Date().toISOString();
     const folderByPath = new Map();
-
     const getFolder = (path) => {
       const parts = path.split("/").filter(Boolean);
       let parentId = "";
       let key = "";
       for (const part of parts) {
-        key = key ? `${key}/${part}` : part;
-        let folder = folderByPath.get(key);
+        key = key ? key + "/" + part : part;
+        let folder = folderByPath.get(key) || state.docFolders.find((item) => item.name === part && (item.parentId || "") === parentId);
         if (!folder) {
-          folder = state.docFolders.find((item) => item.name === part && (item.parentId || "") === parentId);
-        }
-        if (!folder) {
-          folder = {
-            id: folderUid(),
-            name: part,
-            parentId,
-            createdAt: now
-          };
+          folder = { id: folderUid(), name: part, parentId, createdAt: now };
           state.docFolders.push(folder);
         }
         folderByPath.set(key, folder);
@@ -3107,125 +3821,24 @@
       }
       return parentId;
     };
-
-    const sampleFolders = [
-      "机械系统/输送机结构/皮带机",
-      "机械系统/输送机结构/转弯机",
-      "机械系统/分拣机构/摆轮分拣",
-      "机械系统/分拣机构/滑槽与导流",
-      "机械系统/维护保养/日检",
-      "机械系统/维护保养/月检",
-      "电气系统/动力配电/MCC柜",
-      "电气系统/动力配电/变频器",
-      "电气系统/控制回路/传感器",
-      "电气系统/控制回路/急停与安全",
-      "电气系统/故障排查",
-      "IT系统/PLC与网络/PLC点表",
-      "IT系统/PLC与网络/工业交换机",
-      "IT系统/上位机与数据库/报警系统",
-      "IT系统/上位机与数据库/日志与追踪",
-      "IT系统/接口联动/航班与行李数据接口",
-      "IT系统/接口联动/点位编号联动",
-      "运行培训/新员工入门",
-      "运行培训/应急处置"
-    ];
-    sampleFolders.forEach(getFolder);
-
-    const makeDoc = ({ title, folderPath, tags, sections }) => {
-      const textContent = sections.map((section) => `${section.heading}\n${section.items.join("\n")}`).join("\n\n");
-      const htmlContent = sections.map((section) => {
-        const items = section.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
-        return `<section class="sample-doc-section"><h3>${escapeHtml(section.heading)}</h3><ul>${items}</ul></section>`;
-      }).join("");
-      return {
-        id: docUid(),
-        title,
-        folderId: getFolder(folderPath),
-        sourceFileName: `${title}.示例资料`,
-        size: 0,
-        type: "sample",
-        linkedPointIds: [],
-        tags: [seedTag].concat(tags || []),
-        createdAt: now,
-        updatedAt: now,
-        htmlContent,
-        textContent,
-        parseStatus: "sample"
-      };
-    };
-
+    ["Mechanical/Conveyor/Belt", "Mechanical/Maintenance/Daily", "Electrical/Power/MCC", "IT/PLC/Network"].forEach(getFolder);
+    const makeDoc = (title, folderPath, items) => ({
+      id: docUid(), title, folderId: getFolder(folderPath), sourceFileName: title + ".sample", size: 0, type: "sample",
+      linkedPointIds: [], tags: [seedTag], createdAt: now, updatedAt: now,
+      htmlContent: '<section class="sample-doc-section"><h3>Reference</h3><ul>' + items.map((item) => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul></section>",
+      textContent: items.join("\n"), parseStatus: "sample"
+    });
     const samples = [
-      makeDoc({
-        title: "皮带机日检流程",
-        folderPath: "机械系统/维护保养/日检",
-        tags: ["机械", "日检", "皮带机"],
-        sections: [
-          { heading: "检查重点", items: ["确认皮带无明显跑偏、撕裂、起毛。", "检查托辊转动是否顺畅，异常噪声需记录点位。", "观察张紧机构刻度，偏离基准线时提交维护单。"] },
-          { heading: "记录要求", items: ["巡检表记录设备编号、点位编号、发现时间。", "需要拍照时优先拍摄故障点和周边参照物。"] }
-        ]
-      }),
-      makeDoc({
-        title: "转弯机常见机械故障",
-        folderPath: "机械系统/输送机结构/转弯机",
-        tags: ["机械", "转弯机"],
-        sections: [
-          { heading: "常见现象", items: ["行李在内侧堆积，多与导向条磨损或速度差异常有关。", "转弯段抖动时先排查支撑脚、链条张力和轴承温度。"] },
-          { heading: "处理建议", items: ["停机后清理异物，再手动盘车确认无卡滞。", "重复故障需关联最近三次报警和现场点位。"] }
-        ]
-      }),
-      makeDoc({
-        title: "MCC柜送电检查",
-        folderPath: "电气系统/动力配电/MCC柜",
-        tags: ["电气", "MCC"],
-        sections: [
-          { heading: "送电前", items: ["核对柜号、回路名称、挂牌状态。", "确认断路器位置、接地状态、绝缘测试记录齐全。"] },
-          { heading: "送电后", items: ["观察三相电压、电流是否平衡。", "确认柜门指示灯与上位机状态一致。"] }
-        ]
-      }),
-      makeDoc({
-        title: "光电传感器清洁与校准",
-        folderPath: "电气系统/控制回路/传感器",
-        tags: ["电气", "传感器"],
-        sections: [
-          { heading: "清洁", items: ["使用无尘布清理镜面，避免直接刮擦。", "检查支架是否松动，光轴偏移会导致误触发。"] },
-          { heading: "校准", items: ["用标准行李箱通过测试，观察输入点变化。", "校准完成后在培训资料中记录对应点位。"] }
-        ]
-      }),
-      makeDoc({
-        title: "PLC网络排查步骤",
-        folderPath: "IT系统/PLC与网络/工业交换机",
-        tags: ["IT", "PLC", "网络"],
-        sections: [
-          { heading: "基础检查", items: ["确认交换机电源、端口灯、光纤收发状态。", "检查PLC、远程IO、上位机的IP规划是否冲突。"] },
-          { heading: "定位方法", items: ["先按区域隔离，再按链路逐段恢复。", "保留ping、日志截图和点位影响范围。"] }
-        ]
-      }),
-      makeDoc({
-        title: "上位机报警确认流程",
-        folderPath: "IT系统/上位机与数据库/报警系统",
-        tags: ["IT", "上位机", "报警"],
-        sections: [
-          { heading: "确认顺序", items: ["先确认报警等级，再确认影响区域。", "同一设备重复报警时，检查数据库写入和PLC通信状态。"] },
-          { heading: "交接要求", items: ["未恢复报警必须进入交接班记录。", "重大报警需关联现场点位和处置人员。"] }
-        ]
-      }),
-      makeDoc({
-        title: "点位编号与培训资料联动示例",
-        folderPath: "IT系统/接口联动/点位编号联动",
-        tags: ["联动", "点位"],
-        sections: [
-          { heading: "设计思路", items: ["培训资料可以绑定点位编号，点击资料时定位到图纸点位。", "点位详情页可反向显示相关操作规程、故障案例和巡检表。"] },
-          { heading: "示例字段", items: ["pointCode: BHS-MECH-CV-031", "docId: PLC网络排查步骤", "relationType: 故障排查"] }
-        ]
-      })
+      makeDoc("Belt daily inspection", "Mechanical/Maintenance/Daily", ["Check belt tracking, rollers, and tension.", "Record device code and point code."]),
+      makeDoc("MCC power-on checklist", "Electrical/Power/MCC", ["Confirm cabinet number and circuit name.", "Check voltage and HMI status after power-on."]),
+      makeDoc("PLC network troubleshooting", "IT/PLC/Network", ["Check switch power, ports, and fiber status.", "Isolate by area and record affected points."])
     ];
-
     state.docs.push(...samples);
     state.activeFolderId = samples[0].folderId;
     state.selectedDocId = samples[0].id;
     saveDocsData();
     renderDocsModule();
-    setStatus("示例资料已生成。");
+    setStatus("Sample docs created.");
   }
 
   async function uploadDocs(files) {
@@ -3319,7 +3932,7 @@
   }
 
   async function parseDocxFile(file) {
-    if (!window.JSZip) throw new Error("JSZip 未加载");
+    // repaired invalid text literal
     var zip, documentXml;
     try {
       zip = await window.JSZip.loadAsync(await file.arrayBuffer());
@@ -3336,7 +3949,7 @@
     }
     if (!documentXml) {
       var allFiles = Object.keys(zip.files).slice(0, 20).join(", ");
-      throw new Error("未找到 Word 正文。（文件内容: " + allFiles + "）");
+      // repaired invalid text literal
     }
 
     // Extract images from word/media/
@@ -3364,7 +3977,7 @@
     var text = paragraphs.join("\n");
     var html = paragraphs.length
       ? paragraphs.map(function(line) { return "<p>" + escapeHtml(line) + "</p>"; }).join("")
-      : "<div class=\"doc-body-placeholder\">Word 文件已读取，但没有提取到正文。</div>";
+      : "<div class=\"doc-body-placeholder\">Word 鏂囦欢宸茶鍙栵紝浣嗘病鏈夋彁鍙栧埌姝ｆ枃銆?/div>";
 
     // Replace image references with base64 img tags
     for (var key in imageMap) {
@@ -3383,7 +3996,7 @@
   }
 
   async function parsePptxFile(file) {
-    if (!window.JSZip) throw new Error("JSZip 未加载");
+    // repaired invalid text literal
     const zip = await window.JSZip.loadAsync(await file.arrayBuffer());
     const slideFiles = Object.keys(zip.files)
       .filter((name) => /^ppt\/slides\/slide\d+\.xml$/.test(name))
@@ -3397,15 +4010,15 @@
     const filtered = slides.filter(Boolean);
     return {
       html: filtered.length
-        ? filtered.map((text, index) => `<section class="doc-slide"><h3>第 ${index + 1} 页</h3><p>${escapeHtml(text)}</p></section>`).join("")
-        : `<div class="doc-body-placeholder">PPT 文件已读取，但没有提取到文字。</div>`,
+        ? filtered.map((text, index) => `<section class="doc-slide"><h3>绗?${index + 1} 椤?/h3><p>${escapeHtml(text)}</p></section>`).join("")
+        : `<div class="doc-body-placeholder">PPT 鏂囦欢宸茶鍙栵紝浣嗘病鏈夋彁鍙栧埌鏂囧瓧銆?/div>`,
       text: filtered.join("\n"),
       status: "parsed"
     };
   }
 
   async function parseSpreadsheetFile(file) {
-    if (!window.XLSX) throw new Error("XLSX 未加载");
+    // repaired invalid text literal
     const workbook = window.XLSX.read(await file.arrayBuffer(), { type: "array" });
     const parts = [];
     const textParts = [];
@@ -3435,8 +4048,8 @@
     const filtered = pages.filter(Boolean);
     return {
       html: filtered.length
-        ? filtered.map((text, index) => `<section class="doc-pdf-page"><h3>第 ${index + 1} 页</h3><p>${escapeHtml(text)}</p></section>`).join("")
-        : `<div class="doc-body-placeholder">PDF 已读取，但没有提取到文字。</div>`,
+        ? filtered.map((text, index) => `<section class="doc-pdf-page"><h3>绗?${index + 1} 椤?/h3><p>${escapeHtml(text)}</p></section>`).join("")
+        : `<div class="doc-body-placeholder">PDF 宸茶鍙栵紝浣嗘病鏈夋彁鍙栧埌鏂囧瓧銆?/div>`,
       text: filtered.join("\n"),
       status: "parsed"
     };
@@ -3459,7 +4072,7 @@
   }
 
   function rowsToTable(rows) {
-    if (!rows.length) return `<div class="doc-body-placeholder">空工作表</div>`;
+    if (!rows.length) return `<div class="doc-body-placeholder">绌哄伐浣滆〃</div>`;
     return `<div class="doc-table-wrap"><table class="doc-table">${rows.map((row) => {
       return `<tr>${row.map((cell) => `<td>${escapeHtml(cell == null ? "" : cell)}</td>`).join("")}</tr>`;
     }).join("")}</table></div>`;
@@ -3468,7 +4081,7 @@
   function updateSelectedDocTitle() {
     const doc = state.docs.find((item) => item.id === state.selectedDocId);
     if (!doc) return;
-    doc.title = el.docTitleInput.value.trim() || doc.sourceFileName || "未命名文档";
+    // repaired invalid text literal
     doc.updatedAt = new Date().toISOString();
     saveDocsData();
     renderDocsModule();
@@ -3478,7 +4091,7 @@
     if (!state.selectedDocId) return;
     var doc = state.docs.find(function(d) { return d.id === state.selectedDocId; });
     if (!doc) return;
-    if (!confirm("删除文档 \"" + doc.title + "\"？此操作不可恢复。")) return;
+    // repaired invalid text literal
 
     // Delete from server disk
     if (syncState.enabled) {
@@ -3549,6 +4162,10 @@
       }
     }, true);
     document.addEventListener("pointerdown", (event) => {
+      if (event.target instanceof Element && event.target.closest(".group-context-menu")) {
+        return;
+      }
+      hideGroupContextMenu();
       if (
         event.target instanceof Element &&
         (event.target === el.searchInput ||
@@ -3558,6 +4175,9 @@
         return;
       }
       hideSearchResults();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") hideGroupContextMenu();
     });
     el.setBackupButton.addEventListener("click", setBackupFile);
     el.groupNameInput.addEventListener("keydown", (event) => {
@@ -3593,17 +4213,14 @@
       var advanced = el.autoNameAdvanced;
       var isHidden = advanced.hidden;
       advanced.hidden = !isHidden;
-      el.autoNameExpandBtn.textContent = isHidden ? "▲" : "⚙";
+      el.autoNameExpandBtn.textContent = isHidden ? "Hide" : "Settings";
       if (isHidden) renderAutoNameAdvanced();
     });
 
     el.autoNameTemplate.addEventListener("change", applyTemplateChange);
     el.autoNameTemplate.addEventListener("blur", applyTemplateChange);
     el.batchCodeInput.addEventListener("input", function() {
-      if (!state.batchCodeActive) {
-        state.batchCodes = [];
-        state.batchCodeIndex = 0;
-      }
+      syncBatchCodesFromInput({ pickFirstMissing: true });
       updateBatchCodePanel();
     });
     el.startBatchCodeButton.addEventListener("click", startOrPauseBatchCodes);
@@ -3657,8 +4274,12 @@
       event.preventDefault();
       const selected = getSelected();
       if (!selected) return;
-      selected.code = el.pointCode.value.trim();
-      selected.note = el.pointNote.value.trim();
+      const nextCode = el.pointCode.value.trim();
+      const nextNote = el.pointNote.value.trim();
+      if (selected.code === nextCode && selected.note === nextNote) return;
+      recordUndoSnapshot("编辑点位");
+      selected.code = nextCode;
+      selected.note = nextNote;
       selected.updatedAt = new Date().toISOString();
       saveData();
       renderDrawingList();
@@ -3682,8 +4303,7 @@
       if (state.highlightedId) {
         const annotation = state.annotations.find((item) => item.id === state.highlightedId);
         if (annotation) {
-          if (isCompactViewport()) zoomToAnnotation(annotation);
-          else centerOnAnnotation(annotation);
+          zoomToAnnotation(annotation);
         }
         window.clearTimeout(focusAnnotation.timer);
         focusAnnotation.timer = window.setTimeout(() => {
@@ -3723,12 +4343,15 @@
 
   await loadDrawingManifest();
   loadData();
+  restoreCurrentDrawingLocal();
   loadAutoNameSettings();
   loadDocsData();
   await loadRepoTrainingDocs();
   bindEvents();
   startManifestSync();
   await initSync();
+  syncAutoGroupsForAllDrawings();
+  restoreCurrentDrawingLocal();
   renderDrawingList();
   renderDocsModule();
 
