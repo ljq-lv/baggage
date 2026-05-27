@@ -745,6 +745,54 @@ textarea {
   text-align: center;
 }
 
+.mobile-overview {
+  display: none;
+}
+
+.mobile-plc-list {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 2px 0 1px;
+  scrollbar-width: none;
+}
+
+.mobile-plc-list::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-plc-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 28px;
+  padding: 0 8px;
+  border-radius: 7px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.mobile-plc-chip strong {
+  font-size: 12px;
+}
+
+.mobile-plc-chip small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.mobile-plc-chip.active {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+  background: #e8f5f3;
+}
+
+.mobile-plc-empty {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .minimap-group {
   display: grid;
   gap: 4px;
@@ -1280,6 +1328,12 @@ input.minimap-group-name.editing:focus {
   /* Show only search panel + drawing list */
   .sidebar .panel:first-of-type { margin-bottom: 4px; }
   .sidebar .panel:nth-of-type(n+3) { display: none; }
+  .sidebar .panel.mobile-overview {
+    display: block;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid var(--line);
+  }
 
   .search-row { gap: 4px; }
   .search-row input { padding: 6px 8px; font-size: 13px; }

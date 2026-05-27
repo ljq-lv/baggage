@@ -83,6 +83,7 @@
     addGroupButton: document.getElementById("addGroupButton"),
     minimapList: document.getElementById("minimapList"),
     minimapOverlay: document.getElementById("minimapOverlay"),
+    mobilePlcList: document.getElementById("mobilePlcList"),
     setBackupButton: document.getElementById("setBackupButton"),
     batchCodeInput: document.getElementById("batchCodeInput"),
     batchCodePreview: document.getElementById("batchCodePreview"),
@@ -467,6 +468,9 @@
         image: item.image && item.image.includes("/")
           ? item.image
           : `assets/floors/${item.image}`,
+        mobileImage: item.image && item.image.includes("/")
+          ? item.image
+          : `assets/floors/mobile/${item.image}`,
         pdf: item.pdf || "",
         width: item.width,
         height: item.height
@@ -884,6 +888,63 @@
     renderOverlay();
     renderMinimapList();
     setStatus("正在查看 " + groupTitle(group.id) + " 在所有图层的点位数量。");
+  }
+
+  function renderMobilePlcList() {
+    if (!el.mobilePlcList) return;
+    el.mobilePlcList.innerHTML = "";
+    var annotations = currentDrawingAnnotations();
+    var byPrefix = new Map();
+    annotations.forEach(function(annotation) {
+      var prefix = firstFourDigits(annotation.code);
+      if (!prefix) return;
+      byPrefix.set(prefix, (byPrefix.get(prefix) || 0) + 1);
+    });
+
+    if (byPrefix.size === 0) {
+      var empty = document.createElement("span");
+      empty.className = "mobile-plc-empty";
+      empty.textContent = "暂无 PLC";
+      el.mobilePlcList.appendChild(empty);
+      return;
+    }
+
+    var allButton = document.createElement("button");
+    allButton.type = "button";
+    allButton.className = "mobile-plc-chip";
+    allButton.classList.toggle("active", !state.renderPrefix);
+    allButton.textContent = "全部";
+    allButton.addEventListener("click", function() {
+      state.renderPrefix = "";
+      state.activeGroupId = "";
+      renderDrawingList();
+      renderOverlay();
+      renderMinimapList();
+    });
+    el.mobilePlcList.appendChild(allButton);
+
+    Array.from(byPrefix.entries()).sort(function(a, b) {
+      return a[0].localeCompare(b[0], "zh-CN", { numeric: true });
+    }).forEach(function(entry) {
+      var prefix = entry[0];
+      var count = entry[1];
+      var group = state.groups.find(function(item) {
+        return item.isAuto && item.autoKey === prefix && groupVisibleInDrawing(item.id, state.currentDrawingId);
+      });
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "mobile-plc-chip";
+      button.classList.toggle("active", state.renderPrefix === prefix);
+      button.innerHTML = "<strong>" + escapeHtml(groupDisplayName(group) || prefix) + "</strong><small>" + count + "</small>";
+      button.addEventListener("click", function() {
+        state.renderPrefix = prefix;
+        state.activeGroupId = group ? group.id : "";
+        renderDrawingList();
+        renderOverlay();
+        renderMinimapList();
+      });
+      el.mobilePlcList.appendChild(button);
+    });
   }
 
   function renderPrefixForAnnotation(annotation) {
@@ -2075,8 +2136,9 @@
     }
     const drawing = currentDrawing();
     if (!drawing) return;
+    var imageSrc = isCompactViewport() && drawing.mobileImage ? drawing.mobileImage : drawing.image;
     var prevSrc = el.image.getAttribute("src") || "";
-    var srcChanged = prevSrc !== drawing.image;
+    var srcChanged = prevSrc !== imageSrc;
     if (srcChanged) {
       el.currentDrawingTitle.textContent = drawing.title + " 加载中...";
       el.viewport.classList.add("loading");
@@ -2089,8 +2151,10 @@
     } else {
       el.currentDrawingTitle.textContent = drawing.title;
     }
-    el.image.src = drawing.image;
-    el.minimapImage.src = drawing.image;
+    el.image.dataset.fallbackSrc = drawing.image || "";
+    el.minimapImage.dataset.fallbackSrc = drawing.image || "";
+    el.image.src = imageSrc;
+    el.minimapImage.src = imageSrc;
     // Fallback: poll image.complete in case load event doesn't fire (mobile Safari)
     if (srcChanged) {
       var pollCount = 0;
@@ -2248,6 +2312,7 @@
   function renderMinimapList() {
     if (!el.minimapList) return;
     if (syncAutoGroupsForAllDrawings()) saveData();
+    renderMobilePlcList();
     const annotations = currentDrawingAnnotations();
     el.minimapList.innerHTML = "";
 
@@ -4296,6 +4361,12 @@
       renderMinimap();
     });
     el.image.addEventListener("error", () => {
+      var fallbackSrc = el.image.dataset.fallbackSrc || "";
+      if (fallbackSrc && el.image.getAttribute("src") !== fallbackSrc) {
+        el.image.src = fallbackSrc;
+        el.minimapImage.src = fallbackSrc;
+        return;
+      }
       clearTimeout(el.image._loadTimeout);
       el.viewport.classList.remove("loading");
       el.currentDrawingTitle.textContent = (currentDrawing()?.title || "") + " 加载失败";
@@ -4326,16 +4397,22 @@
   loadData();
   restoreCurrentDrawingLocal();
   loadDocsData();
-  await loadRepoTrainingDocs();
   bindEvents();
   startManifestSync();
-  await initSync();
-  syncAutoGroupsForAllDrawings();
-  restoreCurrentDrawingLocal();
   renderDrawingList();
   renderDocsModule();
-
   switchDrawing(state.currentDrawingId);
   setTool("pan");
   updateBatchCodePanel();
+  initSync().then(function() {
+    syncAutoGroupsForAllDrawings();
+    restoreCurrentDrawingLocal();
+    renderDrawingList();
+    renderDocsModule();
+    switchDrawing(state.currentDrawingId, { save: false });
+    updateBatchCodePanel();
+  });
+  loadRepoTrainingDocs().then(function(changed) {
+    if (changed) renderDocsModule();
+  });
 })();
