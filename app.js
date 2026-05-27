@@ -2311,6 +2311,10 @@
 
   function renderMinimapList() {
     if (!el.minimapList) return;
+    if (isCompactViewport()) {
+      renderMobilePlcList();
+      return;
+    }
     if (syncAutoGroupsForAllDrawings()) saveData();
     renderMobilePlcList();
     const annotations = currentDrawingAnnotations();
@@ -2810,6 +2814,7 @@
       event.stopPropagation();
       event.preventDefault();
       selectAnnotation(annotation.id);
+      if (isCompactViewport()) return;
       if (state.tool !== "pan") return;
       beginMoveAnnotation(event, annotation.id);
     });
