@@ -25,6 +25,9 @@ const drawings = Array.isArray(points.drawings) ? points.drawings : [];
 const collapsedGroups = points.collapsedGroups && typeof points.collapsedGroups === "object"
   ? points.collapsedGroups
   : {};
+const groupSortOrders = points.groupSortOrders && typeof points.groupSortOrders === "object"
+  ? points.groupSortOrders
+  : {};
 
 await mkdir(drawingsDir, { recursive: true });
 
@@ -67,6 +70,7 @@ await writeFile(
     drawings,
     groups,
     collapsedGroups,
+    groupSortOrders,
     counts,
     totalAnnotations: annotations.length,
     searchIndex: "data/search-index.json",

@@ -4,9 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>行李输送机点位查找</title>
-    <link rel="stylesheet" href="styles.css?v=20260528-plc-batch-check">
+    <link rel="stylesheet" href="styles.css?v=20260529-group-sort">
   </head>
-  <body>
+  <body class="auth-locked">
+    <section id="accessGate" class="access-gate" aria-label="访问口令">
+      <form id="accessForm" class="access-card">
+        <h1>行李培训</h1>
+        <p>请输入访问口令</p>
+        <input id="accessCode" type="password" autocomplete="current-password" autofocus>
+        <button type="submit" class="primary">进入</button>
+        <div id="accessError" class="access-error" aria-live="polite"></div>
+      </form>
+    </section>
     <header class="module-nav" aria-label="培训网站模块">
       <div>
         <strong>行李培训</strong>
@@ -59,6 +68,23 @@
             <input id="showLabels" type="checkbox">
             <span>显示点位名称</span>
           </label>
+          <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--line);">
+          <div class="duplicate-panel">
+            <div class="duplicate-head">
+              <strong>重复点位检查</strong>
+              <span id="duplicateSummary">未检查</span>
+            </div>
+            <button id="findDuplicatesButton" type="button" class="wide-action">查找跨图层重复点位</button>
+            <div id="duplicateList" class="duplicate-list" aria-label="跨图层重复点位"></div>
+          </div>
+          <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--line);">
+          <div class="plc-task-panel">
+            <div class="plc-task-head">
+              <strong>PLC任务进度</strong>
+              <span id="plcTaskSummary">0/0</span>
+            </div>
+            <div id="plcTaskList" class="plc-task-list" aria-label="PLC任务进度"></div>
+          </div>
           <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--line);">
           <div class="batch-code-panel">
             <label class="field-label" for="batchCodeInput">批量点位编号</label>
@@ -197,6 +223,6 @@
 
     <script src="node_modules/jszip/dist/jszip.min.js"></script>
     <script src="node_modules/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="app.js?v=20260528-plc-batch-check"></script>
+    <script src="app.js?v=20260529-floor2-markup-2"></script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-27T09:58:04.103Z",
+  "generatedAt": "2026-05-29T15:15:48.961Z",
   "drawings": [
     {
       "id": "f1",
@@ -14,7 +14,7 @@
       "id": "f2",
       "title": "2层",
       "pdf": "2层布局图.pdf",
-      "image": "f2.jpg",
+      "image": "f2.jpg?v=20260529-floor2-markup-2",
       "pages": 1,
       "width": 3600,
       "height": 2547
