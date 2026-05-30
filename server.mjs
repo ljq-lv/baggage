@@ -404,7 +404,7 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`Baggage Point Finder running at http://localhost:${port}`);
+  console.log(`行李智查 running at http://localhost:${port}`);
   console.log(`Mode: ${cloudMode ? "CLOUD (read-only)" : "LOCAL (read-write)"}`);
   console.log(`Floor PDFs: ${pdfDir}`);
   console.log(`Training docs: ${trainingDir}`);

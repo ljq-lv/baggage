@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: baggage-point-finder
+    name: baggage-smart-search
     env: node
     buildCommand: npm install
     startCommand: node server.mjs

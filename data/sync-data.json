@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-30T18:46:15.748Z",
+  "updatedAt": "2026-05-30T18:57:44.260Z",
   "data": {
     "version": 1,
     "points": {
@@ -1527,7 +1527,7 @@
         "auto-f4-3381": true,
         "auto-f4-3382": true,
         "auto-f1-3166": true,
-        "auto-b1-3166": true,
+        "auto-b1-3166": false,
         "auto-b1-3272": true,
         "auto-f1-3455": true,
         "auto-b1-3455": true,

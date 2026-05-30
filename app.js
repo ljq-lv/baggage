@@ -67,6 +67,7 @@
     tool: "pan",
     annotationsVisible: true,
     labelsVisible: false,
+    deviceInfoVisible: true,
     annotations: [],
     groups: [],
     collapsedGroups: {},
@@ -883,6 +884,27 @@
     return match ? match[0] : "";
   }
 
+  function compareDeviceCodes(a, b) {
+    var codeA = String(a || "");
+    var codeB = String(b || "");
+    var segsA = codeA.split(".");
+    var segsB = codeB.split(".");
+    var maxLen = Math.max(segsA.length, segsB.length);
+    for (var i = 0; i < maxLen; i++) {
+      var rawA = i < segsA.length ? segsA[i] : "";
+      var rawB = i < segsB.length ? segsB[i] : "";
+      var numA = rawA === "" ? -1 : Number(rawA);
+      var numB = rawB === "" ? -1 : Number(rawB);
+      var numericA = rawA !== "" && Number.isFinite(numA);
+      var numericB = rawB !== "" && Number.isFinite(numB);
+      if (numericA && numericB && numA !== numB) return numA - numB;
+      if (numericA !== numericB) return numericA ? -1 : 1;
+      var textCompare = rawA.localeCompare(rawB, "zh-CN", { numeric: true });
+      if (textCompare !== 0) return textCompare;
+    }
+    return codeA.localeCompare(codeB, "zh-CN", { numeric: true });
+  }
+
   function autoGroupUid(drawingId, prefix) {
     return "auto-" + String(drawingId || "").replace(/[^a-z0-9_-]/gi, "-") + "-" + prefix;
   }
@@ -1120,6 +1142,15 @@
     setRenderPrefixes(prefixes, options);
   }
 
+  function clearPlcFilter() {
+    setRenderPrefix("", { render: false });
+    state.activeGroupId = "";
+    renderDrawingList();
+    renderOverlay();
+    renderMobilePlcList();
+    renderMinimapList();
+  }
+
   function currentAnnotations() {
     var annotations = currentDrawingAnnotations();
     if (hasRenderPrefixes()) {
@@ -1168,19 +1199,17 @@
       return;
     }
 
+    var selectedPrefixes = selectedRenderPrefixes();
+    var chipRow = document.createElement("div");
+    chipRow.className = "mobile-plc-chip-row";
+
     var allButton = document.createElement("button");
     allButton.type = "button";
     allButton.className = "mobile-plc-chip";
     allButton.classList.toggle("active", !hasRenderPrefixes());
     allButton.textContent = "全部";
-    allButton.addEventListener("click", function() {
-      setRenderPrefix("", { render: false });
-      state.activeGroupId = "";
-      renderDrawingList();
-      renderOverlay();
-      renderMinimapList();
-    });
-    el.mobilePlcList.appendChild(allButton);
+    allButton.addEventListener("click", clearPlcFilter);
+    chipRow.appendChild(allButton);
 
     Array.from(byPrefix.entries()).sort(function(a, b) {
       return a[0].localeCompare(b[0], "zh-CN", { numeric: true });
@@ -1193,7 +1222,7 @@
       var button = document.createElement("button");
       button.type = "button";
       button.className = "mobile-plc-chip";
-      button.classList.toggle("active", selectedRenderPrefixes().indexOf(prefix) !== -1);
+      button.classList.toggle("active", selectedPrefixes.indexOf(prefix) !== -1);
       button.innerHTML = "<strong>" + escapeHtml(groupDisplayName(group) || prefix) + "</strong><small>" + count + "</small>";
       button.addEventListener("click", function(event) {
         toggleRenderPrefix(prefix, event.ctrlKey || event.metaKey, { render: false });
@@ -1202,8 +1231,39 @@
         renderOverlay();
         renderMinimapList();
       });
-      el.mobilePlcList.appendChild(button);
+      chipRow.appendChild(button);
     });
+    el.mobilePlcList.appendChild(chipRow);
+
+    if (!selectedPrefixes.length) return;
+
+    var selectedAnnotations = annotations.filter(function(annotation) {
+      return selectedPrefixes.indexOf(firstFourDigits(annotation.code)) !== -1;
+    }).sort(function(a, b) {
+      return compareDeviceCodes(annotationTitle(a), annotationTitle(b));
+    });
+    var detail = document.createElement("section");
+    detail.className = "mobile-plc-detail";
+    var title = selectedPrefixes.join("、");
+    detail.innerHTML =
+      "<div class=\"mobile-plc-detail-head\"><strong>" + escapeHtml(title) + "</strong><span>" +
+      selectedAnnotations.length + " 个点位</span></div>";
+    var codeList = document.createElement("div");
+    codeList.className = "mobile-plc-code-list";
+    selectedAnnotations.forEach(function(annotation) {
+      var codeButton = document.createElement("button");
+      codeButton.type = "button";
+      codeButton.className = "mobile-plc-code";
+      codeButton.classList.toggle("active", annotation.id === state.selectedId);
+      codeButton.textContent = annotationTitle(annotation);
+      codeButton.addEventListener("click", function(event) {
+        event.stopPropagation();
+        focusAnnotationFromOverview(annotation.id);
+      });
+      codeList.appendChild(codeButton);
+    });
+    detail.appendChild(codeList);
+    el.mobilePlcList.appendChild(detail);
   }
 
   function renderPrefixForAnnotation(annotation) {
@@ -1666,7 +1726,7 @@
 
   function renderDeviceInfoInto(panel, annotation, compact) {
     if (!panel) return;
-    if (!annotation) {
+    if (!state.deviceInfoVisible || !annotation) {
       panel.hidden = true;
       panel.innerHTML = "";
       return;
@@ -5062,13 +5122,7 @@
     if (el.deleteDocButton && !VIEW_ONLY) el.deleteDocButton.addEventListener("click", deleteSelectedDoc);
     if (el.fitButton) el.fitButton.addEventListener("click", fitToViewport);
     if (el.clearPlcFilterButton) {
-      el.clearPlcFilterButton.addEventListener("click", function() {
-        setRenderPrefix("", { render: false });
-        state.activeGroupId = "";
-        renderDrawingList();
-        renderOverlay();
-        renderMinimapList();
-      });
+      el.clearPlcFilterButton.addEventListener("click", clearPlcFilter);
     }
     if (el.addGroupButton && !VIEW_ONLY) el.addGroupButton.addEventListener("click", (event) => {
       if (event.defaultPrevented) return;
@@ -5145,10 +5199,13 @@
       state.annotationsVisible = el.showAnnotations.checked;
       renderOverlay();
     });
-    el.showLabels.addEventListener("change", () => {
-      state.labelsVisible = el.showLabels.checked;
-      renderOverlay();
-    });
+    if (el.showLabels) {
+      el.showLabels.checked = state.deviceInfoVisible;
+      el.showLabels.addEventListener("change", () => {
+        state.deviceInfoVisible = el.showLabels.checked;
+        renderDeviceInfo(getSelected());
+      });
+    }
     el.viewport.addEventListener("pointerdown", handlePointerDown);
     el.viewport.addEventListener("pointermove", handlePointerMove);
     el.viewport.addEventListener("pointerup", handlePointerUp);

@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>行李输送机点位查找</title>
-    <link rel="stylesheet" href="styles.css?v=20260531-device-info">
+    <title>行李智查</title>
+    <link rel="stylesheet" href="styles.css?v=20260531-device-info-toggle">
   </head>
   <body class="auth-locked">
     <section id="accessGate" class="access-gate" aria-label="访问口令">
       <form id="accessForm" class="access-card">
-        <h1>行李培训</h1>
+        <h1>行李智查</h1>
         <p>请输入访问口令</p>
         <input id="accessCode" type="password" autocomplete="current-password" autofocus>
         <button type="submit" class="primary">进入</button>
@@ -18,7 +18,7 @@
     </section>
     <header class="module-nav" aria-label="培训网站模块">
       <div>
-        <strong>行李培训</strong>
+        <strong>行李智查</strong>
         <span>点位与资料库</span>
       </div>
       <nav>
@@ -30,7 +30,7 @@
     <main id="pointModule" class="app-shell module-panel active">
       <aside class="sidebar" aria-label="图纸与搜索">
         <header class="brand">
-          <h1>行李输送机点位查找</h1>
+          <h1>行李智查</h1>
           <p>本地标注与搜索</p>
         </header>
 
@@ -63,9 +63,9 @@
             <input id="showAnnotations" type="checkbox" checked>
             <span>显示全部标注</span>
           </label>
-          <label class="toggle-row">
-            <input id="showLabels" type="checkbox">
-            <span>显示点位名称</span>
+          <label class="toggle-row detail-name-toggle">
+            <input id="showLabels" type="checkbox" checked>
+            <span>显示设备清单</span>
           </label>
         </section>
         <p id="statusText" class="status-text"></p>
@@ -141,6 +141,6 @@
       </main>
     </section>
 
-    <script src="app.js?v=20260531-device-info"></script>
+    <script src="app.js?v=20260531-device-info-toggle"></script>
   </body>
 </html>
