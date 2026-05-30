@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>行李输送机点位查找</title>
-    <link rel="stylesheet" href="styles.css?v=20260529-group-sort">
+    <link rel="stylesheet" href="styles.css?v=20260531-device-info">
   </head>
   <body class="auth-locked">
     <section id="accessGate" class="access-gate" aria-label="访问口令">
@@ -53,12 +53,11 @@
           <div id="mobilePlcList" class="mobile-plc-list" aria-label="点位总览"></div>
         </section>
 
-        <section class="panel">
-          <div class="section-title">标注工具</div>
-          <div class="tool-grid" role="group" aria-label="标注工具">
-            <button class="tool-button active" type="button" data-tool="pan">拖动</button>
-            <button class="tool-button" type="button" data-tool="point">点标注</button>
+        <section class="panel viewer-tools-panel">
+          <div class="section-title">查看工具</div>
+          <div class="tool-grid viewer-tools" role="group" aria-label="查看工具">
             <button id="fitButton" type="button">适配</button>
+            <button id="clearPlcFilterButton" type="button">全部PLC</button>
           </div>
           <label class="toggle-row">
             <input id="showAnnotations" type="checkbox" checked>
@@ -68,67 +67,8 @@
             <input id="showLabels" type="checkbox">
             <span>显示点位名称</span>
           </label>
-          <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--line);">
-          <div class="duplicate-panel">
-            <div class="duplicate-head">
-              <strong>重复点位检查</strong>
-              <span id="duplicateSummary">未检查</span>
-            </div>
-            <button id="findDuplicatesButton" type="button" class="wide-action">查找跨图层重复点位</button>
-            <div id="duplicateList" class="duplicate-list" aria-label="跨图层重复点位"></div>
-          </div>
-          <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--line);">
-          <div class="plc-task-panel">
-            <div class="plc-task-head">
-              <strong>PLC任务进度</strong>
-              <span id="plcTaskSummary">0/0</span>
-            </div>
-            <div id="plcTaskList" class="plc-task-list" aria-label="PLC任务进度"></div>
-          </div>
-          <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--line);">
-          <div class="batch-code-panel">
-            <label class="field-label" for="batchCodeInput">批量点位编号</label>
-            <textarea id="batchCodeInput" rows="4" placeholder="从 Excel 复制后粘贴，一行一个编号"></textarea>
-            <div id="batchCodePreview" class="batch-code-preview">未导入编号</div>
-            <div id="batchCodeQueue" class="batch-code-queue" aria-label="批量点位匹配列表"></div>
-            <div class="batch-code-actions">
-              <button id="startBatchCodeButton" type="button">开始批量</button>
-              <button id="clearBatchCodeButton" type="button" class="secondary-action">清空</button>
-            </div>
-          </div>
         </section>
-
-        <section class="panel editor-panel">
-          <div class="section-title">当前标注</div>
-          <div id="emptyEditor" class="empty-state">选择或新建一个标注</div>
-          <form id="annotationForm" class="annotation-form" hidden>
-            <label>
-              点位编号
-              <input id="pointCode" type="text" autocomplete="off" required>
-            </label>
-            <label>
-              备注
-              <textarea id="pointNote" rows="3"></textarea>
-            </label>
-            <div class="form-actions">
-              <button id="saveAnnotation" type="submit">保存</button>
-              <button id="deleteAnnotation" type="button" class="danger">删除</button>
-            </div>
-          </form>
-        </section>
-
-        <section class="panel">
-          <div class="section-title">数据</div>
-          <div class="data-actions">
-            <button id="exportButton" type="button">导出备份</button>
-            <label class="file-button">
-              导入JSON
-              <input id="importInput" type="file" accept="application/json,.json">
-            </label>
-            <button id="setBackupButton" type="button" class="wide-action">设置自动备份</button>
-          </div>
-          <p id="statusText" class="status-text"></p>
-        </section>
+        <p id="statusText" class="status-text"></p>
       </aside>
 
       <section class="workspace" aria-label="图纸工作区">
@@ -149,16 +89,14 @@
               <strong>点位总览</strong>
               <span id="minimapCount">0 个点位</span>
             </div>
+            <section id="deviceInfoPanel" class="device-info-panel" hidden></section>
             <div id="minimapBody" class="minimap-body" hidden>
               <img id="minimapImage" alt="" draggable="false">
               <svg id="minimapOverlay" aria-hidden="true"></svg>
             </div>
-            <div class="group-tools" aria-label="分组工具">
-              <input id="groupNameInput" type="text" placeholder="新建分组">
-              <button id="addGroupButton" type="button">新增</button>
-            </div>
             <div id="minimapList" class="minimap-list" aria-label="标注列表"></div>
           </div>
+          <section id="mobileDeviceInfoPanel" class="mobile-device-info-panel" hidden></section>
         </div>
       </section>
     </main>
@@ -169,23 +107,6 @@
           <h2>培训资料</h2>
           <p>按目录整理 Word 文档，后续可关联点位。</p>
         </header>
-
-        <section class="panel">
-          <div class="section-title">新建目录</div>
-          <input id="folderNameInput" type="text" placeholder="目录名称">
-          <select id="folderParentSelect" class="folder-parent-select" aria-label="父级目录"></select>
-          <button id="addFolderButton" class="wide-action" type="button">新增目录</button>
-          <button id="seedDocsButton" class="wide-action secondary-action" type="button">生成示例资料</button>
-        </section>
-
-        <section class="panel">
-          <div class="section-title">上传文档</div>
-          <label class="file-button docs-upload">
-            上传文档
-              <input id="docUploadInput" type="file" accept=".docx,.pdf,.xlsx,.xls,.csv,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple>
-          </label>
-          <p class="docs-hint">仓库 training-docs 目录会自动生成资料目录；这里可补充上传到当前选中的目录。</p>
-        </section>
 
         <section class="panel docs-tree-panel">
           <div class="section-title">目录</div>
@@ -211,7 +132,6 @@
             <div id="docReaderContent" hidden>
               <div class="doc-reader-head">
                 <input id="docTitleInput" type="text" aria-label="文档标题">
-                <button id="deleteDocButton" type="button" class="danger">删除</button>
               </div>
               <div id="docMeta" class="doc-meta"></div>
               <div id="docBody" class="doc-body"></div>
@@ -221,8 +141,6 @@
       </main>
     </section>
 
-    <script src="node_modules/jszip/dist/jszip.min.js"></script>
-    <script src="node_modules/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="app.js?v=20260529-floor2-markup-2"></script>
+    <script src="app.js?v=20260531-device-info"></script>
   </body>
 </html>

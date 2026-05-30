@@ -3,26 +3,11 @@
   const DOCS_KEY = "baggage-training-docs-v1";
   const ACCESS_KEY = STORAGE_KEY + "-access";
   const ACCESS_PASSPHRASE = "GBIAFMOBHS";
+  const DEVICE_INFO_URL = "data/device-info.json";
   const SVG_NS = "http://www.w3.org/2000/svg";
   const RENDER_LIMIT = 200;
+  const VIEW_ONLY = true;
   const FIXED_DRAWING_ORDER = ["f4", "f3", "f2", "f1", "b1", "f3-transfer", "overview-2d", "overview-3d"];
-  const PLC_TASKS = [
-    ["3001", 69], ["3004", 68], ["3061", 179], ["3062", 179], ["3071", 143], ["3072", 141], ["3081", 105],
-    ["3101", 58], ["3103", 54], ["3104", 66], ["3105", 53], ["3130", 113], ["3131", 120],
-    ["3161", 83], ["3162", 72], ["3163", 73], ["3164", 108], ["3165", 40], ["3166", 79],
-    ["3170", 45], ["3190", 125], ["3191", 138], ["3201", 123], ["3202", 93], ["3203", 109],
-    ["3212", 120], ["3213", 106], ["3220", 162], ["3221", 137], ["3222", 68], ["3223", 65],
-    ["3231", 106], ["3232", 112], ["3241", 119], ["3242", 118], ["3243", 125], ["3244", 119],
-    ["3271", 63], ["3272", 103], ["3281", 119], ["3282", 85], ["3283", 90], ["3291", 98],
-    ["3292", 100], ["3301", 128], ["3302", 90], ["3303", 109], ["3310", 63], ["3311", 54],
-    ["3312", 119], ["3313", 102], ["3320", 136], ["3321", 134], ["3322", 65], ["3323", 68],
-    ["3341", 119], ["3342", 103], ["3343", 111], ["3344", 104], ["3371", 123], ["3372", 133],
-    ["3381", 133], ["3382", 118], ["3391", 96], ["3392", 100], ["3401", 14], ["3402", 30],
-    ["3403", 26], ["3404", 27], ["3405", 33], ["3406", 22], ["3407", 31], ["3408", 30],
-    ["3409", 31], ["3451", 17], ["3452", 41], ["3453", 38], ["3454", 34], ["3455", 33],
-    ["3456", 28], ["3457", 33], ["3510", 20], ["3511", 6], ["3512", 6], ["3513", 6],
-    ["3514", 6], ["3515", 6], ["3516", 6]
-  ].map(function(item) { return { prefix: item[0], target: item[1] }; });
 
   const defaultDrawings = [
     { id: "f4", title: "4层", image: "assets/floors/f4.jpg" },
@@ -113,6 +98,11 @@
     activeFolderId: "",
     selectedDocId: null
   };
+  const deviceInfo = {
+    loaded: false,
+    items: {},
+    count: 0
+  };
 
   const el = {
     drawingList: document.getElementById("drawingList"),
@@ -129,6 +119,7 @@
     deleteAnnotation: document.getElementById("deleteAnnotation"),
     exportButton: document.getElementById("exportButton"),
     importInput: document.getElementById("importInput"),
+    clearPlcFilterButton: document.getElementById("clearPlcFilterButton"),
     statusText: document.getElementById("statusText"),
     currentDrawingTitle: document.getElementById("currentDrawingTitle"),
     annotationCount: document.getElementById("annotationCount"),
@@ -145,6 +136,8 @@
     groupNameInput: document.getElementById("groupNameInput"),
     addGroupButton: document.getElementById("addGroupButton"),
     minimapList: document.getElementById("minimapList"),
+    deviceInfoPanel: document.getElementById("deviceInfoPanel"),
+    mobileDeviceInfoPanel: document.getElementById("mobileDeviceInfoPanel"),
     minimapOverlay: document.getElementById("minimapOverlay"),
     mobilePlcList: document.getElementById("mobilePlcList"),
     setBackupButton: document.getElementById("setBackupButton"),
@@ -153,8 +146,6 @@
     batchCodeQueue: document.getElementById("batchCodeQueue"),
     startBatchCodeButton: document.getElementById("startBatchCodeButton"),
     clearBatchCodeButton: document.getElementById("clearBatchCodeButton"),
-    plcTaskSummary: document.getElementById("plcTaskSummary"),
-    plcTaskList: document.getElementById("plcTaskList"),
     findDuplicatesButton: document.getElementById("findDuplicatesButton"),
     duplicateSummary: document.getElementById("duplicateSummary"),
     duplicateList: document.getElementById("duplicateList"),
@@ -476,7 +467,6 @@
       if (!response.ok) return [];
       var payload = await response.json();
       lazyPoints.searchItems = Array.isArray(payload.items) ? payload.items : [];
-      renderPlcTaskProgress();
       return lazyPoints.searchItems;
     } catch (error) {
       console.warn("Search index load failed:", error.message);
@@ -776,6 +766,7 @@
   }
 
   function setStatus(message) {
+    if (!el.statusText) return;
     el.statusText.textContent = message;
     if (message) {
       window.clearTimeout(setStatus.timer);
@@ -1057,114 +1048,6 @@
     return state.annotations.filter(function(annotation) {
       return annotation.drawingId === drawingId && annotationMatchesPrefix(annotation, prefix);
     }).length;
-  }
-
-  function allKnownAnnotationsForProgress() {
-    if (lazyPoints.searchItems && lazyPoints.searchItems.length) return lazyPoints.searchItems;
-    return state.annotations;
-  }
-
-  function plcTaskCounts() {
-    var counts = new Map();
-    allKnownAnnotationsForProgress().forEach(function(annotation) {
-      var prefix = firstFourDigits(annotation && annotation.code);
-      if (!prefix) return;
-      counts.set(prefix, (counts.get(prefix) || 0) + 1);
-    });
-    return counts;
-  }
-
-  function plcTaskStatus(done, target) {
-    if (done > target) return "extra";
-    if (done === target) return "matched";
-    if (done > 0) return "partial";
-    return "not-started";
-  }
-
-  function plcTaskStatusRank(status) {
-    var ranks = {
-      "extra": 0,
-      "partial": 1,
-      "not-started": 2,
-      "matched": 3
-    };
-    return Object.prototype.hasOwnProperty.call(ranks, status) ? ranks[status] : 4;
-  }
-
-  function renderPlcTaskProgress() {
-    if (!el.plcTaskSummary || !el.plcTaskList) return;
-    var counts = plcTaskCounts();
-    var batchTargetPrefix = batchTaskTargetPrefix();
-    var batchTargetItem = null;
-    var selectedPrefixes = selectedRenderPrefixes();
-    var totalTarget = 0;
-    var totalDone = 0;
-    PLC_TASKS.forEach(function(task) {
-      var done = counts.get(task.prefix) || 0;
-      totalTarget += task.target;
-      totalDone += Math.min(done, task.target);
-    });
-    var percent = totalTarget ? Math.round(totalDone * 100 / totalTarget) : 0;
-    el.plcTaskSummary.textContent = selectedPrefixes.length
-      ? "已选 " + selectedPrefixes.length + " / " + totalDone + "/" + totalTarget + " (" + percent + "%)"
-      : totalDone + "/" + totalTarget + " (" + percent + "%)";
-    el.plcTaskList.innerHTML = "";
-
-    PLC_TASKS.map(function(task, index) {
-      var done = counts.get(task.prefix) || 0;
-      return {
-        prefix: task.prefix,
-        target: task.target,
-        done: done,
-        status: plcTaskStatus(done, task.target),
-        index: index
-      };
-    }).sort(function(a, b) {
-      var rankDiff = plcTaskStatusRank(a.status) - plcTaskStatusRank(b.status);
-      if (rankDiff !== 0) return rankDiff;
-      return a.index - b.index;
-    }).forEach(function(task) {
-      var done = task.done;
-      var percentDone = task.target ? Math.min(100, Math.round(done * 100 / task.target)) : 100;
-      var item = document.createElement("button");
-      item.type = "button";
-      item.className = "plc-task-item";
-      item.classList.add(task.status);
-      item.classList.toggle("active", selectedPrefixes.indexOf(task.prefix) !== -1);
-      item.classList.toggle("batch-target", batchTargetPrefix === task.prefix);
-      item.dataset.prefix = task.prefix;
-      item.title = "点击单选，按住 Ctrl 可多选 PLC";
-      item.innerHTML =
-        "<div><strong>" + escapeHtml(task.prefix) + "</strong><small>" + done + "/" + task.target + "</small></div>" +
-        "<span class=\"plc-task-bar\"><i style=\"width:" + percentDone + "%\"></i></span>";
-      if (batchTargetPrefix === task.prefix) batchTargetItem = item;
-      item.addEventListener("click", function(event) {
-        toggleRenderPrefix(task.prefix, event.ctrlKey || event.metaKey, { render: false });
-        var group = state.groups.find(function(groupItem) {
-          return groupItem.isAuto && groupItem.autoKey === task.prefix && groupVisibleInDrawing(groupItem.id, state.currentDrawingId);
-        });
-        state.activeGroupId = group ? group.id : "";
-        renderDrawingList();
-        renderOverlay();
-        renderMinimapList();
-      });
-      el.plcTaskList.appendChild(item);
-    });
-    if (batchTargetItem) centerPlcTaskItem(batchTargetItem);
-  }
-
-  function centerPlcTaskItem(item) {
-    if (!item || !el.plcTaskList) return;
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        var list = el.plcTaskList;
-        var listRect = list.getBoundingClientRect();
-        var itemRect = item.getBoundingClientRect();
-        var itemTopInList = itemRect.top - listRect.top + list.scrollTop;
-        var targetTop = itemTopInList - (list.clientHeight - itemRect.height) / 2;
-        list.scrollTop = clamp(targetTop, 0, list.scrollHeight - list.clientHeight);
-      });
-    });
   }
 
   function selectedRenderPrefixes() {
@@ -1754,6 +1637,71 @@
     return String(value == null ? "" : value).trim();
   }
 
+  function deviceInfoForAnnotation(annotation) {
+    if (!annotation || !deviceInfo.loaded) return null;
+    return deviceInfo.items[normalizeDeviceCode(annotation.code)] || null;
+  }
+
+  async function loadDeviceInfo() {
+    try {
+      var response = await fetch(DEVICE_INFO_URL, { cache: "no-store" });
+      if (!response.ok) return false;
+      var payload = await response.json();
+      deviceInfo.items = payload && payload.items && typeof payload.items === "object" ? payload.items : {};
+      deviceInfo.count = Number(payload && payload.count) || Object.keys(deviceInfo.items).length;
+      deviceInfo.loaded = true;
+      renderDeviceInfo(getSelected());
+      setStatus("设备清单资料已加载：" + deviceInfo.count + " 条。");
+      return true;
+    } catch (error) {
+      console.warn("Device info load failed:", error.message);
+      return false;
+    }
+  }
+
+  function renderDeviceInfo(annotation) {
+    renderDeviceInfoInto(el.deviceInfoPanel, annotation, false);
+    renderDeviceInfoInto(el.mobileDeviceInfoPanel, annotation, true);
+  }
+
+  function renderDeviceInfoInto(panel, annotation, compact) {
+    if (!panel) return;
+    if (!annotation) {
+      panel.hidden = true;
+      panel.innerHTML = "";
+      return;
+    }
+
+    var info = deviceInfoForAnnotation(annotation);
+    var code = annotationTitle(annotation);
+    if (!info) {
+      panel.hidden = false;
+      panel.classList.toggle("missing", true);
+      panel.innerHTML =
+        "<div class=\"device-info-head\"><strong>" + escapeHtml(code) + "</strong><span>无清单匹配</span></div>" +
+        "<p class=\"device-info-empty\">设备总清单中没有完全匹配的点位编号。</p>";
+      return;
+    }
+
+    var fields = Array.isArray(info.fields) ? info.fields : [];
+    var primary = fields.filter(function(field) {
+      return ["设备名称", "规格/型号", "长度（mm）", "宽度（mm)", "速度v(m/sec)", "电机功率P(W)", "标称电流In(A)", "制动", "变频/软启", "皮带类型"].indexOf(field.label) >= 0;
+    });
+    if (!primary.length) primary = fields;
+    if (compact) primary = primary.slice(0, 6);
+
+    panel.hidden = false;
+    panel.classList.toggle("missing", false);
+    panel.innerHTML =
+      "<div class=\"device-info-head\"><strong>" + escapeHtml(info.code || code) + "</strong><span>设备清单</span></div>" +
+      "<dl class=\"device-info-fields\">" +
+      primary.map(function(field) {
+        return "<div><dt>" + escapeHtml(field.label) + "</dt><dd>" + escapeHtml(field.value) + "</dd></div>";
+      }).join("") +
+      "</dl>" +
+      (compact && fields.length > primary.length ? "<p class=\"device-info-empty\">更多字段请在电脑端查看。</p>" : "");
+  }
+
   function allKnownAnnotations() {
     var items = state.annotations.slice();
     if (Array.isArray(lazyPoints.searchItems)) {
@@ -1955,15 +1903,6 @@
     return state.batchCodes[state.batchCodeIndex] || "";
   }
 
-  function batchTaskTargetPrefix() {
-    var code = previewBatchCode();
-    if (!code && state.batchCodes.length) {
-      var clampedIndex = clamp(state.batchCodeIndex || 0, 0, state.batchCodes.length - 1);
-      code = state.batchCodes[clampedIndex] || state.batchCodes[0] || "";
-    }
-    return firstFourDigits(code);
-  }
-
   function batchCodeExists(code) {
     return Boolean(findBatchCodeAnnotation(code));
   }
@@ -2086,18 +2025,15 @@
         ? coverageText + " 批量中：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个"
         : coverageText + " 批量编号已用完";
       renderBatchCodeQueue();
-      renderPlcTaskProgress();
       return;
     }
     if (remaining > 0) {
       el.batchCodePreview.innerHTML = coverageText + " 已暂停：下一个 <code>" + escapeHtml(previewBatchCode()) + "</code>，剩余 " + remaining + " 个";
       renderBatchCodeQueue();
-      renderPlcTaskProgress();
       return;
     }
     el.batchCodePreview.textContent = coverageText || (parsedCount > 0 ? "待开始：" + parsedCount + " 个编号" : "未导入编号");
     renderBatchCodeQueue();
-    renderPlcTaskProgress();
   }
 
   function batchCodeStats() {
@@ -2747,6 +2683,7 @@
   }
 
   function setTool(tool) {
+    if (VIEW_ONLY && tool !== "pan") tool = "pan";
     state.tool = tool;
     state.draft = null;
     el.viewport.classList.toggle("drawing", tool !== "pan");
@@ -2766,7 +2703,7 @@
       return;
     }
     el.modeHint.textContent = {
-      pan: "拖动画布浏览，滚轮缩放。1切换拖动，2切换点标注，F适配。",
+      pan: "拖动画布浏览，滚轮缩放。点击点位可定位，F适配。",
       point: "点击画布添加点标注。Esc取消选择，Delete删除选中。"
     }[state.tool];
   }
@@ -2893,7 +2830,6 @@
     }
     const total = ensureDrawingTotalCount();
     if (total) total.textContent = `总计 ${totalVisibleCount} 个`;
-    renderPlcTaskProgress();
   }
 
   function switchDrawing(drawingId, options = {}) {
@@ -3394,8 +3330,9 @@
         visibleAnnotationIds.push(annotation.id);
       const row = document.createElement("div");
       row.className = "minimap-item";
+      row.classList.toggle("view-only", VIEW_ONLY);
       row.dataset.id = annotation.id;
-      row.draggable = true;
+      row.draggable = !VIEW_ONLY;
       row.classList.toggle("active", annotation.id === state.selectedId);
       row.classList.toggle("checked", state.selectedForGroupMove.has(annotation.id));
       row.classList.toggle("special-device", Boolean(annotation.special));
@@ -3438,6 +3375,7 @@
       const title = document.createElement("input");
       title.className = "minimap-item-title";
       title.value = annotationTitle(annotation);
+      title.readOnly = VIEW_ONLY;
       title.setAttribute("aria-label", "点位名称");
       title.addEventListener("pointerdown", (event) => event.stopPropagation());
       title.addEventListener("dblclick", (event) => {
@@ -3454,6 +3392,7 @@
         selectAnnotationFromList(annotation.id);
       });
       title.addEventListener("input", () => {
+        if (VIEW_ONLY) return;
         var nextCode = title.value.trim();
         title.classList.toggle("invalid", !nextCode);
         if (!nextCode) return;
@@ -3464,6 +3403,7 @@
         }
       });
       title.addEventListener("change", () => {
+        if (VIEW_ONLY) return;
         if (!title.value.trim()) {
           title.value = annotation.code || title.dataset.originalCode || "";
           title.classList.remove("invalid");
@@ -3477,6 +3417,7 @@
         renderOverlay();
       });
       title.addEventListener("blur", () => {
+        if (VIEW_ONLY) return;
         if (!title.value.trim()) {
           title.value = annotation.code || title.dataset.originalCode || "";
           title.classList.remove("invalid");
@@ -3500,10 +3441,10 @@
         deleteAnnotationById(annotation.id);
       });
 
-      row.appendChild(batchCheck);
+      if (!VIEW_ONLY) row.appendChild(batchCheck);
       row.appendChild(indexBadge);
       row.appendChild(title);
-      row.appendChild(deleteButton);
+      if (!VIEW_ONLY) row.appendChild(deleteButton);
       if (annotation.special) {
         const badge = document.createElement("span");
         badge.className = "special-device-badge";
@@ -3551,6 +3492,14 @@
     addItem("恢复数字排序", function() {
       resetCurrentGroupSortOrder();
     }, false, !state.groupSortOrders[state.currentDrawingId]);
+
+    if (VIEW_ONLY) {
+      document.body.appendChild(menu);
+      var viewRect = menu.getBoundingClientRect();
+      if (viewRect.right > window.innerWidth) menu.style.left = Math.max(8, window.innerWidth - viewRect.width - 8) + "px";
+      if (viewRect.bottom > window.innerHeight) menu.style.top = Math.max(8, window.innerHeight - viewRect.height - 8) + "px";
+      return;
+    }
 
     addItem(group.isAuto ? "编辑别名" : "重命名分组", function() {
       enableGroupRename(groupInput);
@@ -3627,6 +3576,7 @@
       event.preventDefault();
       selectAnnotation(annotation.id);
       if (isCompactViewport()) return;
+      if (VIEW_ONLY) return;
       if (state.tool !== "pan") return;
       beginMoveAnnotation(event, annotation.id);
     });
@@ -3662,8 +3612,8 @@
       setRenderPrefix(renderPrefixForAnnotation(selected), { render: false });
     }
     renderDrawingList();
-    el.pointCode.value = selected.code || "";
-    el.pointNote.value = selected.note || "";
+    if (el.pointCode) el.pointCode.value = selected.code || "";
+    if (el.pointNote) el.pointNote.value = selected.note || "";
     updateEditor();
     renderOverlay();
   }
@@ -3866,6 +3816,8 @@
 
   function updateEditor() {
     const selected = getSelected();
+    renderDeviceInfo(selected);
+    if (!el.annotationForm || !el.emptyEditor) return;
     el.annotationForm.hidden = !selected;
     el.emptyEditor.hidden = Boolean(selected);
     if (selected) {
@@ -3875,6 +3827,7 @@
   }
 
   function createAnnotation(type, imagePoints) {
+    if (VIEW_ONLY) return;
     var now = new Date().toISOString();
     var code = nextPointCode();
     if (!code && state.lastPointCodeSource !== "batch") {
@@ -3965,6 +3918,7 @@
 
     const point = screenToImage(event.clientX, event.clientY);
     if (state.tool === "point") {
+      if (VIEW_ONLY) return;
       createAnnotation("point", [point]);
       renderOverlay();
     }
@@ -4056,6 +4010,7 @@
     if (isTypingTarget(event.target)) return;
 
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
+      if (VIEW_ONLY) return;
       event.preventDefault();
       undoLastAction();
       return;
@@ -4069,6 +4024,7 @@
     }
 
     if (event.key === "Delete" || event.key === "Backspace") {
+      if (VIEW_ONLY) return;
       if (state.selectedId) {
         event.preventDefault();
         deleteSelectedAnnotation();
@@ -4547,11 +4503,16 @@
     });
     el.pointModule.hidden = moduleName !== "points";
     el.docsModule.hidden = moduleName !== "docs";
-    if (moduleName === "docs") renderDocsModule();
+    if (moduleName === "docs") {
+      loadRepoTrainingDocs().then(function() {
+        renderDocsModule();
+      });
+    }
     if (moduleName === "points") renderOverlay();
   }
 
   function renderFolderParentOptions() {
+    if (!el.folderParentSelect) return;
     el.folderParentSelect.innerHTML = "";
     const rootOption = document.createElement("option");
     rootOption.value = "";
@@ -4596,14 +4557,17 @@
           saveDocsData();
           renderDocsModule();
         });
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.className = "folder-delete";
-        deleteButton.title = "删除目录";
-        deleteButton.setAttribute("aria-label", `删除目录 ${folder.name}`);
-        deleteButton.textContent = "×";
-        deleteButton.addEventListener("click", () => deleteDocFolder(folder.id));
-        row.append(button, deleteButton);
+        row.append(button);
+        if (!VIEW_ONLY) {
+          const deleteButton = document.createElement("button");
+          deleteButton.type = "button";
+          deleteButton.className = "folder-delete";
+          deleteButton.title = "删除目录";
+          deleteButton.setAttribute("aria-label", `删除目录 ${folder.name}`);
+          deleteButton.textContent = "×";
+          deleteButton.addEventListener("click", () => deleteDocFolder(folder.id));
+          row.append(deleteButton);
+        }
         el.folderTree.appendChild(row);
         renderBranch(folder.id, depth + 1);
       }
@@ -5078,28 +5042,42 @@
     el.moduleTabs.forEach((button) => {
       button.addEventListener("click", () => switchModule(button.dataset.module));
     });
-    el.addFolderButton.addEventListener("click", addDocFolder);
-    el.seedDocsButton.addEventListener("click", seedTrainingDocs);
-    el.folderNameInput.addEventListener("keydown", (event) => {
+    if (el.addFolderButton) el.addFolderButton.addEventListener("click", addDocFolder);
+    if (el.seedDocsButton) el.seedDocsButton.addEventListener("click", seedTrainingDocs);
+    if (el.folderNameInput) el.folderNameInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
         addDocFolder();
       }
     });
-    el.docUploadInput.addEventListener("change", () => uploadDocs(el.docUploadInput.files));
-    el.docSearchInput.addEventListener("input", renderDocList);
-    el.docTitleInput.addEventListener("change", updateSelectedDocTitle);
-    el.docTitleInput.addEventListener("blur", updateSelectedDocTitle);
-    el.deleteDocButton.addEventListener("click", deleteSelectedDoc);
-    el.fitButton.addEventListener("click", fitToViewport);
-    el.addGroupButton.addEventListener("click", (event) => {
+    if (el.docUploadInput) el.docUploadInput.addEventListener("change", () => uploadDocs(el.docUploadInput.files));
+    if (el.docSearchInput) el.docSearchInput.addEventListener("input", renderDocList);
+    if (el.docTitleInput) {
+      el.docTitleInput.readOnly = VIEW_ONLY;
+      if (!VIEW_ONLY) {
+        el.docTitleInput.addEventListener("change", updateSelectedDocTitle);
+        el.docTitleInput.addEventListener("blur", updateSelectedDocTitle);
+      }
+    }
+    if (el.deleteDocButton && !VIEW_ONLY) el.deleteDocButton.addEventListener("click", deleteSelectedDoc);
+    if (el.fitButton) el.fitButton.addEventListener("click", fitToViewport);
+    if (el.clearPlcFilterButton) {
+      el.clearPlcFilterButton.addEventListener("click", function() {
+        setRenderPrefix("", { render: false });
+        state.activeGroupId = "";
+        renderDrawingList();
+        renderOverlay();
+        renderMinimapList();
+      });
+    }
+    if (el.addGroupButton && !VIEW_ONLY) el.addGroupButton.addEventListener("click", (event) => {
       if (event.defaultPrevented) return;
       event.preventDefault();
       event.stopPropagation();
       addGroup();
     });
     document.addEventListener("click", (event) => {
-      if (event.target === el.addGroupButton) {
+      if (!VIEW_ONLY && event.target === el.addGroupButton) {
         event.preventDefault();
         event.stopPropagation();
         addGroup();
@@ -5123,21 +5101,21 @@
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") hideGroupContextMenu();
     });
-    el.setBackupButton.addEventListener("click", setBackupFile);
-    el.groupNameInput.addEventListener("keydown", (event) => {
+    if (el.setBackupButton && !VIEW_ONLY) el.setBackupButton.addEventListener("click", setBackupFile);
+    if (el.groupNameInput && !VIEW_ONLY) el.groupNameInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
         addGroup();
       }
     });
 
-    el.batchCodeInput.addEventListener("input", function() {
+    if (el.batchCodeInput && !VIEW_ONLY) el.batchCodeInput.addEventListener("input", function() {
       syncBatchCodesFromInput({ pickFirstMissing: true });
       updateBatchCodePanel();
     });
-    el.startBatchCodeButton.addEventListener("click", startOrPauseBatchCodes);
-    el.clearBatchCodeButton.addEventListener("click", clearBatchCodes);
-    if (el.findDuplicatesButton) {
+    if (el.startBatchCodeButton && !VIEW_ONLY) el.startBatchCodeButton.addEventListener("click", startOrPauseBatchCodes);
+    if (el.clearBatchCodeButton && !VIEW_ONLY) el.clearBatchCodeButton.addEventListener("click", clearBatchCodes);
+    if (el.findDuplicatesButton && !VIEW_ONLY) {
       el.findDuplicatesButton.addEventListener("click", findDuplicatePoints);
     }
     [el.viewport, el.stage, el.image, el.minimapImage].forEach((target) => {
@@ -5180,12 +5158,15 @@
       zoomAt(event.clientX, event.clientY, event.deltaY);
     }, { passive: false });
     el.searchButton.addEventListener("click", search);
-    el.searchInput.addEventListener("input", search);
+    el.searchInput.addEventListener("input", function() {
+      window.clearTimeout(search.inputTimer);
+      search.inputTimer = window.setTimeout(search, 140);
+    });
     el.searchInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") search();
     });
     window.addEventListener("keydown", handleGlobalKeydown);
-    el.annotationForm.addEventListener("submit", (event) => {
+    if (el.annotationForm && !VIEW_ONLY) el.annotationForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const selected = getSelected();
       if (!selected) return;
@@ -5206,9 +5187,9 @@
       renderOverlay();
       setStatus("标注已保存。");
     });
-    el.deleteAnnotation.addEventListener("click", deleteSelectedAnnotation);
-    el.exportButton.addEventListener("click", exportData);
-    el.importInput.addEventListener("change", () => importData(el.importInput.files[0]));
+    if (el.deleteAnnotation && !VIEW_ONLY) el.deleteAnnotation.addEventListener("click", deleteSelectedAnnotation);
+    if (el.exportButton && !VIEW_ONLY) el.exportButton.addEventListener("click", exportData);
+    if (el.importInput && !VIEW_ONLY) el.importInput.addEventListener("change", () => importData(el.importInput.files[0]));
     window.addEventListener("resize", renderOverlay);
     el.image.addEventListener("load", () => {
       clearTimeout(el.image._loadTimeout);
@@ -5260,9 +5241,9 @@
         switchDrawing(state.currentDrawingId);
       }
 
-      const docsChanged = await loadRepoTrainingDocs();
-      if (docsChanged && state.activeModule === "docs") {
-        renderDocsModule();
+      if (state.activeModule === "docs") {
+        const docsChanged = await loadRepoTrainingDocs();
+        if (docsChanged) renderDocsModule();
       }
     }, 5000);
   }
@@ -5275,20 +5256,17 @@
   startManifestSync();
   renderDrawingList();
   renderDuplicatePanel();
-  renderDocsModule();
   switchDrawing(state.currentDrawingId);
   setTool("pan");
   updateBatchCodePanel();
+  loadDeviceInfo();
   initSync().then(function() {
     syncAutoGroupsForAllDrawings();
     restoreCurrentDrawingLocal();
     renderDrawingList();
     renderDuplicatePanel();
-    renderDocsModule();
+    if (state.activeModule === "docs") renderDocsModule();
     switchDrawing(state.currentDrawingId, { save: false });
     updateBatchCodePanel();
-  });
-  loadRepoTrainingDocs().then(function(changed) {
-    if (changed) renderDocsModule();
   });
 })();
