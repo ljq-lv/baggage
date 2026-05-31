@@ -1195,6 +1195,11 @@
           annotationIsDuplicate(annotation);
       });
     }
+    if (isCompactViewport()) {
+      return annotations.filter(function(annotation) {
+        return annotation.id === state.selectedId || annotation.id === state.highlightedId;
+      });
+    }
     if (annotations.length > RENDER_LIMIT) {
       return annotations.filter(function(annotation) {
         return annotation.id === state.selectedId || annotation.id === state.highlightedId || annotationIsDuplicate(annotation);
@@ -1241,7 +1246,7 @@
     allButton.type = "button";
     allButton.className = "mobile-plc-chip";
     allButton.classList.toggle("active", !hasRenderPrefixes());
-    allButton.textContent = "全部显示";
+    allButton.textContent = "清除筛选";
     allButton.addEventListener("click", clearPlcFilter);
     chipRow.appendChild(allButton);
 
