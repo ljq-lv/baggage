@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>行李智查</title>
-    <link rel="stylesheet" href="styles.css?v=20260531-mobile-image-fallback">
+    <link rel="stylesheet" href="styles.css?v=20260531-mobile-group-points">
   </head>
   <body class="auth-locked">
     <section id="accessGate" class="access-gate" aria-label="访问口令">
@@ -81,7 +81,7 @@
         </div>
         <div id="viewport" class="viewport">
           <div id="stage" class="stage">
-            <img id="drawingImage" alt="当前图纸" draggable="false">
+            <img id="drawingImage" alt="当前图纸" draggable="false" decoding="async">
             <svg id="overlay" aria-label="标注层"></svg>
           </div>
           <div class="minimap" aria-label="点位总览">
@@ -91,7 +91,7 @@
             </div>
             <section id="deviceInfoPanel" class="device-info-panel" hidden></section>
             <div id="minimapBody" class="minimap-body" hidden>
-              <img id="minimapImage" alt="" draggable="false">
+              <img id="minimapImage" alt="" draggable="false" decoding="async">
               <svg id="minimapOverlay" aria-hidden="true"></svg>
             </div>
             <div id="minimapList" class="minimap-list" aria-label="标注列表"></div>
@@ -141,6 +141,6 @@
       </main>
     </section>
 
-    <script src="app.js?v=20260531-mobile-image-fallback"></script>
+    <script src="app.js?v=20260531-mobile-group-points"></script>
   </body>
 </html>

@@ -101,6 +101,8 @@
   };
   const deviceInfo = {
     loaded: false,
+    loading: false,
+    promise: null,
     items: {},
     count: 0
   };
@@ -507,7 +509,12 @@
         window.setTimeout(loadNext, 450);
       });
     }
-    window.setTimeout(loadNext, 800);
+    var delay = isCompactViewport() ? 8000 : 800;
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(loadNext, { timeout: delay });
+    } else {
+      window.setTimeout(loadNext, delay);
+    }
   }
 
   async function loadLazyPointData() {
@@ -526,7 +533,11 @@
       }
       applyDrawingOrder();
       await loadLazyDrawing(state.currentDrawingId);
-      loadSearchIndex();
+      if (isCompactViewport()) {
+        window.setTimeout(loadSearchIndex, 3000);
+      } else {
+        loadSearchIndex();
+      }
       startLazyBackgroundLoad();
       return true;
     } catch (error) {
@@ -555,15 +566,15 @@
     }
 
     if (!loaded) {
-      loaded = await loadStaticSyncData() || loaded;
-    }
-
-    if (!loaded) {
       loaded = await loadLazyPointData() || loaded;
     }
 
     if (!loaded) {
       loaded = await loadStaticPointBackup() || loaded;
+    }
+
+    if (!loaded) {
+      loaded = await loadStaticSyncData() || loaded;
     }
 
     if (!loaded && hasLocalData() && syncState.enabled) {
@@ -1286,6 +1297,16 @@
     return firstFourDigits(annotation && annotation.code);
   }
 
+  function selectRenderPrefixForAnnotation(annotation) {
+    var prefix = renderPrefixForAnnotation(annotation);
+    setRenderPrefix(prefix, { render: false });
+    var group = state.groups.find(function(item) {
+      return item.isAuto && item.autoKey === prefix && groupVisibleInDrawing(item.id, state.currentDrawingId);
+    });
+    state.activeGroupId = group ? group.id : "";
+    if (isCompactViewport()) renderMobilePlcList();
+  }
+
   function selectFirstAnnotatedDrawingIfNeeded() {
     if (state.annotations.some((annotation) => annotation.drawingId === state.currentDrawingId)) return;
     const drawing = drawings.find((item) => {
@@ -1719,6 +1740,10 @@
   }
 
   async function loadDeviceInfo() {
+    if (deviceInfo.loaded) return true;
+    if (deviceInfo.loading && deviceInfo.promise) return deviceInfo.promise;
+    deviceInfo.loading = true;
+    deviceInfo.promise = (async function() {
     try {
       var response = await fetch(DEVICE_INFO_URL, { cache: "no-store" });
       if (!response.ok) return false;
@@ -1732,10 +1757,17 @@
     } catch (error) {
       console.warn("Device info load failed:", error.message);
       return false;
+    } finally {
+      deviceInfo.loading = false;
     }
+    })();
+    return deviceInfo.promise;
   }
 
   function renderDeviceInfo(annotation) {
+    if (state.deviceInfoVisible && annotation && !deviceInfo.loaded) {
+      loadDeviceInfo();
+    }
     renderDeviceInfoInto(el.deviceInfoPanel, annotation, false);
     renderDeviceInfoInto(el.mobileDeviceInfoPanel, annotation, true);
   }
@@ -1745,6 +1777,15 @@
     if (!state.deviceInfoVisible || !annotation) {
       panel.hidden = true;
       panel.innerHTML = "";
+      return;
+    }
+
+    if (!deviceInfo.loaded) {
+      panel.hidden = false;
+      panel.classList.toggle("missing", false);
+      panel.innerHTML =
+        "<div class=\"device-info-head\"><strong>" + escapeHtml(annotationTitle(annotation)) + "</strong><span>设备清单</span></div>" +
+        "<p class=\"device-info-empty\">设备清单加载中...</p>";
       return;
     }
 
@@ -3684,9 +3725,7 @@
     window.clearTimeout(focusAnnotation.timer);
     state.selectedId = id;
     state.highlightedId = null;
-    if (!(state.tool === "point" && hasRenderPrefixes())) {
-      setRenderPrefix(renderPrefixForAnnotation(selected), { render: false });
-    }
+    if (!(state.tool === "point" && hasRenderPrefixes())) selectRenderPrefixForAnnotation(selected);
     renderDrawingList();
     if (el.pointCode) el.pointCode.value = selected.code || "";
     if (el.pointNote) el.pointNote.value = selected.note || "";
@@ -4252,7 +4291,7 @@
     }
     state.selectedId = id;
     state.highlightedId = id;
-    setRenderPrefix(renderPrefixForAnnotation(annotation), { render: false });
+    selectRenderPrefixForAnnotation(annotation);
     renderDrawingList();
     if (annotation.drawingId !== state.currentDrawingId) {
       switchDrawing(annotation.drawingId, { selectedId: id, highlightedId: id });
@@ -4301,7 +4340,7 @@
 
     state.selectedId = id;
     state.highlightedId = id;
-    setRenderPrefix(renderPrefixForAnnotation(annotation), { render: false });
+    selectRenderPrefixForAnnotation(annotation);
     renderDrawingList();
     zoomToAnnotation(annotation);
     updateEditor();
@@ -4320,7 +4359,7 @@
     window.clearTimeout(focusAnnotation.timer);
     state.selectedId = id;
     state.highlightedId = null;
-    setRenderPrefix(renderPrefixForAnnotation(annotation), { render: false });
+    selectRenderPrefixForAnnotation(annotation);
     renderDrawingList();
 
     const bounds = annotationBounds(annotation);
@@ -5332,7 +5371,6 @@
   switchDrawing(state.currentDrawingId);
   setTool("pan");
   updateBatchCodePanel();
-  loadDeviceInfo();
   initSync().then(function() {
     syncAutoGroupsForAllDrawings();
     restoreCurrentDrawingLocal();

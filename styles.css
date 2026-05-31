@@ -1039,6 +1039,7 @@ textarea {
 
 .mobile-plc-point-chip.active {
   border-color: var(--highlight);
+  color: var(--text);
   background: #fff7ed;
 }
 
