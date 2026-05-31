@@ -139,7 +139,6 @@
     minimapList: document.getElementById("minimapList"),
     deviceInfoPanel: document.getElementById("deviceInfoPanel"),
     mobileDeviceInfoPanel: document.getElementById("mobileDeviceInfoPanel"),
-    mobilePlcPointPanel: document.getElementById("mobilePlcPointPanel"),
     minimapOverlay: document.getElementById("minimapOverlay"),
     mobilePlcList: document.getElementById("mobilePlcList"),
     setBackupButton: document.getElementById("setBackupButton"),
@@ -1217,7 +1216,6 @@
       empty.className = "mobile-plc-empty";
       empty.textContent = "暂无 PLC";
       el.mobilePlcList.appendChild(empty);
-      renderMobilePlcPointPanel([], []);
       return;
     }
 
@@ -1257,51 +1255,28 @@
     });
     el.mobilePlcList.appendChild(chipRow);
 
-    renderMobilePlcPointPanel(annotations, selectedPrefixes);
-  }
-
-  function renderMobilePlcPointPanel(annotations, selectedPrefixes) {
-    if (!el.mobilePlcPointPanel) return;
-    if (!isCompactViewport() || !selectedPrefixes || !selectedPrefixes.length) {
-      el.mobilePlcPointPanel.hidden = true;
-      el.mobilePlcPointPanel.innerHTML = "";
-      return;
-    }
-
-    var selectedAnnotations = annotations.filter(function(annotation) {
-      return selectedPrefixes.indexOf(firstFourDigits(annotation.code)) !== -1;
-    }).sort(function(a, b) {
-      return compareDeviceCodes(annotationTitle(a), annotationTitle(b));
-    });
-    el.mobilePlcPointPanel.hidden = false;
-    el.mobilePlcPointPanel.innerHTML = "";
-    var title = selectedPrefixes.join("、");
-    var head = document.createElement("div");
-    head.className = "mobile-plc-point-head";
-    head.innerHTML = "<strong>" + escapeHtml(title) + "</strong><span>" + selectedAnnotations.length + " 个编号</span>";
-    var closeButton = document.createElement("button");
-    closeButton.type = "button";
-    closeButton.className = "mobile-plc-point-close";
-    closeButton.textContent = "×";
-    closeButton.setAttribute("aria-label", "关闭编号列表");
-    closeButton.addEventListener("click", clearPlcFilter);
-    head.appendChild(closeButton);
-    var codeList = document.createElement("div");
-    codeList.className = "mobile-plc-point-list";
-    selectedAnnotations.forEach(function(annotation, index) {
-      var codeButton = document.createElement("button");
-      codeButton.type = "button";
-      codeButton.className = "mobile-plc-point-item";
-      codeButton.classList.toggle("active", annotation.id === state.selectedId);
-      codeButton.innerHTML = "<span>" + (index + 1) + "</span><strong>" + escapeHtml(annotationTitle(annotation)) + "</strong>";
-      codeButton.addEventListener("click", function(event) {
-        event.stopPropagation();
-        focusAnnotationFromOverview(annotation.id);
+    if (selectedPrefixes.length) {
+      var selectedAnnotations = annotations.filter(function(annotation) {
+        return selectedPrefixes.indexOf(firstFourDigits(annotation.code)) !== -1;
+      }).sort(function(a, b) {
+        return compareDeviceCodes(annotationTitle(a), annotationTitle(b));
       });
-      codeList.appendChild(codeButton);
-    });
-    el.mobilePlcPointPanel.appendChild(head);
-    el.mobilePlcPointPanel.appendChild(codeList);
+      var pointRow = document.createElement("div");
+      pointRow.className = "mobile-plc-point-chip-row";
+      selectedAnnotations.forEach(function(annotation) {
+        var codeButton = document.createElement("button");
+        codeButton.type = "button";
+        codeButton.className = "mobile-plc-point-chip";
+        codeButton.classList.toggle("active", annotation.id === state.selectedId);
+        codeButton.textContent = annotationTitle(annotation);
+        codeButton.addEventListener("click", function(event) {
+          event.stopPropagation();
+          focusAnnotationFromOverview(annotation.id);
+        });
+        pointRow.appendChild(codeButton);
+      });
+      el.mobilePlcList.appendChild(pointRow);
+    }
   }
 
   function renderPrefixForAnnotation(annotation) {
