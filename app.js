@@ -659,6 +659,7 @@
         id: item.id,
         title: item.title,
         image: item.image,
+        mobileImage: item.mobileImage,
         pdf: item.pdf,
         width: item.width,
         height: item.height
@@ -672,9 +673,11 @@
         image: item.image && item.image.includes("/")
           ? item.image
           : `assets/floors/${item.image}`,
-        mobileImage: item.image && item.image.includes("/")
-          ? item.image
-          : `assets/floors/mobile/${item.image}`,
+        mobileImage: item.mobileImage
+          ? (item.mobileImage.includes("/") ? item.mobileImage : `assets/floors/mobile/${item.mobileImage}`)
+          : (item.image && item.image.includes("/")
+            ? item.image
+            : `assets/floors/mobile/${item.image}`),
         pdf: item.pdf || "",
         width: item.width,
         height: item.height

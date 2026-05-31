@@ -113,6 +113,7 @@ async function renderPdf(fileName, previousDrawings) {
     title: legacy?.title || drawingTitle(fileName) || path.basename(fileName, path.extname(fileName)),
     pdf: fileName,
     image,
+    mobileImage: previous?.mobileImage || image.replace(/\.[^.]+$/, ".jpg"),
     pages: doc.numPages,
     width: Math.ceil(viewport.width),
     height: Math.ceil(viewport.height)
