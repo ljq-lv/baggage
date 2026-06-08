@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>行李智查</title>
+    <link rel="stylesheet" href="styles.css?v=20260609-no-special">
+  </head>
+  <body class="auth-locked">
+    <section id="accessGate" class="access-gate" aria-label="访问口令">
+      <form id="accessForm" class="access-card">
+        <h1>行李智查</h1>
+        <p>请输入访问口令</p>
+        <input id="accessCode" type="password" autocomplete="current-password" autofocus>
+        <button type="submit" class="primary">进入</button>
+        <div id="accessError" class="access-error" aria-live="polite"></div>
+      </form>
+    </section>
+    <header class="module-nav" aria-label="培训网站模块">
+      <div>
+        <strong>行李智查</strong>
+        <span>点位与资料库</span>
+      </div>
+      <nav>
+        <button class="module-tab active" type="button" data-module="points">点位图纸</button>
+        <button class="module-tab" type="button" data-module="docs">培训资料</button>
+      </nav>
+    </header>
+
+    <main id="pointModule" class="app-shell module-panel active">
+      <aside class="sidebar" aria-label="图纸与搜索">
+        <header class="brand">
+          <h1>行李智查</h1>
+          <p>本地标注与搜索</p>
+        </header>
+
+        <section class="panel">
+          <label class="field-label" for="searchInput">搜索点位</label>
+          <div class="search-row">
+            <input id="searchInput" type="search" placeholder="输入点位编号或备注">
+            <button id="searchButton" type="button">搜索</button>
+          </div>
+          <div id="searchResults" class="search-results" aria-live="polite"></div>
+          <div class="bulk-highlight">
+            <textarea id="bulkHighlightInput" rows="2" placeholder="批量输入点位：3405.9.15、3163.33.1"></textarea>
+            <button id="bulkHighlightButton" type="button">高亮定位</button>
+          </div>
+          <label class="bulk-highlight-toggle">
+            <input id="bulkHighlightLabels" type="checkbox" checked>
+            <span>显示高亮编号</span>
+          </label>
+          <div id="bulkHighlightResults" class="bulk-highlight-results" aria-live="polite"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">图纸</div>
+          <div id="drawingList" class="drawing-list"></div>
+        </section>
+
+        <section class="panel mobile-overview">
+          <div class="section-title">点位总览</div>
+          <div id="mobilePlcList" class="mobile-plc-list" aria-label="点位总览"></div>
+        </section>
+
+        <section class="panel viewer-tools-panel">
+          <div class="section-title">查看工具</div>
+          <div class="tool-grid viewer-tools" role="group" aria-label="查看工具">
+            <button id="fitButton" type="button">适配</button>
+            <button id="clearPlcFilterButton" type="button">全部PLC</button>
+          </div>
+          <label class="toggle-row">
+            <input id="showAnnotations" type="checkbox" checked>
+            <span>显示全部标注</span>
+          </label>
+          <label class="toggle-row detail-name-toggle">
+            <input id="showLabels" type="checkbox" checked>
+            <span>显示设备清单</span>
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">标点工具</div>
+          <div class="tool-grid" role="group" aria-label="标点工具">
+            <button class="tool-button active" type="button" data-tool="pan">拖动</button>
+            <button class="tool-button" type="button" data-tool="point">点位</button>
+          </div>
+          <div class="field-row">
+            <input id="groupNameInput" type="text" placeholder="新建分组名称">
+            <button id="addGroupButton" type="button">新建分组</button>
+          </div>
+        </section>
+
+        <section class="panel batch-code-panel">
+          <div class="section-title">批量标点</div>
+          <label class="field-label" for="batchCodeInput">编号清单</label>
+          <textarea id="batchCodeInput" rows="4" placeholder="每行一个编号，适合批量标记电柜位置"></textarea>
+          <div id="batchCodePreview" class="batch-code-preview" aria-live="polite"></div>
+          <div class="batch-code-actions">
+            <button id="startBatchCodeButton" type="button">开始批量</button>
+            <button id="clearBatchCodeButton" type="button">清空</button>
+          </div>
+          <div id="batchCodeQueue" class="batch-code-queue"></div>
+        </section>
+
+        <section class="panel duplicate-panel">
+          <div class="duplicate-head">
+            <strong>重复点位</strong>
+            <button id="findDuplicatesButton" type="button">检查</button>
+          </div>
+          <div id="duplicateSummary" class="batch-code-preview"></div>
+          <div id="duplicateList" class="duplicate-list"></div>
+        </section>
+
+        <section class="panel editor-panel" aria-label="标注编辑">
+          <div class="section-title">当前标注</div>
+          <div id="emptyEditor" class="empty-state">选择点位后编辑；或切到“点位”工具后点击图纸新增。</div>
+          <form id="annotationForm" class="annotation-form" hidden>
+            <label>
+              点位编号
+              <input id="pointCode" type="text" autocomplete="off" required>
+            </label>
+            <label>
+              备注
+              <textarea id="pointNote" rows="3"></textarea>
+            </label>
+            <div class="form-actions">
+              <button class="primary" type="submit">保存</button>
+              <button id="deleteAnnotation" type="button">删除</button>
+            </div>
+          </form>
+          <div class="data-actions">
+            <button id="setBackupButton" type="button">设置自动备份</button>
+            <button id="exportButton" type="button">导出数据</button>
+            <label class="file-button">
+              导入数据
+              <input id="importInput" type="file" accept="application/json,.json">
+            </label>
+          </div>
+        </section>
+        <p id="statusText" class="status-text"></p>
+      </aside>
+
+      <section class="workspace" aria-label="图纸工作区">
+        <div class="topbar">
+          <div>
+            <strong id="currentDrawingTitle">B1层</strong>
+            <span id="annotationCount">0 个标注</span>
+          </div>
+          <div id="modeHint" class="mode-hint">拖动画布浏览，滚轮缩放。</div>
+        </div>
+        <div id="viewport" class="viewport">
+          <div id="stage" class="stage">
+            <img id="drawingImage" alt="当前图纸" draggable="false" decoding="async">
+            <svg id="overlay" aria-label="标注层"></svg>
+          </div>
+          <div class="minimap" aria-label="点位总览">
+            <div class="minimap-title">
+              <strong>点位总览</strong>
+              <span id="minimapCount">0 个点位</span>
+            </div>
+            <section id="deviceInfoPanel" class="device-info-panel" hidden></section>
+            <div id="minimapBody" class="minimap-body" hidden>
+              <img id="minimapImage" alt="" draggable="false" decoding="async">
+              <svg id="minimapOverlay" aria-hidden="true"></svg>
+            </div>
+            <div id="minimapList" class="minimap-list" aria-label="标注列表"></div>
+          </div>
+          <section id="mobileDeviceInfoPanel" class="mobile-device-info-panel" hidden></section>
+        </div>
+      </section>
+    </main>
+
+    <section id="docsModule" class="docs-shell module-panel" aria-label="培训资料库" hidden>
+      <aside class="docs-sidebar">
+        <header class="docs-header">
+          <h2>培训资料</h2>
+          <p>按目录整理 Word 文档，后续可关联点位。</p>
+        </header>
+
+        <section class="panel docs-tree-panel">
+          <div class="section-title">目录</div>
+          <div id="folderTree" class="folder-tree"></div>
+        </section>
+      </aside>
+
+      <main class="docs-workspace">
+        <div class="docs-topbar">
+          <div>
+            <strong id="docsCurrentFolder">全部资料</strong>
+            <span id="docsCount">0 篇文档</span>
+          </div>
+          <input id="docSearchInput" type="search" placeholder="搜索文档标题">
+        </div>
+
+        <div class="docs-content">
+          <section class="doc-list-panel">
+            <div id="docList" class="doc-list"></div>
+          </section>
+          <article class="doc-reader">
+            <div id="docEmptyState" class="doc-empty-state">选择一篇文档查看详情</div>
+            <div id="docReaderContent" hidden>
+              <div class="doc-reader-head">
+                <input id="docTitleInput" type="text" aria-label="文档标题">
+              </div>
+              <div id="docMeta" class="doc-meta"></div>
+              <div id="docBody" class="doc-body"></div>
+            </div>
+          </article>
+        </div>
+      </main>
+    </section>
+
+    <script src="app.js?v=20260609-no-special"></script>
+  </body>
+</html>

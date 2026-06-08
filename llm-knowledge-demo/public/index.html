@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>资料知识库 + 大语言模型 Demo</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <h1>培训资料库</h1>
+          <p>远程资料按需加载，后端检索后交给大模型回答。</p>
+        </div>
+        <div class="toolbar">
+          <button id="refreshBtn" type="button">刷新资料</button>
+          <label class="toggle">
+            <input id="ollamaToggle" type="checkbox">
+            <span>使用本地 Ollama</span>
+          </label>
+        </div>
+        <div id="docList" class="doc-list" aria-label="资料目录"></div>
+      </aside>
+
+      <main class="workspace">
+        <section class="reader">
+          <header>
+            <div>
+              <span class="eyebrow">资料正文</span>
+              <h2 id="docTitle">请选择一份资料</h2>
+            </div>
+            <span id="docMeta" class="meta"></span>
+          </header>
+          <article id="docContent" class="doc-content">
+            网页启动时只加载左侧目录。点击资料后，才会从服务器加载正文。
+          </article>
+        </section>
+
+        <section class="assistant-panel">
+          <header>
+            <div>
+              <span class="eyebrow">知识库问答</span>
+              <h2>向培训资料提问</h2>
+            </div>
+            <span id="status" class="status">待提问</span>
+          </header>
+          <form id="askForm" class="ask-form">
+            <textarea id="questionInput" rows="3" placeholder="例如：堵包应该怎么处理？"></textarea>
+            <button type="submit">提问</button>
+          </form>
+          <div id="answer" class="answer">答案会显示在这里。</div>
+          <div id="sources" class="sources"></div>
+        </section>
+      </main>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>
