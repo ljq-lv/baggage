@@ -575,9 +575,12 @@
   async function initSync() {
     var loaded = false;
 
-    if (syncState.enabled) {
+    if (syncState.enabled && !syncState.apiUnavailable) {
       try {
-        var response = await fetch(SYNC_ENDPOINT, { cache: "no-store" });
+        var controller = new AbortController();
+        var timeout = setTimeout(function() { controller.abort(); }, 3000);
+        var response = await fetch(SYNC_ENDPOINT, { cache: "no-store", signal: controller.signal });
+        clearTimeout(timeout);
         if (response.ok) {
           var remote = await response.json();
           if (payloadHasData(remote.data)) {
@@ -587,7 +590,8 @@
           }
         }
       } catch (e) {
-        console.warn("Sync API unavailable, trying static JSON:", e.message);
+        syncState.apiUnavailable = true;
+        console.warn("Sync API unavailable, using local data:", e.message);
       }
     }
 
