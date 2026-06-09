@@ -420,8 +420,8 @@
 
   async function loadStaticPointBackup() {
     try {
-      var staticUrl = new URL("data-backup.json?v=" + Date.now(), document.baseURI).href;
-      var staticResp = await fetch(staticUrl, { cache: "no-store" });
+      var staticUrl = new URL("data-backup.json", document.baseURI).href;
+      var staticResp = await fetch(staticUrl);
       if (!staticResp.ok) return false;
       var staticData = await staticResp.json();
       if (!payloadHasPointData(staticData)) return false;
@@ -435,8 +435,8 @@
 
   async function loadStaticSyncData() {
     try {
-      var staticUrl = new URL("data/sync-data.json?v=" + Date.now(), document.baseURI).href;
-      var response = await fetch(staticUrl, { cache: "no-store" });
+      var staticUrl = new URL("data/sync-data.json", document.baseURI).href;
+      var response = await fetch(staticUrl);
       if (!response.ok) return false;
       var payload = await response.json();
       if (!payloadHasData(payload && payload.data)) return false;
@@ -467,7 +467,7 @@
     var task = (async function() {
       try {
         var url = "data/drawings/" + encodeURIComponent(drawingId) + ".json";
-        var response = await fetch(url, { cache: "no-store" });
+        var response = await fetch(url);
         if (!response.ok) return false;
         var payload = await response.json();
         mergeDrawingAnnotations(drawingId, payload.annotations || []);
@@ -494,7 +494,7 @@
   async function loadSearchIndex() {
     if (lazyPoints.searchItems) return lazyPoints.searchItems;
     try {
-      var response = await fetch("data/search-index.json", { cache: "no-store" });
+      var response = await fetch("data/search-index.json");
       if (!response.ok) return [];
       var payload = await response.json();
       lazyPoints.searchItems = Array.isArray(payload.items) ? payload.items : [];
@@ -508,21 +508,31 @@
 
   function startLazyBackgroundLoad() {
     if (!lazyPoints.enabled || lazyPoints.backgroundStarted) return;
-    if (isCompactViewport()) return;
     lazyPoints.backgroundStarted = true;
+    var compact = isCompactViewport();
     var ids = FIXED_DRAWING_ORDER.filter(function(id) {
       return drawings.some(function(drawing) { return drawing.id === id; });
     });
+    // Sort by proximity to current drawing on mobile for better perceived performance
+    if (compact) {
+      var currentIdx = ids.indexOf(state.currentDrawingId);
+      if (currentIdx >= 0) {
+        ids = ids.slice().sort(function(a, b) {
+          return Math.abs(ids.indexOf(a) - currentIdx) - Math.abs(ids.indexOf(b) - currentIdx);
+        });
+      }
+    }
     var index = 0;
+    var gap = compact ? 1000 : 450;       // slower pacing on mobile
     function loadNext() {
       while (index < ids.length && lazyPoints.loadedDrawingIds.has(ids[index])) index += 1;
       if (index >= ids.length) return;
       var drawingId = ids[index++];
       loadLazyDrawing(drawingId).finally(function() {
-        window.setTimeout(loadNext, 450);
+        window.setTimeout(loadNext, gap);
       });
     }
-    var delay = 800;
+    var delay = compact ? 2000 : 800;     // longer initial delay on mobile
     if ("requestIdleCallback" in window) {
       window.requestIdleCallback(loadNext, { timeout: delay });
     } else {
@@ -532,7 +542,7 @@
 
   async function loadLazyPointData() {
     try {
-      var response = await fetch("data/points-manifest.json", { cache: "no-store" });
+      var response = await fetch("data/points-manifest.json");
       if (!response.ok) return false;
       var manifest = await response.json();
       if (!manifest || !manifest.counts) return false;
@@ -582,11 +592,11 @@
     }
 
     if (!loaded) {
-      loaded = await loadStaticPointBackup() || loaded;
+      loaded = await loadLazyPointData() || loaded;
     }
 
     if (!loaded) {
-      loaded = await loadLazyPointData() || loaded;
+      loaded = await loadStaticPointBackup() || loaded;
     }
 
     if (!loaded) {
@@ -678,7 +688,7 @@
 
   async function loadDrawingManifest() {
     try {
-      const response = await fetch("assets/floors/manifest.json", { cache: "no-store" });
+      const response = await fetch("assets/floors/manifest.json");
       if (!response.ok) return;
       const manifest = await response.json();
       if (!manifest || !Array.isArray(manifest.drawings) || manifest.drawings.length === 0) return;
@@ -1810,7 +1820,7 @@
 
   async function loadResponsibilityZones() {
     try {
-      var response = await fetch(RESPONSIBILITY_URL, { cache: "no-store" });
+      var response = await fetch(RESPONSIBILITY_URL);
       if (!response.ok) return false;
       var payload = await response.json();
       responsibilityInfo.items = payload && payload.items && typeof payload.items === "object" ? payload.items : {};
@@ -1838,7 +1848,7 @@
     deviceInfo.loading = true;
     deviceInfo.promise = (async function() {
     try {
-      var response = await fetch(DEVICE_INFO_URL, { cache: "no-store" });
+      var response = await fetch(DEVICE_INFO_URL);
       if (!response.ok) return false;
       var payload = await response.json();
       deviceInfo.items = payload && payload.items && typeof payload.items === "object" ? payload.items : {};
@@ -4743,7 +4753,7 @@
   async function loadRepoTrainingDocs() {
     let manifest;
     try {
-      const response = await fetch("assets/training-docs-manifest.json", { cache: "no-store" });
+      const response = await fetch("assets/training-docs-manifest.json");
       if (!response.ok) return;
       manifest = await response.json();
     } catch (error) {
@@ -5669,10 +5679,10 @@
     }, intervalMs);
   }
 
+  // Phase 1: Critical path — show the drawing as fast as possible
   await loadDrawingManifest();
   loadData();
   restoreCurrentDrawingLocal();
-  loadDocsData();
   bindEvents();
   startManifestSync();
   renderDrawingList();
@@ -5680,7 +5690,12 @@
   switchDrawing(state.currentDrawingId);
   setTool("pan");
   updateBatchCodePanel();
+
+  // Phase 2: Non-critical — load in background without blocking first paint
+  loadDocsData();
   loadResponsibilityZones();
+
+  // Phase 3: Data sync — async, re-render when data arrives
   initSync().then(function() {
     syncAutoGroupsForAllDrawings();
     restoreCurrentDrawingLocal();
