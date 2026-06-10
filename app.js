@@ -8,6 +8,7 @@
   const SVG_NS = "http://www.w3.org/2000/svg";
   const RENDER_LIMIT = 200;
   const VIEW_ONLY = false;
+  const APP_VERSION = "20260610-v2";
   const FIXED_DRAWING_ORDER = ["f4", "f3", "f2", "f1", "b1", "f3-transfer", "overview-2d", "overview-3d"];
 
   const defaultDrawings = [
@@ -5690,6 +5691,10 @@
       }
     }, intervalMs);
   }
+
+  // Show version
+  var versionEl = document.getElementById("appVersion");
+  if (versionEl) versionEl.textContent = "v" + APP_VERSION;
 
   // Phase 1: Critical path — show the drawing as fast as possible
   await loadDrawingManifest();
