@@ -3412,6 +3412,10 @@
             return;
           }
           state.activeGroupId = groupId;
+          // Auto-expand group when clicked
+          if (state.collapsedGroups[groupId]) {
+            delete state.collapsedGroups[groupId];
+          }
           if (groupMeta && groupMeta.autoKey) {
             toggleRenderPrefix(groupMeta.autoKey, event.ctrlKey || event.metaKey, { render: false });
           } else {
@@ -3527,6 +3531,10 @@
           return;
         }
         state.activeGroupId = groupId;
+        // Auto-expand group when clicked
+        if (state.collapsedGroups[groupId]) {
+          delete state.collapsedGroups[groupId];
+        }
         if (groupMeta && groupMeta.autoKey) {
           toggleRenderPrefix(groupMeta.autoKey, event.ctrlKey || event.metaKey, { render: false });
         } else {
