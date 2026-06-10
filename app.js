@@ -8,7 +8,7 @@
   const SVG_NS = "http://www.w3.org/2000/svg";
   const RENDER_LIMIT = 200;
   const VIEW_ONLY = false;
-  const APP_VERSION = "20260611-v3";
+  const APP_VERSION = "20260611-v4";
   const FIXED_DRAWING_ORDER = ["f4", "f3", "f2", "f1", "b1", "f3-transfer", "overview-2d", "overview-3d"];
 
   const defaultDrawings = [
@@ -3419,15 +3419,19 @@
             moveSelectedAnnotationsToGroup(groupId);
             return;
           }
-          state.activeGroupId = groupId;
-          // Auto-expand group when clicked
-          if (state.collapsedGroups[groupId]) {
-            delete state.collapsedGroups[groupId];
-          }
-          if (groupMeta && groupMeta.autoKey) {
-            toggleRenderPrefix(groupMeta.autoKey, event.ctrlKey || event.metaKey, { render: false });
+          // Toggle: if currently active → deactivate; otherwise → activate
+          var isActive = state.activeGroupId === groupId ||
+            (groupMeta && groupMeta.autoKey && selectedRenderPrefixes().indexOf(groupMeta.autoKey) !== -1);
+          if (isActive && !state.collapsedGroups[groupId]) {
+            state.activeGroupId = "";
+            setRenderPrefixes([], { render: false });
           } else {
-            setRenderPrefix("", { render: false });
+            state.activeGroupId = groupId;
+            if (groupMeta && groupMeta.autoKey) {
+              setRenderPrefixes([groupMeta.autoKey], { render: false });
+            } else {
+              setRenderPrefixes([], { render: false });
+            }
           }
           renderDrawingList();
           renderOverlay();
@@ -3538,24 +3542,29 @@
           moveSelectedAnnotationsToGroup(groupId);
           return;
         }
-        // Toggle expand/collapse: if already active & expanded, collapse; otherwise expand & activate
+        // Toggle: if currently active + expanded → collapse & clear filter;
+        //         otherwise → expand & activate
         var isActive = state.activeGroupId === groupId ||
           (groupMeta && groupMeta.autoKey && selectedRenderPrefixes().indexOf(groupMeta.autoKey) !== -1);
         if (isActive && !state.collapsedGroups[groupId]) {
+          // Clicking active & expanded group → collapse it, clear filter
           state.collapsedGroups[groupId] = true;
+          state.activeGroupId = "";
+          setRenderPrefixes([], { render: false });
         } else {
+          // Expand and set as active
           delete state.collapsedGroups[groupId];
           state.activeGroupId = groupId;
           if (groupMeta && groupMeta.autoKey) {
-            toggleRenderPrefix(groupMeta.autoKey, event.ctrlKey || event.metaKey, { render: false });
+            setRenderPrefixes([groupMeta.autoKey], { render: false });
           } else {
-            setRenderPrefix("", { render: false });
+            setRenderPrefixes([], { render: false });
           }
         }
         renderDrawingList();
         renderOverlay();
         renderMinimapList();
-        setStatus(groupId ? `当前分组：${groupTitle(groupId)}` : "当前分组：未分组");
+        setStatus(groupId ? `当前分组：${groupTitle(groupId)}` : "当前分组：全部");
       });
       heading.addEventListener("dragover", (event) => {
         event.preventDefault();
