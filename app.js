@@ -8,7 +8,7 @@
   const SVG_NS = "http://www.w3.org/2000/svg";
   const RENDER_LIMIT = 200;
   const VIEW_ONLY = false;
-  const APP_VERSION = "20260610-v2";
+  const APP_VERSION = "20260611-v3";
   const FIXED_DRAWING_ORDER = ["f4", "f3", "f2", "f1", "b1", "f3-transfer", "overview-2d", "overview-3d"];
 
   const defaultDrawings = [
@@ -197,11 +197,13 @@
   var customDrawingOrder = [];
   var drawingPointerDrag = null;
   var suppressDrawingClick = false;
+  var IS_STATIC_HOST = location.hostname.endsWith("github.io");
   var syncState = {
     enabled: !VIEW_ONLY && (location.protocol === "http:" || location.protocol === "https:"),
     applyingRemote: false,
     pushTimer: null,
-    syncedAt: ""
+    syncedAt: "",
+    apiUnavailable: IS_STATIC_HOST
   };
   var lazyPoints = {
     enabled: false,
@@ -3098,12 +3100,17 @@
     if (srcChanged) {
       el.currentDrawingTitle.textContent = drawing.title + " 加载中...";
       el.viewport.classList.add("loading");
+      var overlay = document.getElementById("loadingOverlay");
+      var loadingText = document.getElementById("loadingText");
+      if (overlay) overlay.hidden = false;
+      if (loadingText) loadingText.textContent = "加载中...";
       clearTimeout(el.image._loadTimeout);
       el.image._loadTimeout = setTimeout(function() {
         if (el.viewport.classList.contains("loading")) {
           el.currentDrawingTitle.textContent = drawing.title + " 加载较慢，请稍候...";
+          if (loadingText) loadingText.textContent = "图片较大，请稍候...";
         }
-      }, 10000);
+      }, 8000);
     } else {
       el.currentDrawingTitle.textContent = drawing.title;
     }
@@ -5641,6 +5648,8 @@
     el.image.addEventListener("load", () => {
       clearTimeout(el.image._loadTimeout);
       el.viewport.classList.remove("loading");
+      var overlay = document.getElementById("loadingOverlay");
+      if (overlay) overlay.hidden = true;
       el.currentDrawingTitle.textContent = currentDrawing()?.title || "";
       console.log("Image loaded: " + el.image.src.split("/").pop() + " " + el.image.naturalWidth + "x" + el.image.naturalHeight);
       state.imageSize.width = el.image.naturalWidth;
@@ -5671,6 +5680,8 @@
       }
       clearTimeout(el.image._loadTimeout);
       el.viewport.classList.remove("loading");
+      var overlay = document.getElementById("loadingOverlay");
+      if (overlay) overlay.hidden = true;
       el.currentDrawingTitle.textContent = (currentDrawing()?.title || "") + " 加载失败";
       setTimeout(function() {
         if (el.currentDrawingTitle.textContent.indexOf("加载失败") >= 0) {

@@ -4,7 +4,30 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>行李智查</title>
-    <link rel="stylesheet" href="styles.css?v=20260610-v2">
+    <link rel="stylesheet" href="styles.css?v=20260611-v3">
+    <script>
+      // Preload first drawing image so it downloads in parallel with JS
+      (function(){
+        try {
+          var DRAWING_IMAGES = { f4:1, f3:1, f2:1, f1:1, b1:1, "f3-transfer":1, "overview-2d":1, "overview-3d":1 };
+          var raw = localStorage.getItem("baggage-point-finder-v1");
+          var drawingId = "f2"; // default
+          if (raw) {
+            var data = JSON.parse(raw);
+            if (data.currentDrawingId && DRAWING_IMAGES[data.currentDrawingId]) {
+              drawingId = data.currentDrawingId;
+            }
+          }
+          var isMobile = window.matchMedia("(max-width: 900px)").matches;
+          var imgPath = isMobile ? "assets/floors/mobile/" + drawingId + ".jpg" : "assets/floors/" + drawingId + ".jpg";
+          var link = document.createElement("link");
+          link.rel = "preload";
+          link.as = "image";
+          link.href = imgPath;
+          document.head.appendChild(link);
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body class="auth-locked">
     <section id="accessGate" class="access-gate" aria-label="访问口令">
@@ -153,6 +176,10 @@
             <img id="drawingImage" alt="当前图纸" draggable="false" decoding="async">
             <svg id="overlay" aria-label="标注层"></svg>
           </div>
+          <div id="loadingOverlay" class="loading-overlay" hidden>
+            <div class="loading-spinner"></div>
+            <span id="loadingText">加载中...</span>
+          </div>
           <div class="minimap" aria-label="点位总览">
             <div class="minimap-title">
               <strong>点位总览</strong>
@@ -210,6 +237,6 @@
       </main>
     </section>
 
-    <script src="app.js?v=20260610-v2"></script>
+    <script src="app.js?v=20260611-v3"></script>
   </body>
 </html>
