@@ -3531,15 +3531,19 @@
           moveSelectedAnnotationsToGroup(groupId);
           return;
         }
-        state.activeGroupId = groupId;
-        // Auto-expand group when clicked
-        if (state.collapsedGroups[groupId]) {
-          delete state.collapsedGroups[groupId];
-        }
-        if (groupMeta && groupMeta.autoKey) {
-          toggleRenderPrefix(groupMeta.autoKey, event.ctrlKey || event.metaKey, { render: false });
+        // Toggle expand/collapse: if already active & expanded, collapse; otherwise expand & activate
+        var isActive = state.activeGroupId === groupId ||
+          (groupMeta && groupMeta.autoKey && selectedRenderPrefixes().indexOf(groupMeta.autoKey) !== -1);
+        if (isActive && !state.collapsedGroups[groupId]) {
+          state.collapsedGroups[groupId] = true;
         } else {
-          setRenderPrefix("", { render: false });
+          delete state.collapsedGroups[groupId];
+          state.activeGroupId = groupId;
+          if (groupMeta && groupMeta.autoKey) {
+            toggleRenderPrefix(groupMeta.autoKey, event.ctrlKey || event.metaKey, { render: false });
+          } else {
+            setRenderPrefix("", { render: false });
+          }
         }
         renderDrawingList();
         renderOverlay();
