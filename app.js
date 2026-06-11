@@ -9,7 +9,7 @@
   const SVG_NS = "http://www.w3.org/2000/svg";
   const RENDER_LIMIT = 200;
   const VIEW_ONLY = false;
-  const APP_VERSION = "20260612-v8";
+  const APP_VERSION = "20260612-v9";
   const FIXED_DRAWING_ORDER = ["f4", "f3", "f2", "f1", "b1", "f3-transfer", "overview-2d", "overview-3d"];
 
   const defaultDrawings = [
@@ -227,6 +227,14 @@
     loadingDrawings: new Map(),
     backgroundStarted: false
   };
+
+  function consumePreloadedJson(key) {
+    var preloads = window.__baggagePreloads;
+    if (!preloads || !preloads[key]) return null;
+    var value = preloads[key];
+    delete preloads[key];
+    return value;
+  }
   var undoStack = [];
   var duplicateReview = {
     groups: [],
@@ -483,10 +491,18 @@
     if (lazyPoints.loadingDrawings.has(drawingId)) return lazyPoints.loadingDrawings.get(drawingId);
     var task = (async function() {
       try {
-        var url = "data/drawings/" + encodeURIComponent(drawingId) + ".json";
-        var response = await fetch(url);
-        if (!response.ok) return false;
-        var payload = await response.json();
+        var preloadedDrawing = window.__baggagePreloads && window.__baggagePreloads.drawing;
+        var payload;
+        if (preloadedDrawing && preloadedDrawing.id === drawingId) {
+          delete window.__baggagePreloads.drawing;
+          payload = await preloadedDrawing.promise;
+        } else {
+          var url = "data/drawings/" + encodeURIComponent(drawingId) + ".json";
+          var response = await fetch(url);
+          if (!response.ok) return false;
+          payload = await response.json();
+        }
+        if (!payload) return false;
         mergeDrawingAnnotations(drawingId, payload.annotations || []);
         if (state.duplicateReviewActive) {
           setDuplicateReview(buildDuplicateGroups(allKnownAnnotations()));
@@ -593,9 +609,15 @@
 
   async function loadLazyPointData() {
     try {
-      var response = await fetch("data/points-manifest.json");
-      if (!response.ok) return false;
-      var manifest = await response.json();
+      var preloadedManifest = consumePreloadedJson("pointsManifest");
+      var manifest;
+      if (preloadedManifest) {
+        manifest = await preloadedManifest;
+      } else {
+        var response = await fetch("data/points-manifest.json");
+        if (!response.ok) return false;
+        manifest = await response.json();
+      }
       if (!manifest || !manifest.counts) return false;
       lazyPoints.enabled = true;
       lazyPoints.manifest = manifest;
@@ -743,9 +765,15 @@
 
   async function loadDrawingManifest() {
     try {
-      const response = await fetch("assets/floors/manifest.json");
-      if (!response.ok) return;
-      const manifest = await response.json();
+      const preloadedManifest = consumePreloadedJson("drawingManifest");
+      let manifest;
+      if (preloadedManifest) {
+        manifest = await preloadedManifest;
+      } else {
+        const response = await fetch("assets/floors/manifest.json");
+        if (!response.ok) return;
+        manifest = await response.json();
+      }
       if (!manifest || !Array.isArray(manifest.drawings) || manifest.drawings.length === 0) return;
       const signature = JSON.stringify(manifest.drawings.map((item) => ({
         id: item.id,
