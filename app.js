@@ -599,11 +599,11 @@
     }
 
     if (!loaded) {
-      loaded = await loadLazyPointData() || loaded;
+      loaded = await loadStaticPointBackup() || loaded;
     }
 
     if (!loaded) {
-      loaded = await loadStaticPointBackup() || loaded;
+      loaded = await loadLazyPointData() || loaded;
     }
 
     if (!loaded) {
