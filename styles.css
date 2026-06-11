@@ -1831,7 +1831,7 @@ input.minimap-group-name.editing:focus {
     overflow: visible;
   }
 
-  body.mobile-ui-hidden #pointModule > .sidebar > :not(.panel:first-of-type),
+  body.mobile-ui-hidden #pointModule > .sidebar > :not(.panel:first-of-type):not(.panel:nth-of-type(2)),
   body.mobile-ui-hidden #pointModule > .sidebar .panel:first-of-type > :not(.search-row):not(.search-results) {
     display: none !important;
   }
@@ -1859,6 +1859,34 @@ input.minimap-group-name.editing:focus {
     border-radius: 9px;
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 2px 12px rgba(23, 33, 43, 0.2);
+  }
+
+  body.mobile-ui-hidden #pointModule > .sidebar .panel:nth-of-type(2) {
+    position: fixed;
+    top: calc(48px + env(safe-area-inset-top, 0px));
+    left: 8px;
+    right: 8px;
+    z-index: 58;
+    display: block;
+    margin: 0;
+    padding: 4px 6px;
+    border: 0;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 2px 12px rgba(23, 33, 43, 0.2);
+    backdrop-filter: blur(8px);
+  }
+
+  body.mobile-ui-hidden #pointModule > .sidebar .panel:nth-of-type(2) .section-title {
+    display: none;
+  }
+
+  body.mobile-ui-hidden #pointModule > .sidebar .drawing-list {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 0;
+    scrollbar-width: none;
   }
 
   body.mobile-ui-hidden #pointModule {
