@@ -4564,6 +4564,7 @@
       button.type = "button";
       button.className = "bulk-highlight-result";
       var prefix = codePrefix(annotation.code);
+      button.innerHTML =
         "<strong>" + escapeHtml(annotationTitle(annotation)) + "</strong>" +
         "<small>" + escapeHtml(drawingTitleById(annotation.drawingId)) +
         (prefix ? " / PLC " + escapeHtml(prefix) : "") +
