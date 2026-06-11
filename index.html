@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>行李智查</title>
     <link rel="stylesheet" href="styles.css?v=20260612-hidden-floor-switcher">
+    <link rel="preload" href="app.js?v=20260612-parallel-startup" as="script">
     <script>
       // Preload first drawing image so it downloads in parallel with JS
       (function(){
@@ -25,6 +26,21 @@
           link.as = "image";
           link.href = imgPath;
           document.head.appendChild(link);
+          function preloadJson(url) {
+            return fetch(url).then(function(response) {
+              return response.ok ? response.json() : null;
+            }).catch(function() {
+              return null;
+            });
+          }
+          window.__baggagePreloads = {
+            drawingManifest: preloadJson("assets/floors/manifest.json"),
+            pointsManifest: preloadJson("data/points-manifest.json"),
+            drawing: {
+              id: drawingId,
+              promise: preloadJson("data/drawings/" + encodeURIComponent(drawingId) + ".json")
+            }
+          };
         } catch(e) {}
       })();
     </script>
@@ -238,6 +254,6 @@
       </main>
     </section>
 
-    <script src="app.js?v=20260612-fast-first-load"></script>
+    <script src="app.js?v=20260612-parallel-startup"></script>
   </body>
 </html>
