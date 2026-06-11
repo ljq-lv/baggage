@@ -9,7 +9,7 @@
   const SVG_NS = "http://www.w3.org/2000/svg";
   const RENDER_LIMIT = 200;
   const VIEW_ONLY = false;
-  const APP_VERSION = "20260612-v7";
+  const APP_VERSION = "20260612-v8";
   const FIXED_DRAWING_ORDER = ["f4", "f3", "f2", "f1", "b1", "f3-transfer", "overview-2d", "overview-3d"];
 
   const defaultDrawings = [
@@ -647,11 +647,11 @@
     }
 
     if (!loaded) {
-      loaded = await loadStaticPointBackup() || loaded;
+      loaded = await loadLazyPointData() || loaded;
     }
 
     if (!loaded) {
-      loaded = await loadLazyPointData() || loaded;
+      loaded = await loadStaticPointBackup() || loaded;
     }
 
     if (!loaded) {
