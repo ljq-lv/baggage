@@ -4435,9 +4435,10 @@
   }
 
   function parseBulkHighlightCodes(value) {
-    var matches = String(value || "").match(/\d+(?:\.\d+)+/g) || [];
-    return matches
-      .map(normalizeDeviceCode)
+    // Split by 、or , only — keep & as part of the code (e.g. "3001.00.78 & 3004.00.79")
+    var parts = String(value || "").split(/[、,]+/);
+    return parts
+      .map(function(s) { return s.trim(); })
       .filter(Boolean)
       .filter(function(code, index, list) { return list.indexOf(code) === index; });
   }
