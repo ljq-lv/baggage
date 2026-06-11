@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-06-11T02:40:11.906Z",
+  "updatedAt": "2026-06-11T02:56:26.714Z",
   "data": {
     "version": 1,
     "points": {
       "version": 1,
-      "currentDrawingId": "b1",
+      "currentDrawingId": "f2",
       "drawings": [
         {
           "id": "f4",
@@ -1958,7 +1958,17 @@
         "grp-mq5ejyzo-zf3gd0": true,
         "grp-mq5ejyzo-6j3byn": false,
         "grp-mq8vyw4r-ns3qrh": true,
-        "grp-mq8vyw4s-dyw8jo": true
+        "grp-mq8vyw4s-dyw8jo": true,
+        "auto-f3-3281": true,
+        "grp-mq8vyw4u-nce6c5": true,
+        "grp-mq8vyw4s-jts4o7": true,
+        "grp-mq8vyw4s-chp46k": true,
+        "grp-mq8vyw4t-kmm9i3": true,
+        "grp-mq8vyw4t-oheai8": true,
+        "grp-mq8vyw4s-p3w90p": true,
+        "grp-mq8vyw4s-sw3b4d": true,
+        "grp-mq8vyw4s-04w5ji": true,
+        "grp-mq8vyw4t-imyybf": true
       },
       "groupSortOrders": {},
       "annotations": [
@@ -148823,6 +148833,125 @@
           ],
           "createdAt": "2026-06-11T02:25:58.323Z",
           "updatedAt": "2026-06-11T02:25:58.323Z",
+          "special": true
+        },
+        {
+          "id": "ann-mq8wlcbp-b87u2x",
+          "drawingId": "b1",
+          "type": "point",
+          "groupId": "grp-mq5ayig3-gkptxz",
+          "code": "3456.79.99",
+          "note": "到达-急停信号柜（含隶属急停点） | 位于3456.15.1内",
+          "points": [
+            {
+              "x": 0.5030950175823578,
+              "y": 0.7432755180992332
+            }
+          ],
+          "createdAt": "2026-06-11T02:53:43.716Z",
+          "updatedAt": "2026-06-11T02:53:43.716Z",
+          "special": true
+        },
+        {
+          "id": "ann-mq8wlcbr-gefcgu",
+          "drawingId": "b1",
+          "type": "point",
+          "groupId": "auto-b1-3455",
+          "code": "3455.00.89",
+          "note": "PN 交换机柜 | 位于3455.13.1内",
+          "points": [
+            {
+              "x": 0.5231745744816869,
+              "y": 0.7229646285167631
+            }
+          ],
+          "createdAt": "2026-06-11T02:53:43.716Z",
+          "updatedAt": "2026-06-11T02:53:43.716Z",
+          "special": true
+        },
+        {
+          "id": "ann-mq8wlcbr-3ynl5j",
+          "drawingId": "f1",
+          "type": "point",
+          "groupId": "auto-f1-3455",
+          "code": "3455.00.69",
+          "note": "ASI 网关柜 | 位于3455.11.1内",
+          "points": [
+            {
+              "x": 0.3393812970633063,
+              "y": 0.761149454908152
+            }
+          ],
+          "createdAt": "2026-06-11T02:53:43.716Z",
+          "updatedAt": "2026-06-11T02:53:43.716Z",
+          "special": true
+        },
+        {
+          "id": "ann-mq8wlcbr-nmnqzf",
+          "drawingId": "f1",
+          "type": "point",
+          "groupId": "auto-f1-3454",
+          "code": "3454.00.69",
+          "note": "ASI 网关柜 | 位于3454.13.1内",
+          "points": [
+            {
+              "x": 0.36583578785382687,
+              "y": 0.7424890465631742
+            }
+          ],
+          "createdAt": "2026-06-11T02:53:43.716Z",
+          "updatedAt": "2026-06-11T02:53:43.716Z",
+          "special": true
+        },
+        {
+          "id": "ann-mq8wlcbs-pdgd0t",
+          "drawingId": "b1",
+          "type": "point",
+          "groupId": "auto-b1-3372",
+          "code": "3372.00.89",
+          "note": "PN 交换机柜 | 位于3372.23.1内",
+          "points": [
+            {
+              "x": 0.531217201352532,
+              "y": 0.6742261532264348
+            }
+          ],
+          "createdAt": "2026-06-11T02:53:43.716Z",
+          "updatedAt": "2026-06-11T02:53:43.716Z",
+          "special": true
+        },
+        {
+          "id": "ann-mq8wlcbs-jc46ul",
+          "drawingId": "b1",
+          "type": "point",
+          "groupId": "auto-b1-3371",
+          "code": "3371.00.84",
+          "note": "PN 交换机柜 | 位于3371.25.1内",
+          "points": [
+            {
+              "x": 0.5887076154282328,
+              "y": 0.6553519570801332
+            }
+          ],
+          "createdAt": "2026-06-11T02:53:43.716Z",
+          "updatedAt": "2026-06-11T02:53:43.716Z",
+          "special": true
+        },
+        {
+          "id": "ann-mq8wlcbs-y5kmnw",
+          "drawingId": "f4",
+          "type": "point",
+          "groupId": "grp-mpkq6u0n-ozcl78",
+          "code": "3103.00.68",
+          "note": "ASI 网关柜 | 位于3103.55.1内",
+          "points": [
+            {
+              "x": 0.3064412879014392,
+              "y": 0.236787879334158
+            }
+          ],
+          "createdAt": "2026-06-11T02:53:43.716Z",
+          "updatedAt": "2026-06-11T02:53:43.716Z",
           "special": true
         }
       ],
