@@ -1,0 +1,236 @@
+﻿{
+  "sourceRowsMatched": 1013,
+  "existingCodes": 963,
+  "updatedCodes": 9,
+  "unchangedCodes": 937,
+  "legacyCodes": 17,
+  "updated": [
+    {
+      "code": "3221.09.02",
+      "references": [
+        "3321.09.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.09.04",
+      "references": [
+        "3321.09.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.09.05",
+      "references": [
+        "3321.09.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.63.03",
+      "references": [
+        "3321.63.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.63.04",
+      "references": [
+        "3321.63.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.63.05",
+      "references": [
+        "3321.63.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3232.00.86",
+      "references": [
+        "3232.41.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3242.00.81",
+      "references": [
+        "3242.71.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3301.00.68",
+      "references": [
+        "3301.35.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    }
+  ],
+  "legacy": [
+    {
+      "code": "3001.00.87",
+      "rows": [
+        "PLC分区非急停部分!6"
+      ],
+      "missingReferences": [
+        "3001.12.01"
+      ]
+    },
+    {
+      "code": "3101.63.97",
+      "rows": [
+        "PLC分区非急停部分!211"
+      ],
+      "missingReferences": [
+        "3101.63.03"
+      ]
+    },
+    {
+      "code": "3103.00.68",
+      "rows": [
+        "PLC分区非急停部分!220"
+      ],
+      "missingReferences": [
+        "3103.57.04"
+      ]
+    },
+    {
+      "code": "3130.00.86",
+      "rows": [
+        "PLC分区非急停部分!262"
+      ],
+      "missingReferences": [
+        "3130.35.07"
+      ]
+    },
+    {
+      "code": "3221.37.03",
+      "rows": [
+        "PLC分区非急停部分!672"
+      ],
+      "missingReferences": [
+        "3321.37.03"
+      ]
+    },
+    {
+      "code": "3221.37.04",
+      "rows": [
+        "PLC分区非急停部分!673"
+      ],
+      "missingReferences": [
+        "3321.37.04"
+      ]
+    },
+    {
+      "code": "3221.37.05",
+      "rows": [
+        "PLC分区非急停部分!674"
+      ],
+      "missingReferences": [
+        "3321.37.05"
+      ]
+    },
+    {
+      "code": "3311.00.89",
+      "rows": [
+        "PLC分区非急停部分!1338"
+      ],
+      "missingReferences": [
+        "3011.07.01"
+      ]
+    },
+    {
+      "code": "3371.00.84",
+      "rows": [
+        "PLC分区非急停部分!1784"
+      ],
+      "missingReferences": [
+        "3371.25.02"
+      ]
+    },
+    {
+      "code": "3372.00.89",
+      "rows": [
+        "PLC分区非急停部分!1812"
+      ],
+      "missingReferences": [
+        "3372.25.02"
+      ]
+    },
+    {
+      "code": "3382.05.01",
+      "rows": [
+        "PLC分区非急停部分!1876"
+      ],
+      "missingReferences": [
+        "参考点跨图纸: "
+      ]
+    },
+    {
+      "code": "3382.15.01",
+      "rows": [
+        "PLC分区非急停部分!1878"
+      ],
+      "missingReferences": [
+        "参考点跨图纸: "
+      ]
+    },
+    {
+      "code": "3382.33.01",
+      "rows": [
+        "PLC分区非急停部分!1881"
+      ],
+      "missingReferences": [
+        "参考点跨图纸: "
+      ]
+    },
+    {
+      "code": "3382.51.02",
+      "rows": [
+        "PLC分区非急停部分!1890"
+      ],
+      "missingReferences": [
+        "参考点跨图纸: "
+      ]
+    },
+    {
+      "code": "3382.51.03",
+      "rows": [
+        "PLC分区非急停部分!1891"
+      ],
+      "missingReferences": [
+        "参考点跨图纸: "
+      ]
+    },
+    {
+      "code": "3454.00.89",
+      "rows": [
+        "PLC分区非急停部分!1922"
+      ],
+      "missingReferences": [
+        "3454.17.02"
+      ]
+    },
+    {
+      "code": "3454.00.68",
+      "rows": [
+        "PLC分区非急停部分!1927"
+      ],
+      "missingReferences": [
+        "3454.15.07"
+      ]
+    }
+  ]
+}

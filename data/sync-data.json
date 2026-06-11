@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-06-11T02:56:26.714Z",
+  "updatedAt": "2026-06-11T16:11:46.517Z",
   "data": {
     "version": 1,
     "points": {
       "version": 1,
-      "currentDrawingId": "f2",
+      "currentDrawingId": "b1",
       "drawings": [
         {
           "id": "f4",
@@ -611,10 +611,7 @@
         {
           "id": "auto-overview-2d-3001",
           "name": "3001",
-          "createdAt": "2026-05-28T17:12:01.464Z",
-          "autoKey": "3001",
-          "isAuto": true,
-          "drawingId": "overview-2d"
+          "createdAt": "2026-05-28T17:12:01.464Z"
         },
         {
           "id": "auto-overview-2d-3004",
@@ -1671,6 +1668,19 @@
           "autoKey": "3222",
           "isAuto": true,
           "drawingId": "f3"
+        },
+        {
+          "id": "grp-mq9nyypa-trvzn3",
+          "name": "3321",
+          "createdAt": "2026-06-11T15:40:08.878Z"
+        },
+        {
+          "id": "grp-mq9nyypp-lep4s2",
+          "name": "3001",
+          "createdAt": "2026-06-11T15:40:08.893Z",
+          "autoKey": "3001",
+          "isAuto": true,
+          "drawingId": "overview-2d"
         }
       ],
       "collapsedGroups": {
@@ -6622,12 +6632,12 @@
           "note": "",
           "points": [
             {
-              "x": 0.37680689270046686,
-              "y": 0.8007833610211745
+              "x": 0.37985442182453344,
+              "y": 0.8168645512164849
             }
           ],
           "createdAt": "2026-05-26T08:46:53.129Z",
-          "updatedAt": "2026-05-26T08:46:53.129Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": false
         },
         {
@@ -8424,12 +8434,12 @@
           "note": "",
           "points": [
             {
-              "x": 0.3521431364451187,
-              "y": 0.35389919098770484
+              "x": 0.3488133848839303,
+              "y": 0.3553152446010302
             }
           ],
           "createdAt": "2026-05-26T10:45:15.874Z",
-          "updatedAt": "2026-05-26T10:54:03.027Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": false
         },
         {
@@ -10447,12 +10457,12 @@
           "note": "",
           "points": [
             {
-              "x": 0.34696730191139596,
-              "y": 0.34863130832682515
+              "x": 0.3474853728439654,
+              "y": 0.34507613981668894
             }
           ],
           "createdAt": "2026-05-26T11:21:34.519Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": false
         },
         {
@@ -10787,12 +10797,12 @@
           "note": "",
           "points": [
             {
-              "x": 0.3611279580934734,
-              "y": 0.5786788473426716
+              "x": 0.36218568145498625,
+              "y": 0.5763942411881735
             }
           ],
           "createdAt": "2026-05-26T11:28:30.098Z",
-          "updatedAt": "2026-05-26T11:28:30.098Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": false
         },
         {
@@ -11926,12 +11936,12 @@
           "note": "",
           "points": [
             {
-              "x": 0.34979153426575366,
-              "y": 0.6281998154217665
+              "x": 0.3503081894208106,
+              "y": 0.6298028744003787
             }
           ],
           "createdAt": "2026-05-26T11:39:24.875Z",
-          "updatedAt": "2026-06-08T14:27:09.520Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": false
         },
         {
@@ -12522,12 +12532,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.33154386090709287,
-              "y": 0.25523802281721497
+              "x": 0.33238906800118806,
+              "y": 0.2579987872809984
             }
           ],
           "createdAt": "2026-05-27T03:28:31.289Z",
-          "updatedAt": "2026-05-27T03:28:59.974Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpnicm9v-a1dc11",
@@ -12590,12 +12600,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3515956199752225,
-              "y": 0.33940587996987803
+              "x": 0.3492622866418891,
+              "y": 0.33877768994239477
             }
           ],
           "createdAt": "2026-05-27T03:38:46.038Z",
-          "updatedAt": "2026-05-27T03:38:52.355Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpnipqzu-7pfgmf",
@@ -12675,12 +12685,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3612974061880419,
-              "y": 0.43280687359263403
+              "x": 0.36240382245777186,
+              "y": 0.43465229382296006
             }
           ],
           "createdAt": "2026-05-27T03:59:02.884Z",
-          "updatedAt": "2026-05-27T03:59:02.884Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpnji836-hdlcir",
@@ -12692,12 +12702,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.29526810052097885,
-              "y": 0.34554222834424764
+              "x": 0.2935100056046741,
+              "y": 0.3479564299770928
             }
           ],
           "createdAt": "2026-05-27T04:04:13.550Z",
-          "updatedAt": "2026-05-27T04:04:13.550Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpnjmawj-1jne3f",
@@ -12726,12 +12736,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.29694425456056667,
-              "y": 0.626192629119423
+              "x": 0.29868335964219683,
+              "y": 0.6276239955298487
             }
           ],
           "createdAt": "2026-05-27T04:11:01.337Z",
-          "updatedAt": "2026-05-27T04:11:12.660Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpnjtvtc-34lhcf",
@@ -13627,12 +13637,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3518347389373378,
-              "y": 0.657739529675836
+              "x": 0.35112045205163306,
+              "y": 0.6552786488001697
             }
           ],
           "createdAt": "2026-05-27T05:21:24.468Z",
-          "updatedAt": "2026-05-27T05:21:24.468Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpnm9m1d-3ypood",
@@ -14613,12 +14623,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3517566574311379,
-              "y": 0.6740800734645471
+              "x": 0.351639882644206,
+              "y": 0.6710943671701282
             }
           ],
           "createdAt": "2026-05-27T08:37:49.432Z",
-          "updatedAt": "2026-05-27T08:37:49.432Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpntce5n-ewfy76",
@@ -15599,12 +15609,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.33095525289258787,
-              "y": 0.7654528525888572
+              "x": 0.3296489632278455,
+              "y": 0.7626174015674044
             }
           ],
           "createdAt": "2026-05-27T08:43:47.051Z",
-          "updatedAt": "2026-05-27T08:43:47.051Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpnthuuj-30kx2j",
@@ -16432,12 +16442,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3293953809148198,
-              "y": 0.7790342307583427
+              "x": 0.3296286068084371,
+              "y": 0.7820835179038561
             }
           ],
           "createdAt": "2026-05-27T08:52:33.850Z",
-          "updatedAt": "2026-05-27T08:52:33.850Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpntt4a3-tprz24",
@@ -17571,12 +17581,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5103914056669195,
-              "y": 0.6887527238893325
+              "x": 0.5091710997353449,
+              "y": 0.6865779601050138
             }
           ],
           "createdAt": "2026-05-27T08:59:39.916Z",
-          "updatedAt": "2026-05-27T08:59:39.916Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpnu2dj5-lwgytj",
@@ -18642,12 +18652,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.47427253584071877,
-              "y": 0.6980557614650151
+              "x": 0.4727744364225699,
+              "y": 0.6947619425637064
             }
           ],
           "createdAt": "2026-05-27T09:05:38.532Z",
-          "updatedAt": "2026-05-27T09:05:38.532Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpnu9wl1-d0zi0y",
@@ -23521,12 +23531,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.40358907733840976,
-              "y": 0.7778898391564452
+              "x": 0.4068447170741161,
+              "y": 0.8126542074551739
             }
           ],
           "createdAt": "2026-05-27T16:45:36.672Z",
-          "updatedAt": "2026-05-27T16:46:04.624Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpoatqyq-zq8qc0",
@@ -23555,12 +23565,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.39170532038322076,
-              "y": 0.7632602933750996
+              "x": 0.3991830047403919,
+              "y": 0.8158505009866088
             }
           ],
           "createdAt": "2026-05-27T16:49:36.847Z",
-          "updatedAt": "2026-05-27T16:49:42.658Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpoav5sr-rguipb",
@@ -23606,12 +23616,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3393759704442649,
-              "y": 0.7843654994076238
+              "x": 0.3432015636249704,
+              "y": 0.8079741709607767
             }
           ],
           "createdAt": "2026-05-27T16:50:59.102Z",
-          "updatedAt": "2026-05-27T16:50:59.102Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpoayss2-w0diya",
@@ -23640,12 +23650,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3343173502554861,
-              "y": 0.7980494848144651
+              "x": 0.3404893429446889,
+              "y": 0.8330907808718675
             }
           ],
           "createdAt": "2026-05-27T16:53:14.400Z",
-          "updatedAt": "2026-05-27T16:53:14.400Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpoazomt-6fl73h",
@@ -23691,12 +23701,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.29217922152039155,
-              "y": 0.8063377611072322
+              "x": 0.29778214647712337,
+              "y": 0.8369189590406381
             }
           ],
           "createdAt": "2026-05-27T16:54:12.143Z",
-          "updatedAt": "2026-05-27T16:54:12.143Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpob0nz4-enu6ak",
@@ -24150,12 +24160,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.29659952000129874,
-              "y": 0.35712902788782147
+              "x": 0.29292232936730783,
+              "y": 0.3575695159207615
             }
           ],
           "createdAt": "2026-05-27T18:39:55.871Z",
-          "updatedAt": "2026-05-27T18:39:55.871Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpoeuapv-qem6al",
@@ -24388,12 +24398,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3655101328089344,
-              "y": 0.35767364969619936
+              "x": 0.3643990216978233,
+              "y": 0.35484679457252444
             }
           ],
           "createdAt": "2026-05-27T18:46:42.900Z",
-          "updatedAt": "2026-05-27T18:46:42.900Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpof1w3g-4xh56b",
@@ -24728,12 +24738,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.4245328269416799,
-              "y": 0.28479478034736516
+              "x": 0.426291240673156,
+              "y": 0.28183143021549467
             }
           ],
           "createdAt": "2026-05-27T18:50:14.269Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpof5x3d-ivzqy5",
@@ -25136,12 +25146,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.45834045811749996,
-              "y": 0.28476307700845005
+              "x": 0.45745661973366153,
+              "y": 0.2819968993306116
             }
           ],
           "createdAt": "2026-05-27T18:57:57.445Z",
-          "updatedAt": "2026-05-27T18:57:57.445Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpoffugp-nfvfe7",
@@ -25476,12 +25486,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5968399731866761,
-              "y": 0.31701989120648794
+              "x": 0.5946087537077928,
+              "y": 0.3210034707112826
             }
           ],
           "createdAt": "2026-05-27T19:00:53.147Z",
-          "updatedAt": "2026-05-27T19:00:53.147Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpofjewf-pyz1ud",
@@ -25765,12 +25775,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5739510601203114,
-              "y": 0.34477745267992144
+              "x": 0.575259357207885,
+              "y": 0.3469964724750992
             }
           ],
           "createdAt": "2026-05-27T19:09:09.500Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpofu05i-x32wdr",
@@ -26037,12 +26047,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3113187780616287,
-              "y": 0.33568289908862203
+              "x": 0.30893660826289465,
+              "y": 0.3360570129164562
             }
           ],
           "createdAt": "2026-05-27T19:23:33.411Z",
-          "updatedAt": "2026-05-27T19:23:33.411Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpogcurt-giuxik",
@@ -26292,12 +26302,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3607267442575936,
-              "y": 0.3351840806515098
+              "x": 0.35781520339247425,
+              "y": 0.33917462814840754
             }
           ],
           "createdAt": "2026-05-27T19:28:57.226Z",
-          "updatedAt": "2026-05-27T19:28:57.226Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpogjqxk-52vle6",
@@ -29998,12 +30008,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.46745182421712417,
-              "y": 0.686093121017072
+              "x": 0.4678449367562302,
+              "y": 0.6895041784259184
             }
           ],
           "createdAt": "2026-05-28T15:36:40.367Z",
-          "updatedAt": "2026-05-28T15:36:46.675Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppnokxr-7wioil",
@@ -31239,12 +31249,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.4604467173650585,
-              "y": 0.6788790030961913
+              "x": 0.45992525631305475,
+              "y": 0.6810901377748404
             }
           ],
           "createdAt": "2026-05-28T15:44:33.317Z",
-          "updatedAt": "2026-05-28T15:44:33.317Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppnyqsy-jh02pm",
@@ -31630,12 +31640,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.40060675174173066,
-              "y": 0.2641778422348492
+              "x": 0.40132425181192566,
+              "y": 0.27009364929982954
             }
           ],
           "createdAt": "2026-05-28T15:48:07.209Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppo3ck4-ow2ikf",
@@ -31902,12 +31912,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.44465916575759706,
-              "y": 0.26402336698519113
+              "x": 0.4430315086488686,
+              "y": 0.2696337412003761
             }
           ],
           "createdAt": "2026-05-28T15:49:00.984Z",
-          "updatedAt": "2026-05-28T15:49:00.984Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppo4jbn-qk1oog",
@@ -32378,12 +32388,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6235360846608643,
-              "y": 0.32398133469383666
+              "x": 0.6218797206829052,
+              "y": 0.3179612484084213
             }
           ],
           "createdAt": "2026-05-28T15:50:43.621Z",
-          "updatedAt": "2026-05-28T15:50:43.621Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppo6phq-l9400q",
@@ -32650,12 +32660,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.573372897322063,
-              "y": 0.3410681115352811
+              "x": 0.5755653991353814,
+              "y": 0.34776852252790397
             }
           ],
           "createdAt": "2026-05-28T15:52:45.104Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppo99fe-o81yek",
@@ -32905,12 +32915,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5962670489206515,
-              "y": 0.3618569926087303
+              "x": 0.5966063205983734,
+              "y": 0.36617286216937744
             }
           ],
           "createdAt": "2026-05-28T16:06:42.848Z",
-          "updatedAt": "2026-05-28T16:06:42.848Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpporeta-wuf23v",
@@ -33517,12 +33527,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7518032178419444,
-              "y": 0.365103953132726
+              "x": 0.7506164796592357,
+              "y": 0.3592642311288223
             }
           ],
           "createdAt": "2026-05-28T16:10:52.966Z",
-          "updatedAt": "2026-05-28T16:10:52.966Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppowm1z-s83nvc",
@@ -33585,12 +33595,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7609015439093764,
-              "y": 0.3582081078791684
+              "x": 0.7616487541265378,
+              "y": 0.363923589373315
             }
           ],
           "createdAt": "2026-05-28T16:11:20.304Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppox5wr-mc626k",
@@ -33755,12 +33765,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7587268837326773,
-              "y": 0.3934715405846863
+              "x": 0.7601496799704118,
+              "y": 0.3863611582518183
             }
           ],
           "createdAt": "2026-05-28T16:11:52.939Z",
-          "updatedAt": "2026-05-28T16:11:52.939Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppoxxin-mnrwu2",
@@ -33874,12 +33884,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7422658382211664,
-              "y": 0.3919222150578791
+              "x": 0.7428623575455031,
+              "y": 0.38612563109352643
             }
           ],
           "createdAt": "2026-05-28T16:12:31.498Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppoyoq8-elisj9",
@@ -34333,12 +34343,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6037022076575506,
-              "y": 0.3839562703996528
+              "x": 0.6018121909643922,
+              "y": 0.3887820466088619
             }
           ],
           "createdAt": "2026-05-28T16:14:44.058Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppp1j6a-amj11l",
@@ -35534,7 +35544,7 @@
           "id": "ann-mppr36wr-gmlu6f",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.1.1",
           "note": "",
           "special": false,
@@ -35551,7 +35561,7 @@
           "id": "ann-mppr37ib-pdeb7o",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.1.2",
           "note": "",
           "special": false,
@@ -35568,7 +35578,7 @@
           "id": "ann-mppr37u2-1ca84y",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.1.3",
           "note": "",
           "special": false,
@@ -35585,7 +35595,7 @@
           "id": "ann-mppr3biv-vw9vrq",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.1.4",
           "note": "",
           "special": false,
@@ -35602,7 +35612,7 @@
           "id": "ann-mppr3e88-2qi88x",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.3.1",
           "note": "",
           "special": false,
@@ -35619,7 +35629,7 @@
           "id": "ann-mppr3eq6-abq5lf",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.3.2",
           "note": "",
           "special": false,
@@ -35636,7 +35646,7 @@
           "id": "ann-mppr3f45-g1avwe",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.5.1",
           "note": "",
           "special": false,
@@ -35653,7 +35663,7 @@
           "id": "ann-mppr3ffg-6u7ggf",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.7.1",
           "note": "",
           "special": false,
@@ -35670,7 +35680,7 @@
           "id": "ann-mppr3fqd-1ohgu3",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.9.1",
           "note": "",
           "special": false,
@@ -35687,7 +35697,7 @@
           "id": "ann-mppr3k12-ki4uea",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.11.1",
           "note": "",
           "special": false,
@@ -35704,7 +35714,7 @@
           "id": "ann-mppr3l5q-1wagjh",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.13.1",
           "note": "",
           "special": false,
@@ -35721,7 +35731,7 @@
           "id": "ann-mppr3lka-ii93we",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.13.2",
           "note": "",
           "special": false,
@@ -35738,7 +35748,7 @@
           "id": "ann-mppr4283-avzyv4",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.15.2",
           "note": "",
           "special": false,
@@ -35755,7 +35765,7 @@
           "id": "ann-mppr46gf-r2joby",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.17.1",
           "note": "",
           "special": false,
@@ -35772,7 +35782,7 @@
           "id": "ann-mppr48v1-hh0kfx",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.19.2",
           "note": "",
           "special": false,
@@ -35789,7 +35799,7 @@
           "id": "ann-mppr49aa-0cjka4",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.21.1",
           "note": "",
           "special": false,
@@ -35806,7 +35816,7 @@
           "id": "ann-mppr49k7-goumw6",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.23.2",
           "note": "",
           "special": false,
@@ -35823,7 +35833,7 @@
           "id": "ann-mppr49ws-8srj36",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.25.1",
           "note": "",
           "special": false,
@@ -35840,7 +35850,7 @@
           "id": "ann-mppr4a6f-u47j7e",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.27.2",
           "note": "",
           "special": false,
@@ -35857,7 +35867,7 @@
           "id": "ann-mppr4ajd-m850sh",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.29.1",
           "note": "",
           "special": false,
@@ -35874,7 +35884,7 @@
           "id": "ann-mppr4asx-9k0qrn",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.31.2",
           "note": "",
           "special": false,
@@ -35891,7 +35901,7 @@
           "id": "ann-mppr4b5b-i9kr4b",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.33.1",
           "note": "",
           "special": false,
@@ -35908,7 +35918,7 @@
           "id": "ann-mppr4beo-z6gd2c",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.35.2",
           "note": "",
           "special": false,
@@ -35925,7 +35935,7 @@
           "id": "ann-mppr6qro-o929t8",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.37.1",
           "note": "",
           "special": false,
@@ -35942,7 +35952,7 @@
           "id": "ann-mppr6r1t-tp7gpj",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.37.2",
           "note": "",
           "special": false,
@@ -35959,7 +35969,7 @@
           "id": "ann-mppr7dwr-czbb94",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.37.4",
           "note": "",
           "special": false,
@@ -35976,7 +35986,7 @@
           "id": "ann-mppr7edb-b8cwuu",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.37.5",
           "note": "",
           "special": false,
@@ -35993,7 +36003,7 @@
           "id": "ann-mppr7hd1-u3xa78",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.39.1",
           "note": "",
           "special": false,
@@ -36010,7 +36020,7 @@
           "id": "ann-mppr7ilp-bz83xb",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.39.2",
           "note": "",
           "special": false,
@@ -36027,7 +36037,7 @@
           "id": "ann-mppr7jgn-7ncoc1",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.39.4",
           "note": "",
           "special": false,
@@ -36044,7 +36054,7 @@
           "id": "ann-mppr7jt9-jx7u4x",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.39.5",
           "note": "",
           "special": false,
@@ -36061,7 +36071,7 @@
           "id": "ann-mppr7kfj-m1y3ni",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.41.1",
           "note": "",
           "special": false,
@@ -36078,7 +36088,7 @@
           "id": "ann-mppr7kn4-78yxhg",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.41.2",
           "note": "",
           "special": false,
@@ -36095,7 +36105,7 @@
           "id": "ann-mppr7kyt-si2yio",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.41.4",
           "note": "",
           "special": false,
@@ -36112,7 +36122,7 @@
           "id": "ann-mppr7l7p-nt0isb",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.41.5",
           "note": "",
           "special": false,
@@ -36129,7 +36139,7 @@
           "id": "ann-mppr7ltv-sw1xfu",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.43.1",
           "note": "",
           "special": false,
@@ -36146,7 +36156,7 @@
           "id": "ann-mppr7mam-n9lunk",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.43.2",
           "note": "",
           "special": false,
@@ -36163,7 +36173,7 @@
           "id": "ann-mppr7mne-4m6x2l",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.43.4",
           "note": "",
           "special": false,
@@ -36180,7 +36190,7 @@
           "id": "ann-mppr7n18-apr6pe",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.43.5",
           "note": "",
           "special": false,
@@ -36197,7 +36207,7 @@
           "id": "ann-mppr7nne-rigv9z",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.45.1",
           "note": "",
           "special": false,
@@ -36214,7 +36224,7 @@
           "id": "ann-mppr7o01-c3h29r",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.45.2",
           "note": "",
           "special": false,
@@ -36231,7 +36241,7 @@
           "id": "ann-mppr7ocd-byebvj",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.45.4",
           "note": "",
           "special": false,
@@ -36248,7 +36258,7 @@
           "id": "ann-mppr7onu-2ebu7v",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.45.5",
           "note": "",
           "special": false,
@@ -36265,7 +36275,7 @@
           "id": "ann-mppr7pa7-k1i8pg",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.47.1",
           "note": "",
           "special": false,
@@ -36282,7 +36292,7 @@
           "id": "ann-mppr7pn6-cgdinr",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.47.2",
           "note": "",
           "special": false,
@@ -36299,7 +36309,7 @@
           "id": "ann-mppr7pyb-0hs6fq",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.47.4",
           "note": "",
           "special": false,
@@ -36316,7 +36326,7 @@
           "id": "ann-mppr7q9w-h88sgr",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.47.5",
           "note": "",
           "special": false,
@@ -36333,7 +36343,7 @@
           "id": "ann-mppr7tt4-wz3vqq",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.49.1",
           "note": "",
           "special": false,
@@ -36350,7 +36360,7 @@
           "id": "ann-mppr7u2e-9n2c6a",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.51.1",
           "note": "",
           "special": false,
@@ -36367,7 +36377,7 @@
           "id": "ann-mppr7ucl-umk7jn",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.53.1",
           "note": "",
           "special": false,
@@ -36384,7 +36394,7 @@
           "id": "ann-mppr7uo4-2li4z1",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.55.1",
           "note": "",
           "special": false,
@@ -36401,7 +36411,7 @@
           "id": "ann-mppr7uxw-zr3r1e",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.57.1",
           "note": "",
           "special": false,
@@ -36418,7 +36428,7 @@
           "id": "ann-mppr7v71-gdn6e3",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.59.1",
           "note": "",
           "special": false,
@@ -36435,7 +36445,7 @@
           "id": "ann-mppr7vhs-qxabzm",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.61.1",
           "note": "",
           "special": false,
@@ -36452,7 +36462,7 @@
           "id": "ann-mppr7vpg-04clpo",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.61.2",
           "note": "",
           "special": false,
@@ -36469,7 +36479,7 @@
           "id": "ann-mppr7vzy-f2pc1w",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.61.3",
           "note": "",
           "special": false,
@@ -36486,7 +36496,7 @@
           "id": "ann-mppr7wcw-sogk1t",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.61.4",
           "note": "",
           "special": false,
@@ -36503,7 +36513,7 @@
           "id": "ann-mppr7wo1-77fzkt",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.61.5",
           "note": "",
           "special": false,
@@ -36520,7 +36530,7 @@
           "id": "ann-mppr7x1d-vc70cg",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.61.6",
           "note": "",
           "special": false,
@@ -36537,7 +36547,7 @@
           "id": "ann-mppr8dcn-93krka",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.61.7",
           "note": "",
           "special": false,
@@ -36554,7 +36564,7 @@
           "id": "ann-mppr8e70-o0r6a4",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.61.8",
           "note": "",
           "special": false,
@@ -36571,7 +36581,7 @@
           "id": "ann-mppr8eps-ib0him",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.61.9",
           "note": "",
           "special": false,
@@ -36588,7 +36598,7 @@
           "id": "ann-mppr8gvp-1wztm2",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.63.1",
           "note": "",
           "special": false,
@@ -36605,7 +36615,7 @@
           "id": "ann-mppr8isi-mbekjs",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.63.2",
           "note": "",
           "special": false,
@@ -36622,7 +36632,7 @@
           "id": "ann-mppr8lxg-9y6rm6",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.64.2",
           "note": "",
           "special": false,
@@ -36639,7 +36649,7 @@
           "id": "ann-mppr8mf5-e87ra2",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.64.3",
           "note": "",
           "special": false,
@@ -36656,7 +36666,7 @@
           "id": "ann-mppr8o3g-5advw9",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.65.1",
           "note": "",
           "special": false,
@@ -36673,7 +36683,7 @@
           "id": "ann-mppr8ro5-2lyjs4",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.65.2",
           "note": "",
           "special": false,
@@ -36690,7 +36700,7 @@
           "id": "ann-mppr8s6n-q3xrz4",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3001",
+          "groupId": "grp-mq9nyypp-lep4s2",
           "code": "3001.65.3",
           "note": "",
           "special": false,
@@ -37920,12 +37930,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.07688365291458514,
-              "y": 0.49604703056969435
+              "x": 0.0762928073335707,
+              "y": 0.49051579194320094
             }
           ],
           "createdAt": "2026-05-28T17:19:39.374Z",
-          "updatedAt": "2026-05-28T17:19:39.374Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpprd0jf-b90q4f",
@@ -38107,12 +38117,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.10434327587671681,
-              "y": 0.4953927296789619
+              "x": 0.10576333579694779,
+              "y": 0.4897188798763969
             }
           ],
           "createdAt": "2026-05-28T17:20:09.861Z",
-          "updatedAt": "2026-06-08T14:27:09.523Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpprdo5d-aryn5x",
@@ -40079,12 +40089,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6235266410386314,
-              "y": 0.42002002996191296
+              "x": 0.6240876129579118,
+              "y": 0.4253437907046441
             }
           ],
           "createdAt": "2026-05-28T17:34:15.088Z",
-          "updatedAt": "2026-06-08T14:27:09.523Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpprvsil-p72vvz",
@@ -42561,12 +42571,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.07453169086012731,
-              "y": 0.5057289411373328
+              "x": 0.07095920011214493,
+              "y": 0.502649208208177
             }
           ],
           "createdAt": "2026-05-28T17:40:50.930Z",
-          "updatedAt": "2026-05-28T17:40:50.930Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpps4b6k-c4whxz",
@@ -42595,12 +42605,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.07063069664177253,
-              "y": 0.50520313269886
+              "x": 0.06956305472390495,
+              "y": 0.5030247864010529
             }
           ],
           "createdAt": "2026-05-28T17:40:53.598Z",
-          "updatedAt": "2026-05-28T17:40:53.598Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpps4gsk-lhx4ke",
@@ -43156,12 +43166,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6098443595821659,
-              "y": 0.4346542140331224
+              "x": 0.608203307094647,
+              "y": 0.4266519042370797
             }
           ],
           "createdAt": "2026-05-28T17:43:31.770Z",
-          "updatedAt": "2026-06-08T14:27:09.523Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpps7qgh-nqug4m",
@@ -45604,12 +45614,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.07416160196049898,
-              "y": 0.4690105361333908
+              "x": 0.07133480261039923,
+              "y": 0.47147289282830745
             }
           ],
           "createdAt": "2026-05-28T17:48:33.164Z",
-          "updatedAt": "2026-05-28T17:48:33.164Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppse6gw-5da4fp",
@@ -45638,12 +45648,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.0720751581221719,
-              "y": 0.46864117840222175
+              "x": 0.07012332311650026,
+              "y": 0.46888742252557647
             }
           ],
           "createdAt": "2026-05-28T17:48:34.181Z",
-          "updatedAt": "2026-05-28T17:48:44.258Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mppse96h-7qul7f",
@@ -47491,12 +47501,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.682194108457791,
-              "y": 0.41957858274189486
+              "x": 0.6818661468143707,
+              "y": 0.41447953700256135
             }
           ],
           "createdAt": "2026-05-29T02:42:24.005Z",
-          "updatedAt": "2026-05-29T02:42:24.005Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqbgtun-cd05p2",
@@ -49888,12 +49898,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.681887516821822,
-              "y": 0.4200834646988471
+              "x": 0.6806159281222134,
+              "y": 0.4144150923588916
             }
           ],
           "createdAt": "2026-05-29T03:10:44.033Z",
-          "updatedAt": "2026-05-29T03:10:44.033Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqch5hk-9t22yl",
@@ -50619,12 +50629,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6069298258749165,
-              "y": 0.3472937017485488
+              "x": 0.6068783578438292,
+              "y": 0.34307454426288003
             }
           ],
           "createdAt": "2026-05-29T03:15:49.245Z",
-          "updatedAt": "2026-05-29T03:15:49.245Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqcnq82-5fqa4u",
@@ -51112,12 +51122,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7399302261548459,
-              "y": 0.3478195611736016
+              "x": 0.742635850565845,
+              "y": 0.34549996463823984
             }
           ],
           "createdAt": "2026-05-29T03:17:17.840Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqcpm8m-xb1r1h",
@@ -51231,12 +51241,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7606767407059486,
-              "y": 0.34751407977249565
+              "x": 0.7612797593261528,
+              "y": 0.3418319276860811
             }
           ],
           "createdAt": "2026-05-29T03:18:01.064Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqcqk36-zoa9xa",
@@ -51401,12 +51411,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7577591653574794,
-              "y": 0.31566803251328984
+              "x": 0.7595475704022049,
+              "y": 0.3216263669052316
             }
           ],
           "createdAt": "2026-05-29T03:18:51.454Z",
-          "updatedAt": "2026-05-29T03:18:51.454Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqcrn8r-rsih63",
@@ -51503,12 +51513,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7441221754516285,
-              "y": 0.32142814546650017
+              "x": 0.7426465381987231,
+              "y": 0.3153606163158975
             }
           ],
           "createdAt": "2026-05-29T03:19:56.782Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqct18x-i3d7fc",
@@ -51945,12 +51955,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6084733043505136,
-              "y": 0.32138859338693004
+              "x": 0.6080635890916827,
+              "y": 0.31518392781762267
             }
           ],
           "createdAt": "2026-05-29T03:22:30.113Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqcwacj-gk508r",
@@ -52540,12 +52550,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8985834055005733,
-              "y": 0.31488050572862253
+              "x": 0.8992087613881278,
+              "y": 0.32059979158672497
             }
           ],
           "createdAt": "2026-05-29T06:55:28.631Z",
-          "updatedAt": "2026-05-29T06:55:28.631Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqki850-u51nyb",
@@ -52693,12 +52703,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8694493587928628,
-              "y": 0.32059979158672497
+              "x": 0.86749973574733,
+              "y": 0.31550442905554477
             }
           ],
           "createdAt": "2026-05-29T06:55:57.096Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqkis3s-7pvcc0",
@@ -52948,12 +52958,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8384172987154243,
-              "y": 0.32106214590732934
+              "x": 0.8394135488785209,
+              "y": 0.31555154350177833
             }
           ],
           "createdAt": "2026-05-29T06:56:44.075Z",
-          "updatedAt": "2026-05-29T06:56:44.075Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqkjumy-s5w2ty",
@@ -53203,12 +53213,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7766952518817616,
-              "y": 0.3154276872848567
+              "x": 0.7751058048500367,
+              "y": 0.320669655365661
             }
           ],
           "createdAt": "2026-05-29T06:57:18.753Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqkkj82-7h3nko",
@@ -53373,12 +53383,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7794200011458179,
-              "y": 0.34709346759230075
+              "x": 0.7772250606295942,
+              "y": 0.3416375350345416
             }
           ],
           "createdAt": "2026-05-29T06:57:40.536Z",
-          "updatedAt": "2026-05-29T06:57:40.536Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqkl2v8-w3jhjq",
@@ -53560,12 +53570,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8026574194212114,
-              "y": 0.3416368634438551
+              "x": 0.8022006927700512,
+              "y": 0.3474468303991004
             }
           ],
           "createdAt": "2026-05-29T06:58:17.601Z",
-          "updatedAt": "2026-05-29T06:58:17.601Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqklsj9-6ppdnc",
@@ -53866,12 +53876,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8808097397491226,
-              "y": 0.34238832686129844
+              "x": 0.8828900754678515,
+              "y": 0.34805077710275323
             }
           ],
           "createdAt": "2026-05-29T07:03:27.957Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqksjlo-nx83ju",
@@ -54359,12 +54369,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.9070137956144835,
-              "y": 0.37247350605018825
+              "x": 0.9028772473822403,
+              "y": 0.3705040868902188
             }
           ],
           "createdAt": "2026-05-29T08:18:01.548Z",
-          "updatedAt": "2026-05-29T08:18:01.548Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqngdk2-167mew",
@@ -54818,12 +54828,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.776981325062358,
-              "y": 0.3922766635375357
+              "x": 0.7766863289719641,
+              "y": 0.3864393280151566
             }
           ],
           "createdAt": "2026-05-29T08:19:22.638Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqni2g3-g6clar",
@@ -54988,12 +54998,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.779292109765447,
-              "y": 0.35801707219314993
+              "x": 0.7788496190057931,
+              "y": 0.36378491591000317
             }
           ],
           "createdAt": "2026-05-29T08:19:50.988Z",
-          "updatedAt": "2026-05-29T08:19:50.988Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqnirln-87og3i",
@@ -55073,12 +55083,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7885352485778041,
-              "y": 0.364271358548684
+              "x": 0.7891808206249165,
+              "y": 0.3588512667391913
             }
           ],
           "createdAt": "2026-05-29T08:20:05.114Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqnj31h-zd864z",
@@ -55209,12 +55219,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8168529421970878,
-              "y": 0.3581615777377914
+              "x": 0.8177639857422853,
+              "y": 0.3652132472967944
             }
           ],
           "createdAt": "2026-05-29T08:20:27.781Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqnjhh8-1c0hil",
@@ -55566,12 +55576,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.857357318854526,
-              "y": 0.35900834149939886
+              "x": 0.8570457545752589,
+              "y": 0.36363224665637917
             }
           ],
           "createdAt": "2026-05-29T08:22:34.396Z",
-          "updatedAt": "2026-05-29T08:22:34.396Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqnm9gc-dlsua1",
@@ -55719,12 +55729,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8887167580907704,
-              "y": 0.36358562356880525
+              "x": 0.8912711204529702,
+              "y": 0.3647101767086687
             }
           ],
           "createdAt": "2026-05-29T08:23:20.718Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqnn7fz-b3q3zm",
@@ -56467,12 +56477,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3911511633702238,
-              "y": 0.3548611673375275
+              "x": 0.3911017791471335,
+              "y": 0.3513712216753514
             }
           ],
           "createdAt": "2026-05-29T08:47:51.206Z",
-          "updatedAt": "2026-05-29T08:47:51.206Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqoiujx-wm0hy5",
@@ -57266,12 +57276,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6065205626490064,
-              "y": 0.35645184636704463
+              "x": 0.6064935350067797,
+              "y": 0.35954365039601727
             }
           ],
           "createdAt": "2026-05-29T08:53:16.199Z",
-          "updatedAt": "2026-05-29T08:53:16.199Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqopqiu-mjcky3",
@@ -57997,12 +58007,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.31012328908208664,
-              "y": 0.3451291508120497
+              "x": 0.30988558553364576,
+              "y": 0.3411814687327555
             }
           ],
           "createdAt": "2026-05-29T08:57:09.767Z",
-          "updatedAt": "2026-05-29T08:57:09.767Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqounnz-tzmlnn",
@@ -58456,12 +58466,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6066701309303882,
-              "y": 0.3811828115551553
+              "x": 0.6077010831996984,
+              "y": 0.37858522156511104
             }
           ],
           "createdAt": "2026-05-29T08:59:52.409Z",
-          "updatedAt": "2026-05-29T08:59:52.409Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqoy7zy-4agv3j",
@@ -58609,12 +58619,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6164674290037405,
-              "y": 0.39640206869893946
+              "x": 0.6136258984692062,
+              "y": 0.40177600155718457
             }
           ],
           "createdAt": "2026-05-29T09:00:25.341Z",
-          "updatedAt": "2026-05-29T09:00:25.341Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqoyvcm-xut2h2",
@@ -60292,12 +60302,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3883752063942293,
-              "y": 0.3111193420071623
+              "x": 0.3884501564588232,
+              "y": 0.3078354127423792
             }
           ],
           "createdAt": "2026-05-29T09:13:34.523Z",
-          "updatedAt": "2026-05-29T09:13:34.523Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqpft4z-w926pv",
@@ -62383,12 +62393,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.4311621849864318,
-              "y": 0.3106128451688157
+              "x": 0.4293910516707937,
+              "y": 0.3080167529191034
             }
           ],
           "createdAt": "2026-05-29T09:41:00.192Z",
-          "updatedAt": "2026-05-29T09:41:00.192Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqqf222-p5r8d2",
@@ -63250,12 +63260,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7928891583157494,
-              "y": 0.39826874314641514
+              "x": 0.7923848698994719,
+              "y": 0.4033600401404565
             }
           ],
           "createdAt": "2026-05-29T09:46:06.759Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqqllw8-7emvd3",
@@ -63743,12 +63753,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.705884022718272,
-              "y": 0.3970666998312565
+              "x": 0.7061049835616433,
+              "y": 0.3914450983570803
             }
           ],
           "createdAt": "2026-05-29T09:48:02.170Z",
-          "updatedAt": "2026-05-29T09:48:02.170Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqqo453-cp9b72",
@@ -63998,12 +64008,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6225388147508092,
-              "y": 0.3968797378642847
+              "x": 0.6197017629741558,
+              "y": 0.39535872213463497
             }
           ],
           "createdAt": "2026-05-29T09:49:03.163Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqqpenm-aoab0d",
@@ -64593,12 +64603,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5566528961891308,
-              "y": 0.3094421670753979
+              "x": 0.558335410042359,
+              "y": 0.31637828976098703
             }
           ],
           "createdAt": "2026-05-29T09:51:27.292Z",
-          "updatedAt": "2026-05-29T09:51:27.292Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqqsnrk-c3lw31",
@@ -65069,12 +65079,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.9043716129069564,
-              "y": 0.35305830391490445
+              "x": 0.9059009371297367,
+              "y": 0.3462132504126098
             }
           ],
           "createdAt": "2026-05-29T09:53:52.399Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqqvl78-82jyms",
@@ -65409,12 +65419,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8074433911649722,
-              "y": 0.39786823434195673
+              "x": 0.8067582471482779,
+              "y": 0.4035818719757788
             }
           ],
           "createdAt": "2026-05-29T09:54:52.485Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqqww21-8iua1r",
@@ -65647,12 +65657,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7316168825464666,
-              "y": 0.402964465339098
+              "x": 0.7324244136657514,
+              "y": 0.3993388847399456
             }
           ],
           "createdAt": "2026-05-29T09:55:44.692Z",
-          "updatedAt": "2026-05-29T09:55:44.692Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqqy4wm-mwc7ta",
@@ -65936,12 +65946,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6244334067253279,
-              "y": 0.40327217698245577
+              "x": 0.6245532262163532,
+              "y": 0.3979374372436308
             }
           ],
           "createdAt": "2026-05-29T09:56:35.852Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqqz3b9-ybf7wv",
@@ -66327,12 +66337,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.588211765316251,
-              "y": 0.4041358548921365
+              "x": 0.588861081443185,
+              "y": 0.39852731744228476
             }
           ],
           "createdAt": "2026-05-29T09:58:11.415Z",
-          "updatedAt": "2026-05-29T09:58:11.415Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqr190z-kvdv5d",
@@ -66820,12 +66830,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5959542804281583,
-              "y": 0.6707326331901406
+              "x": 0.5955617519524474,
+              "y": 0.6640749172781385
             }
           ],
           "createdAt": "2026-05-29T10:00:55.066Z",
-          "updatedAt": "2026-05-29T10:00:55.066Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqr4ncn-0brezm",
@@ -67466,12 +67476,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.76102843392927,
-              "y": 0.6724826606741947
+              "x": 0.761864905570518,
+              "y": 0.666486754191801
             }
           ],
           "createdAt": "2026-05-29T10:02:35.927Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqr6t8b-mhpi8s",
@@ -67636,12 +67646,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7583995359505463,
-              "y": 0.638027324427175
+              "x": 0.7590567501888188,
+              "y": 0.6444454731080019
             }
           ],
           "createdAt": "2026-05-29T10:03:07.448Z",
-          "updatedAt": "2026-05-29T10:03:07.448Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqr7j8a-aisiwe",
@@ -67755,12 +67765,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7429248146900194,
-              "y": 0.6442765750688935
+              "x": 0.7421480927813876,
+              "y": 0.638365120505392
             }
           ],
           "createdAt": "2026-05-29T10:03:25.004Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqr7v1v-6nz7tn",
@@ -68214,12 +68224,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.602416711816112,
-              "y": 0.6449948612244077
+              "x": 0.601793357899256,
+              "y": 0.6411769113816658
             }
           ],
           "createdAt": "2026-05-29T10:04:13.259Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqr8w8n-vjlxsa",
@@ -68792,12 +68802,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.9070689635123748,
-              "y": 0.6557100554722711
+              "x": 0.903252969736593,
+              "y": 0.6584699516164401
             }
           ],
           "createdAt": "2026-05-29T10:13:22.569Z",
-          "updatedAt": "2026-05-29T10:13:22.569Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqrkpf0-vodayd",
@@ -69200,12 +69210,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7766564195120111,
-              "y": 0.6388374201057402
+              "x": 0.7758824390553138,
+              "y": 0.643838425841179
             }
           ],
           "createdAt": "2026-05-29T10:14:06.800Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqrlm72-ajm56z",
@@ -69370,12 +69380,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7794759292373411,
-              "y": 0.672750473482014
+              "x": 0.7793100781803783,
+              "y": 0.6672024931399073
             }
           ],
           "createdAt": "2026-05-29T10:14:29.193Z",
-          "updatedAt": "2026-05-29T10:14:29.193Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqrmhkd-plxmnh",
@@ -69455,12 +69465,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7891167489638993,
-              "y": 0.6673554137699037
+              "x": 0.7902761782340393,
+              "y": 0.6721724194311358
             }
           ],
           "createdAt": "2026-05-29T10:14:59.852Z",
-          "updatedAt": "2026-06-08T14:27:09.518Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqrmr7n-uz9obs",
@@ -69591,12 +69601,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8170601495867715,
-              "y": 0.6721881280946694
+              "x": 0.8171836101444973,
+              "y": 0.6672585776901264
             }
           ],
           "createdAt": "2026-05-29T10:15:21.439Z",
-          "updatedAt": "2026-06-08T14:27:09.518Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqrn7sn-6o1rr2",
@@ -69948,12 +69958,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8569260117127806,
-              "y": 0.6730497767546098
+              "x": 0.8556951439314128,
+              "y": 0.6669192774207275
             }
           ],
           "createdAt": "2026-05-29T10:17:01.438Z",
-          "updatedAt": "2026-05-29T10:17:01.438Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqrpfga-rg85lb",
@@ -70084,12 +70094,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8901984626667749,
-              "y": 0.6723841226665537
+              "x": 0.8904203040980863,
+              "y": 0.6668970456367683
             }
           ],
           "createdAt": "2026-05-29T10:17:25.761Z",
-          "updatedAt": "2026-06-08T14:27:09.518Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqrpvqy-dd3cmp",
@@ -70441,12 +70451,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.606381095351958,
-              "y": 0.6829547881832522
+              "x": 0.6056765766014672,
+              "y": 0.6891508850293153
             }
           ],
           "createdAt": "2026-05-29T11:41:34.286Z",
-          "updatedAt": "2026-05-29T11:41:34.286Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpquq4ji-x52clh",
@@ -70900,12 +70910,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.737466475751383,
-              "y": 0.6883389326713297
+              "x": 0.7394750553103487,
+              "y": 0.6823672650334779
             }
           ],
           "createdAt": "2026-05-29T11:42:50.362Z",
-          "updatedAt": "2026-06-08T14:27:09.518Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqurq5a-b2ylct",
@@ -71019,12 +71029,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7603483598983596,
-              "y": 0.6830059233892557
+              "x": 0.7613172280063386,
+              "y": 0.6887574903647984
             }
           ],
           "createdAt": "2026-05-29T11:43:15.649Z",
-          "updatedAt": "2026-06-08T14:27:09.518Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqus9la-1g1bwx",
@@ -71189,12 +71199,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7583367131827563,
-              "y": 0.716444074096807
+              "x": 0.7588127197513881,
+              "y": 0.7097260242571097
             }
           ],
           "createdAt": "2026-05-29T11:43:58.986Z",
-          "updatedAt": "2026-05-29T11:43:58.986Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqut6yq-nra5hq",
@@ -71291,12 +71301,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.744499547385514,
-              "y": 0.7103140094469261
+              "x": 0.7423826662734637,
+              "y": 0.7160062187787292
             }
           ],
           "createdAt": "2026-05-29T11:44:11.805Z",
-          "updatedAt": "2026-06-08T14:27:09.518Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqutgwv-fx639p",
@@ -71733,12 +71743,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6093687957613264,
-              "y": 0.7106688730905407
+              "x": 0.6078797522761373,
+              "y": 0.7158685862243566
             }
           ],
           "createdAt": "2026-05-29T11:45:31.700Z",
-          "updatedAt": "2026-06-08T14:27:09.518Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpquv9ky-tr779x",
@@ -72226,12 +72236,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8451501297013264,
-              "y": 0.709240473025066
+              "x": 0.8460052209107006,
+              "y": 0.7150975255227796
             }
           ],
           "createdAt": "2026-05-29T11:52:21.394Z",
-          "updatedAt": "2026-05-29T11:52:21.394Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqv3z56-0ax97o",
@@ -72498,12 +72508,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7763977029674264,
-              "y": 0.7160909457988258
+              "x": 0.7754075827778609,
+              "y": 0.7100932259267225
             }
           ],
           "createdAt": "2026-05-29T11:52:53.257Z",
-          "updatedAt": "2026-06-08T14:27:09.518Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqv4py1-4e13p8",
@@ -72668,12 +72678,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7785194036564419,
-              "y": 0.6825036994145809
+              "x": 0.7784486783576723,
+              "y": 0.6888013076826364
             }
           ],
           "createdAt": "2026-05-29T11:54:06.374Z",
-          "updatedAt": "2026-05-29T11:54:06.374Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqv69oh-ha2hkc",
@@ -72838,12 +72848,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8032017802202638,
-              "y": 0.6898009276613202
+              "x": 0.8013629807263265,
+              "y": 0.6835033193932649
             }
           ],
           "createdAt": "2026-05-29T11:54:34.410Z",
-          "updatedAt": "2026-05-29T11:54:34.410Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqv6vm5-bbktir",
@@ -73127,12 +73137,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8793834124978815,
-              "y": 0.6905560522866494
+              "x": 0.8819477409323246,
+              "y": 0.6824369784873009
             }
           ],
           "createdAt": "2026-05-29T11:57:32.404Z",
-          "updatedAt": "2026-06-08T14:27:09.518Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqvaold-pxsoyt",
@@ -73314,12 +73324,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8873243066281092,
-              "y": 0.7094544053515793
+              "x": 0.8853608027372071,
+              "y": 0.716326492756143
             }
           ],
           "createdAt": "2026-05-29T12:01:36.210Z",
-          "updatedAt": "2026-06-08T14:27:09.518Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqvfvp6-qt97c0",
@@ -73569,12 +73579,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8547395282856034,
-              "y": 0.7099830302517472
+              "x": 0.8559550311528386,
+              "y": 0.7150049373115268
             }
           ],
           "createdAt": "2026-05-29T12:02:25.200Z",
-          "updatedAt": "2026-05-29T12:02:25.200Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqvgxu3-e4arny",
@@ -74079,12 +74089,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5614603559687091,
-              "y": 0.5283629752033131
+              "x": 0.5644484965768222,
+              "y": 0.5296572801868051
             }
           ],
           "createdAt": "2026-05-29T12:12:34.842Z",
-          "updatedAt": "2026-05-29T12:12:34.842Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqvu1nf-5qa2ta",
@@ -74589,12 +74599,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5706417385154785,
-              "y": 0.539551910274495
+              "x": 0.5732170953293325,
+              "y": 0.5386393345153007
             }
           ],
           "createdAt": "2026-05-29T12:17:14.889Z",
-          "updatedAt": "2026-05-29T12:17:14.889Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqw015q-v8eobh",
@@ -75728,12 +75738,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.680659307679092,
-              "y": 0.44167393529602433
+              "x": 0.6830821544783333,
+              "y": 0.4435288721725351
             }
           ],
           "createdAt": "2026-05-29T12:27:40.183Z",
-          "updatedAt": "2026-05-29T12:27:40.183Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqwdekh-8y6mxn",
@@ -76306,12 +76316,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6466448820312236,
-              "y": 0.40914561004753924
+              "x": 0.6461377942390909,
+              "y": 0.40532307156070696
             }
           ],
           "createdAt": "2026-05-29T12:29:49.853Z",
-          "updatedAt": "2026-05-29T12:29:49.853Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqwg8hy-6tknih",
@@ -76612,12 +76622,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.658723109531766,
-              "y": 0.4086635362488814
+              "x": 0.6586501750991891,
+              "y": 0.40515866261822847
             }
           ],
           "createdAt": "2026-05-29T12:31:24.231Z",
-          "updatedAt": "2026-05-29T12:31:24.231Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqwi73d-cde8o2",
@@ -78040,12 +78050,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6462841726064469,
-              "y": 0.6224311407412264
+              "x": 0.646336530655759,
+              "y": 0.6238002687517239
             }
           ],
           "createdAt": "2026-05-29T12:43:05.951Z",
-          "updatedAt": "2026-05-29T12:43:05.951Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqwxc9k-ork8of",
@@ -80233,12 +80243,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3069583650844669,
-              "y": 0.5552906176035405
+              "x": 0.30723238276238996,
+              "y": 0.5649742583430364
             }
           ],
           "createdAt": "2026-05-29T13:04:30.113Z",
-          "updatedAt": "2026-05-29T13:04:30.113Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqxoux7-iej97f",
@@ -80794,12 +80804,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.9015233647304869,
-              "y": 0.24839414382514347
+              "x": 0.9006379043762689,
+              "y": 0.2530874180701045
             }
           ],
           "createdAt": "2026-05-29T13:07:22.856Z",
-          "updatedAt": "2026-05-29T13:07:22.856Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqxsni0-u8yhu4",
@@ -81678,12 +81688,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5930941994749872,
-              "y": 0.34165720605417477
+              "x": 0.5927948903236094,
+              "y": 0.34733818445893455
             }
           ],
           "createdAt": "2026-05-29T13:13:40.570Z",
-          "updatedAt": "2026-05-29T13:13:40.570Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqy0jhu-igrnm7",
@@ -81865,12 +81875,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6152174952006796,
-              "y": 0.30926106734957454
+              "x": 0.616421201730085,
+              "y": 0.3038516543889185
             }
           ],
           "createdAt": "2026-05-29T13:14:47.987Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqy22sv-is5wit",
@@ -83038,12 +83048,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7837091809924452,
-              "y": 0.2874530268236901
+              "x": 0.7834662381127963,
+              "y": 0.2924900071394997
             }
           ],
           "createdAt": "2026-05-29T13:21:15.370Z",
-          "updatedAt": "2026-05-29T13:21:15.370Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqyaebn-4j8j8m",
@@ -83123,12 +83133,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7935030943114217,
-              "y": 0.29342799085676063
+              "x": 0.7915777995824895,
+              "y": 0.2870389199229353
             }
           ],
           "createdAt": "2026-05-29T13:21:33.087Z",
-          "updatedAt": "2026-05-29T13:21:33.087Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqyao8r-71rhkw",
@@ -83191,12 +83201,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.802620324963092,
-              "y": 0.28742891310291535
+              "x": 0.803778502779558,
+              "y": 0.293679279376117
             }
           ],
           "createdAt": "2026-05-29T13:21:52.722Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqyb34v-dkgxfc",
@@ -83548,12 +83558,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5939411326832927,
-              "y": 0.34189131795072814
+              "x": 0.5918687537036625,
+              "y": 0.34701733819577607
             }
           ],
           "createdAt": "2026-05-29T13:24:50.723Z",
-          "updatedAt": "2026-05-29T13:24:50.723Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqyewk4-rmo3o0",
@@ -83735,12 +83745,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6160292911109773,
-              "y": 0.3092993487551475
+              "x": 0.6173413389293693,
+              "y": 0.3034192771206592
             }
           ],
           "createdAt": "2026-05-29T13:25:30.893Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqyfrio-mqakm6",
@@ -84891,12 +84901,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7825961708957575,
-              "y": 0.2875930070767885
+              "x": 0.7823991235548315,
+              "y": 0.29177056172771004
             }
           ],
           "createdAt": "2026-05-29T13:31:32.423Z",
-          "updatedAt": "2026-05-29T13:31:32.423Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqynl69-bqmvo7",
@@ -85010,12 +85020,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8024338810901462,
-              "y": 0.28704631073529835
+              "x": 0.8034366309560285,
+              "y": 0.29320850781282115
             }
           ],
           "createdAt": "2026-05-29T13:32:09.978Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqyoc5o-7hoa9z",
@@ -85367,12 +85377,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6003413233097278,
-              "y": 0.2555564886651186
+              "x": 0.597145022207736,
+              "y": 0.26205569077103363
             }
           ],
           "createdAt": "2026-05-29T13:35:51.311Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqyt34o-qd5lsh",
@@ -88121,12 +88131,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5953248379428002,
-              "y": 0.2814143555876988
+              "x": 0.5938851435397767,
+              "y": 0.27530958680342776
             }
           ],
           "createdAt": "2026-05-29T14:07:14.968Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqzxfuq-tcy5e3",
@@ -88206,12 +88216,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5802619531386484,
-              "y": 0.28062996371662924
+              "x": 0.5782660239850412,
+              "y": 0.7146048832760437
             }
           ],
           "createdAt": "2026-05-29T14:07:38.382Z",
-          "updatedAt": "2026-05-29T14:07:38.382Z"
+          "updatedAt": "2026-06-11T15:36:51.617Z"
         },
         {
           "id": "ann-mpqzxyrv-j8fbiq",
@@ -88223,12 +88233,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5798294611382321,
-              "y": 0.2781847792619791
+              "x": 0.5782660239850412,
+              "y": 0.7146048832760437
             }
           ],
           "createdAt": "2026-05-29T14:07:40.299Z",
-          "updatedAt": "2026-05-29T14:07:40.299Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqzxzfn-9yvlha",
@@ -88240,12 +88250,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5752642703669012,
-              "y": 0.2811733359670763
+              "x": 0.5782660239850412,
+              "y": 0.7146048832760437
             }
           ],
           "createdAt": "2026-05-29T14:07:41.158Z",
-          "updatedAt": "2026-05-29T14:07:41.158Z"
+          "updatedAt": "2026-06-11T15:36:51.617Z"
         },
         {
           "id": "ann-mpqzxzrg-a85z2e",
@@ -88257,12 +88267,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5756967623673174,
-              "y": 0.2780489408631866
+              "x": 0.5782660239850412,
+              "y": 0.7146048832760437
             }
           ],
           "createdAt": "2026-05-29T14:07:41.578Z",
-          "updatedAt": "2026-05-29T14:07:41.578Z"
+          "updatedAt": "2026-06-11T15:36:51.617Z"
         },
         {
           "id": "ann-mpqzy1ap-twlrts",
@@ -88342,12 +88352,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5589490434553693,
-              "y": 0.275365825564675
+              "x": 0.5574128427871812,
+              "y": 0.28147578445792487
             }
           ],
           "createdAt": "2026-05-29T14:08:02.732Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqzykf1-0u6gkq",
@@ -88563,12 +88573,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5824193505597713,
-              "y": 0.26201123153369693
+              "x": 0.5842366431010118,
+              "y": 0.26860789399871576
             }
           ],
           "createdAt": "2026-05-29T14:09:11.911Z",
-          "updatedAt": "2026-05-29T14:09:11.911Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpqzzzgk-hbvj7e",
@@ -88631,12 +88641,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5739111098218027,
-              "y": 0.2685495186541149
+              "x": 0.24926428916122917,
+              "y": 0.6433790214951498
             }
           ],
           "createdAt": "2026-05-29T14:09:31.748Z",
-          "updatedAt": "2026-05-29T14:09:31.748Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpr00d7e-xjbhdo",
@@ -89447,12 +89457,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.28930814714409,
-              "y": 0.3260281694654815
+              "x": 0.28808214707201135,
+              "y": 0.6641355012265426
             }
           ],
           "createdAt": "2026-05-29T14:15:14.016Z",
-          "updatedAt": "2026-05-29T14:15:14.016Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpr07p2u-s2bg9j",
@@ -89464,12 +89474,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.28890035984379103,
-              "y": 0.3221088114415837
+              "x": 0.28808214707201135,
+              "y": 0.6641355012265426
             }
           ],
           "createdAt": "2026-05-29T14:15:14.293Z",
-          "updatedAt": "2026-05-29T14:15:14.293Z"
+          "updatedAt": "2026-06-11T15:36:51.617Z"
         },
         {
           "id": "ann-mpr07phi-d3iv1l",
@@ -89481,12 +89491,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.28287384166325136,
-              "y": 0.3253586095720922
+              "x": 0.28808214707201135,
+              "y": 0.6641355012265426
             }
           ],
           "createdAt": "2026-05-29T14:15:14.829Z",
-          "updatedAt": "2026-05-29T14:15:43.210Z"
+          "updatedAt": "2026-06-11T15:36:51.617Z"
         },
         {
           "id": "ann-mpr07ptt-qpm4z5",
@@ -89498,12 +89508,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.2851895082912761,
-              "y": 0.32245463971041366
+              "x": 0.28808214707201135,
+              "y": 0.6641355012265426
             }
           ],
           "createdAt": "2026-05-29T14:15:15.267Z",
-          "updatedAt": "2026-05-29T14:15:15.267Z"
+          "updatedAt": "2026-06-11T15:36:51.617Z"
         },
         {
           "id": "ann-mpr081vf-hikosu",
@@ -90433,12 +90443,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.777669834759975,
-              "y": 0.404067617094873
+              "x": 0.7762679542224263,
+              "y": 0.4104366114315023
             }
           ],
           "createdAt": "2026-05-29T14:23:01.759Z",
-          "updatedAt": "2026-06-08T14:27:09.522Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpr0hs32-j3i31c",
@@ -90722,12 +90732,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.761470977627646,
-              "y": 0.4105522457150428
+              "x": 0.7625003029101793,
+              "y": 0.4162262849200821
             }
           ],
           "createdAt": "2026-05-29T14:24:15.587Z",
-          "updatedAt": "2026-05-29T14:24:15.587Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpr0jc6i-m4voyr",
@@ -93961,20 +93971,20 @@
         },
         {
           "id": "ann-mps34pmc-8e35rt",
-          "drawingId": "f2",
+          "drawingId": "f3",
           "type": "point",
-          "groupId": "auto-f2-3281",
+          "groupId": "auto-f3-3281",
           "code": "3281.45.99",
           "note": "",
           "special": false,
           "points": [
             {
-              "x": 0.45732482147379044,
-              "y": 0.34245932721609146
+              "x": 0.5730032719573542,
+              "y": 0.3939514399952112
             }
           ],
           "createdAt": "2026-05-30T08:24:40.028Z",
-          "updatedAt": "2026-05-30T08:24:45.188Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mps3fhlr-qnuvxn",
@@ -94258,12 +94268,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5669784189295488,
-              "y": 0.40979844617011185
+              "x": 0.5668092508278924,
+              "y": 0.4145805833194097
             }
           ],
           "createdAt": "2026-05-30T09:01:27.945Z",
-          "updatedAt": "2026-05-30T09:01:27.945Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mps4g3bt-i1di4e",
@@ -94921,12 +94931,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5620315817092169,
-              "y": 0.4175931373134998
+              "x": 0.5621767854916899,
+              "y": 0.41194917403716164
             }
           ],
           "createdAt": "2026-05-30T09:18:09.057Z",
-          "updatedAt": "2026-05-30T09:18:09.057Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mps51ylj-vfnema",
@@ -95533,12 +95543,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3058106813543035,
-              "y": 0.617071616214103
+              "x": 0.30565352141889723,
+              "y": 0.6186265555043418
             }
           ],
           "createdAt": "2026-05-30T09:41:00.223Z",
-          "updatedAt": "2026-05-30T09:41:13.936Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mps5vkz0-uyd1rr",
@@ -95788,12 +95798,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.36714898532249346,
-              "y": 0.6182142162300178
+              "x": 0.36573214911666957,
+              "y": 0.6217642716124228
             }
           ],
           "createdAt": "2026-05-30T09:44:12.317Z",
-          "updatedAt": "2026-05-30T09:44:12.317Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mps5zou9-gxipcj",
@@ -95975,12 +95985,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.39713193167603317,
-              "y": 0.6333818738202868
+              "x": 0.39525693167603315,
+              "y": 0.6354431223479664
             }
           ],
           "createdAt": "2026-05-30T09:46:40.863Z",
-          "updatedAt": "2026-06-08T14:27:09.520Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mps62785-004vme",
@@ -96281,12 +96291,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3973066071937253,
-              "y": 0.6802390439384757
+              "x": 0.39426887930468474,
+              "y": 0.6765737685401678
             }
           ],
           "createdAt": "2026-05-30T09:49:56.246Z",
-          "updatedAt": "2026-05-30T09:49:56.246Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mps66ig8-1sobrb",
@@ -96927,12 +96937,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6158000293816229,
-              "y": 0.6580763766122159
+              "x": 0.6123013583484447,
+              "y": 0.6545598482082362
             }
           ],
           "createdAt": "2026-05-30T09:57:19.846Z",
-          "updatedAt": "2026-05-30T09:57:19.846Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mps6fw7o-5wrebp",
@@ -97233,12 +97243,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5740561547869802,
-              "y": 0.6854638489532783
+              "x": 0.5765841486688011,
+              "y": 0.6830495677176551
             }
           ],
           "createdAt": "2026-05-30T10:02:12.206Z",
-          "updatedAt": "2026-06-08T14:27:09.520Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mps6m5v6-bz0w09",
@@ -98304,12 +98314,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6513744515725473,
-              "y": 0.6169399655569792
+              "x": 0.6537738818734321,
+              "y": 0.6112472527041672
             }
           ],
           "createdAt": "2026-05-30T14:22:49.805Z",
-          "updatedAt": "2026-05-30T14:22:49.805Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsfxcmx-bcb9s6",
@@ -98559,12 +98569,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.591637037438019,
-              "y": 0.6118765727492549
+              "x": 0.5882371597749583,
+              "y": 0.6181059003857752
             }
           ],
           "createdAt": "2026-05-30T14:24:51.728Z",
-          "updatedAt": "2026-06-08T14:27:09.521Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsfzxr8-868w3k",
@@ -98678,12 +98688,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5714266506699351,
-              "y": 0.6116985926579812
+              "x": 0.5719932969471119,
+              "y": 0.6166820535451004
             }
           ],
           "createdAt": "2026-05-30T14:25:06.240Z",
-          "updatedAt": "2026-05-30T14:25:06.240Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsg09x6-g0m35a",
@@ -99103,12 +99113,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.582833060853084,
-              "y": 0.6532977640289765
+              "x": 0.5858388972088128,
+              "y": 0.6522781088924817
             }
           ],
           "createdAt": "2026-05-30T14:40:56.503Z",
-          "updatedAt": "2026-05-30T14:40:56.503Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsgkpcf-lgsu2p",
@@ -100004,12 +100014,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.652079066134525,
-              "y": 0.617177578278914
+              "x": 0.652669963873237,
+              "y": 0.61204712713448
             }
           ],
           "createdAt": "2026-05-30T14:48:32.679Z",
-          "updatedAt": "2026-05-30T14:48:32.679Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsguh6q-dsau17",
@@ -100242,12 +100252,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5998374702860098,
-              "y": 0.6122062401435633
+              "x": 0.6006202319466969,
+              "y": 0.6170873007949608
             }
           ],
           "createdAt": "2026-05-30T14:49:25.616Z",
-          "updatedAt": "2026-05-30T14:49:25.616Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsgvz3b-ca3656",
@@ -100310,12 +100320,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5887383851882845,
-              "y": 0.6115409656704747
+              "x": 0.5880064553450105,
+              "y": 0.6180240030690446
             }
           ],
           "createdAt": "2026-05-30T14:50:43.292Z",
-          "updatedAt": "2026-06-08T14:27:09.520Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsgx6wi-nzkbm0",
@@ -100429,12 +100439,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5709769426063472,
-              "y": 0.6113340587605742
+              "x": 0.5721968223279719,
+              "y": 0.6168515368938585
             }
           ],
           "createdAt": "2026-05-30T14:50:59.141Z",
-          "updatedAt": "2026-05-30T14:50:59.141Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsgxkso-57tghi",
@@ -100803,12 +100813,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5823534079628973,
-              "y": 0.6532215765858782
+              "x": 0.5861272882234715,
+              "y": 0.6518468075632629
             }
           ],
           "createdAt": "2026-05-30T14:54:47.636Z",
-          "updatedAt": "2026-05-30T14:54:47.636Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsh2gvm-fht4pj",
@@ -100973,12 +100983,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3082678455925564,
-              "y": 0.6343578345927419
+              "x": 0.3048006358682654,
+              "y": 0.6398840965041784
             }
           ],
           "createdAt": "2026-05-30T14:57:11.638Z",
-          "updatedAt": "2026-05-30T14:57:11.638Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsh5ked-bff4bw",
@@ -101228,12 +101238,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3615013293337709,
-              "y": 0.6431642653687277
+              "x": 0.3600067474686072,
+              "y": 0.6370188441069968
             }
           ],
           "createdAt": "2026-05-30T14:58:09.475Z",
-          "updatedAt": "2026-05-30T14:58:09.475Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsh6td4-ip88a9",
@@ -101296,12 +101306,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3708449615652034,
-              "y": 0.6434607609634303
+              "x": 0.3713155802221857,
+              "y": 0.637546043693243
             }
           ],
           "createdAt": "2026-05-30T14:58:19.518Z",
-          "updatedAt": "2026-06-08T14:27:09.520Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsh772u-fs8mtu",
@@ -101704,12 +101714,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.3781926010778566,
-              "y": 0.6869431267834618
+              "x": 0.38219211425694477,
+              "y": 0.6846513611841807
             }
           ],
           "createdAt": "2026-05-30T14:59:35.991Z",
-          "updatedAt": "2026-05-30T14:59:35.991Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsh8r9w-d4tdf1",
@@ -102299,12 +102309,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.61510523673899,
-              "y": 0.6621615849409512
+              "x": 0.6136104079498078,
+              "y": 0.6563648331466981
             }
           ],
           "createdAt": "2026-05-30T15:05:25.512Z",
-          "updatedAt": "2026-05-30T15:05:25.512Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshg3sw-cdnp1h",
@@ -102571,12 +102581,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5745450889085361,
-              "y": 0.6894022865890957
+              "x": 0.5758924342276757,
+              "y": 0.6822974990315036
             }
           ],
           "createdAt": "2026-05-30T15:07:06.819Z",
-          "updatedAt": "2026-06-08T14:27:09.520Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshia7g-fsvldx",
@@ -102843,12 +102853,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5965580178902151,
-              "y": 0.693490611712137
+              "x": 0.5935333483978052,
+              "y": 0.6980640173956192
             }
           ],
           "createdAt": "2026-05-30T15:13:51.895Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshr0nc-dz4yj0",
@@ -102945,12 +102955,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5790541961179685,
-              "y": 0.6953267466301629
+              "x": 0.5794162545279724,
+              "y": 0.6988065914741004
             }
           ],
           "createdAt": "2026-05-30T15:14:12.763Z",
-          "updatedAt": "2026-05-30T15:14:12.763Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshrefk-zbdw58",
@@ -102962,12 +102972,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5753612182354905,
-              "y": 0.6987042399958799
+              "x": 0.5794162545279724,
+              "y": 0.6988065914741004
             }
           ],
           "createdAt": "2026-05-30T15:14:13.264Z",
-          "updatedAt": "2026-05-30T15:14:13.264Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshreqs-85eyum",
@@ -102979,12 +102989,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5749267461546457,
-              "y": 0.695736138487637
+              "x": 0.5794162545279724,
+              "y": 0.6988065914741004
             }
           ],
           "createdAt": "2026-05-30T15:14:13.669Z",
-          "updatedAt": "2026-05-30T15:14:13.669Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshrf4o-v0iq84",
@@ -103047,12 +103057,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5627879628929007,
-              "y": 0.6926235455560465
+              "x": 0.5639349846371912,
+              "y": 0.6983364333421703
             }
           ],
           "createdAt": "2026-05-30T15:18:37.358Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshx47i-oye9le",
@@ -103285,12 +103295,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5828880641631541,
-              "y": 0.7101482160637066
+              "x": 0.584581278522794,
+              "y": 0.7048985336761381
             }
           ],
           "createdAt": "2026-05-30T15:19:43.762Z",
-          "updatedAt": "2026-05-30T15:19:43.762Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshyjs9-5kmtmk",
@@ -103370,12 +103380,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5720733348654652,
-              "y": 0.7076777766694408
+              "x": 0.5730018705625428,
+              "y": 0.7102254249149437
             }
           ],
           "createdAt": "2026-05-30T15:19:57.644Z",
-          "updatedAt": "2026-05-30T15:19:57.644Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshyst0-limw08",
@@ -103387,12 +103397,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5673214058555766,
-              "y": 0.7100710178144399
+              "x": 0.5730018705625428,
+              "y": 0.7102254249149437
             }
           ],
           "createdAt": "2026-05-30T15:19:58.488Z",
-          "updatedAt": "2026-05-30T15:19:58.488Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshyt70-xe0ldk",
@@ -103404,12 +103414,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5671575488210612,
-              "y": 0.7073689730704039
+              "x": 0.5730018705625428,
+              "y": 0.7102254249149437
             }
           ],
           "createdAt": "2026-05-30T15:19:58.993Z",
-          "updatedAt": "2026-05-30T15:19:58.993Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpshyw58-lf33v5",
@@ -103591,12 +103601,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5380122565061513,
-              "y": 0.7102212322982221
+              "x": 0.536788295044243,
+              "y": 0.7049425792183289
             }
           ],
           "createdAt": "2026-05-30T15:32:39.512Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsif4ko-1dndbk",
@@ -104203,12 +104213,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.2880192181196715,
-              "y": 0.6531856679944898
+              "x": 0.28853493026697163,
+              "y": 0.6493588428157063
             }
           ],
           "createdAt": "2026-05-30T15:34:35.168Z",
-          "updatedAt": "2026-05-30T15:34:35.168Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsihn6d-5wibqo",
@@ -104220,12 +104230,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.2847960360111256,
-              "y": 0.649449957254033
+              "x": 0.28853493026697163,
+              "y": 0.6493588428157063
             }
           ],
           "createdAt": "2026-05-30T15:34:37.660Z",
-          "updatedAt": "2026-05-30T15:34:37.660Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsihnjr-li17dg",
@@ -104237,12 +104247,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.28460264340259156,
-              "y": 0.6532767793046385
+              "x": 0.28853493026697163,
+              "y": 0.6493588428157063
             }
           ],
           "createdAt": "2026-05-30T15:34:38.142Z",
-          "updatedAt": "2026-05-30T15:34:38.142Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsihrlq-maoe8e",
@@ -104662,12 +104672,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5996574505420464,
-              "y": 0.7182356137556327
+              "x": 0.5977530346273253,
+              "y": 0.7124139265619771
             }
           ],
           "createdAt": "2026-05-30T15:39:37.461Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsio2wq-qrfu78",
@@ -104764,12 +104774,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5787974889621974,
-              "y": 0.7179226230095659
+              "x": 0.5782660239850412,
+              "y": 0.7146048832760437
             }
           ],
           "createdAt": "2026-05-30T15:39:50.020Z",
-          "updatedAt": "2026-05-30T15:39:50.020Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsiocjc-pbl07j",
@@ -104798,12 +104808,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5745014882529265,
-              "y": 0.7184234159402484
+              "x": 0.5782660239850412,
+              "y": 0.7146048832760437
             }
           ],
           "createdAt": "2026-05-30T15:39:53.025Z",
-          "updatedAt": "2026-05-30T15:39:53.025Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsioet6-03u9sb",
@@ -104815,12 +104825,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5743686212483723,
-              "y": 0.7154812676809982
+              "x": 0.5782660239850412,
+              "y": 0.7146048832760437
             }
           ],
           "createdAt": "2026-05-30T15:39:53.402Z",
-          "updatedAt": "2026-05-30T15:39:53.402Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsioj85-mywwb1",
@@ -105665,12 +105675,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.2555320141655249,
-              "y": 0.6688386110978217
+              "x": 0.256209611506938,
+              "y": 0.6719512271412684
             }
           ],
           "createdAt": "2026-05-30T15:42:31.242Z",
-          "updatedAt": "2026-05-30T15:42:31.242Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsirt1y-06vv8v",
@@ -105682,12 +105692,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.25174879206793854,
-              "y": 0.6721906553506533
+              "x": 0.256209611506938,
+              "y": 0.6719512271412684
             }
           ],
           "createdAt": "2026-05-30T15:42:31.835Z",
-          "updatedAt": "2026-05-30T15:42:31.835Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsirtr2-4vcc1u",
@@ -105699,12 +105709,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.2508453392852904,
-              "y": 0.6692376654203436
+              "x": 0.256209611506938,
+              "y": 0.6719512271412684
             }
           ],
           "createdAt": "2026-05-30T15:42:32.738Z",
-          "updatedAt": "2026-05-30T15:42:32.738Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsirvsa-bx4mvm",
@@ -106380,11 +106390,11 @@
           "points": [
             {
               "x": 0.28808214707201135,
-              "y": 0.6605583096786201
+              "y": 0.6641355012265426
             }
           ],
           "createdAt": "2026-05-30T15:47:29.215Z",
-          "updatedAt": "2026-05-30T15:47:29.215Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsiy8aa-noic0g",
@@ -106396,12 +106406,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.2839463413062236,
-              "y": 0.6642227495086438
+              "x": 0.28808214707201135,
+              "y": 0.6641355012265426
             }
           ],
           "createdAt": "2026-05-30T15:47:31.510Z",
-          "updatedAt": "2026-05-30T15:47:31.510Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsiy8qs-c0ic07",
@@ -106413,12 +106423,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.28373029380730863,
-              "y": 0.6608636771682526
+              "x": 0.28808214707201135,
+              "y": 0.6641355012265426
             }
           ],
           "createdAt": "2026-05-30T15:47:32.109Z",
-          "updatedAt": "2026-05-30T15:47:32.109Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsiyco4-m01vdk",
@@ -107178,12 +107188,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5556197383632067,
-              "y": 0.5314434966947917
+              "x": 0.5512970608170896,
+              "y": 0.5319825937747874
             }
           ],
           "createdAt": "2026-05-30T15:52:51.973Z",
-          "updatedAt": "2026-05-30T15:52:51.973Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsj54ar-tfb71d",
@@ -107416,12 +107426,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5933164392185477,
-              "y": 0.6893296476645585
+              "x": 0.5925756970649562,
+              "y": 0.6838329819286361
             }
           ],
           "createdAt": "2026-05-30T16:48:25.946Z",
-          "updatedAt": "2026-05-30T16:48:25.946Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsl4lps-dwxuu1",
@@ -108079,12 +108089,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8026544611800364,
-              "y": 0.7437694586949783
+              "x": 0.803871695681122,
+              "y": 0.7372316325473884
             }
           ],
           "createdAt": "2026-05-30T16:50:53.870Z",
-          "updatedAt": "2026-06-08T14:27:09.520Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsl7qva-j4n3xz",
@@ -108793,12 +108803,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8069255120446216,
-              "y": 0.6331057154045147
+              "x": 0.8072199911084944,
+              "y": 0.6276947748136111
             }
           ],
           "createdAt": "2026-05-30T16:54:36.750Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpslck4q-hesfoc",
@@ -109031,12 +109041,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7288151375770898,
-              "y": 0.6280304573415171
+              "x": 0.7323976429676423,
+              "y": 0.6326721000972904
             }
           ],
           "createdAt": "2026-05-30T16:55:32.498Z",
-          "updatedAt": "2026-05-30T16:55:32.498Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsldpxt-bkt260",
@@ -109320,12 +109330,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.624998750967102,
-              "y": 0.6275313333196338
+              "x": 0.6237490880173115,
+              "y": 0.6330710851020791
             }
           ],
           "createdAt": "2026-05-30T16:56:43.795Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpslfa23-xbgo1c",
@@ -109711,12 +109721,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5869075340889461,
-              "y": 0.6269955267914146
+              "x": 0.5894383992283776,
+              "y": 0.6329720565811718
             }
           ],
           "createdAt": "2026-05-30T16:57:48.022Z",
-          "updatedAt": "2026-05-30T16:57:48.022Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpslgnqf-y15ea1",
@@ -110476,12 +110486,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.8086018326471593,
-              "y": 0.6326075236050255
+              "x": 0.8078833802613424,
+              "y": 0.6277438992072697
             }
           ],
           "createdAt": "2026-05-30T17:03:04.951Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpslnfmg-eg0g5n",
@@ -110969,12 +110979,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7040316066071425,
-              "y": 0.6341185714538384
+              "x": 0.7044935551368259,
+              "y": 0.6394236081548085
             }
           ],
           "createdAt": "2026-05-30T17:06:04.403Z",
-          "updatedAt": "2026-05-30T17:06:04.403Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpslra1f-4hgbg6",
@@ -111224,12 +111234,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6251413531191052,
-              "y": 0.6277948395013038
+              "x": 0.6242017022402228,
+              "y": 0.6331567641417006
             }
           ],
           "createdAt": "2026-05-30T17:06:56.143Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpslsf8d-1s06x1",
@@ -111819,12 +111829,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5563689877073213,
-              "y": 0.720561588810534
+              "x": 0.5580172075914985,
+              "y": 0.7155140337883382
             }
           ],
           "createdAt": "2026-05-30T17:11:40.677Z",
-          "updatedAt": "2026-05-30T17:11:40.677Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpslythr-4mh1mm",
@@ -116035,12 +116045,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6182809350588774,
-              "y": 0.6755419007963144
+              "x": 0.6186974212589657,
+              "y": 0.6786029918902424
             }
           ],
           "createdAt": "2026-05-30T17:36:45.465Z",
-          "updatedAt": "2026-05-30T17:36:45.465Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsmusyw-qty236",
@@ -116494,12 +116504,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6371004759773111,
-              "y": 0.6571270509842538
+              "x": 0.6345066795380527,
+              "y": 0.6513887377080179
             }
           ],
           "createdAt": "2026-05-30T17:43:31.299Z",
-          "updatedAt": "2026-05-30T17:43:31.299Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsn3esc-0r7lav",
@@ -116511,12 +116521,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6348825907561837,
-              "y": 0.6580303060268028
+              "x": 0.6345066795380527,
+              "y": 0.6513887377080179
             }
           ],
           "createdAt": "2026-05-30T17:43:31.670Z",
-          "updatedAt": "2026-05-30T17:43:31.670Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsn3jb8-gnubvc",
@@ -116528,12 +116538,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6371756582209374,
-              "y": 0.6633435570335096
+              "x": 0.6345066795380527,
+              "y": 0.6513887377080179
             }
           ],
           "createdAt": "2026-05-30T17:43:37.534Z",
-          "updatedAt": "2026-05-30T17:43:37.534Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsn3jo3-mfp1e4",
@@ -116545,12 +116555,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6348450009249642,
-              "y": 0.6634498216888115
+              "x": 0.6345066795380527,
+              "y": 0.6513887377080179
             }
           ],
           "createdAt": "2026-05-30T17:43:37.993Z",
-          "updatedAt": "2026-05-30T17:43:37.993Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsn3kxj-8pbtj1",
@@ -118160,12 +118170,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6157756158568586,
-              "y": 0.6869714434472721
+              "x": 0.615955886164569,
+              "y": 0.690220146280142
             }
           ],
           "createdAt": "2026-05-30T17:53:32.454Z",
-          "updatedAt": "2026-05-30T17:53:32.454Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsngdew-b0mtnv",
@@ -118721,12 +118731,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.625386820742467,
-              "y": 0.6618397192552282
+              "x": 0.6275082209011603,
+              "y": 0.66207959390329
             }
           ],
           "createdAt": "2026-05-30T17:56:35.019Z",
-          "updatedAt": "2026-05-30T17:56:35.019Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsnk7or-9f3y2h",
@@ -118755,12 +118765,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6252171036023655,
-              "y": 0.6674767940733654
+              "x": 0.6281022075851245,
+              "y": 0.6680764765757831
             }
           ],
           "createdAt": "2026-05-30T17:56:36.025Z",
-          "updatedAt": "2026-05-30T17:56:36.025Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsnka4b-n8g3ty",
@@ -119197,12 +119207,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.6952284239100498,
-              "y": 0.6446823203068068
+              "x": 0.6950873452917921,
+              "y": 0.6509304262433124
             }
           ],
           "createdAt": "2026-05-30T17:58:38.343Z",
-          "updatedAt": "2026-05-30T17:58:38.343Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsnmw3l-tvu8fm",
@@ -119928,12 +119938,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.5932026183198995,
-              "y": 0.689789651781944
+              "x": 0.591654223168003,
+              "y": 0.6833307801099454
             }
           ],
           "createdAt": "2026-05-30T18:08:27.300Z",
-          "updatedAt": "2026-05-30T18:08:27.300Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsnzj42-xtdk5u",
@@ -120591,12 +120601,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.802908204892643,
-              "y": 0.7441927953211616
+              "x": 0.8033348522978552,
+              "y": 0.7372147557148032
             }
           ],
           "createdAt": "2026-05-30T18:10:56.051Z",
-          "updatedAt": "2026-06-08T14:27:09.520Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpso2nye-dkt6rx",
@@ -120931,12 +120941,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7723970664780863,
-              "y": 0.6036390350255979
+              "x": 0.7722601571731016,
+              "y": 0.6084767842213122
             }
           ],
           "createdAt": "2026-05-30T18:14:35.643Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpso7efr-ucnrqd",
@@ -121033,12 +121043,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7590054855112562,
-              "y": 0.6064118363851345
+              "x": 0.7590803885266625,
+              "y": 0.6088997901533997
             }
           ],
           "createdAt": "2026-05-30T18:14:56.246Z",
-          "updatedAt": "2026-05-30T18:14:56.246Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpso7w3b-ust4rl",
@@ -121050,12 +121060,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7548483514408071,
-              "y": 0.6086351170046858
+              "x": 0.7590803885266625,
+              "y": 0.6088997901533997
             }
           ],
           "createdAt": "2026-05-30T18:15:00.345Z",
-          "updatedAt": "2026-05-30T18:15:00.345Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpso7wjw-9ra6lq",
@@ -121067,12 +121077,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.754661095188092,
-              "y": 0.6060412932499807
+              "x": 0.7590803885266625,
+              "y": 0.6088997901533997
             }
           ],
           "createdAt": "2026-05-30T18:15:00.944Z",
-          "updatedAt": "2026-05-30T18:15:00.944Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpso7y0b-e74oit",
@@ -121968,12 +121978,12 @@
           "special": false,
           "points": [
             {
-              "x": 0.7776540441115493,
-              "y": 0.6272306741320728
+              "x": 0.7766663850810589,
+              "y": 0.6205561550900626
             }
           ],
           "createdAt": "2026-05-30T18:21:24.858Z",
-          "updatedAt": "2026-06-08T14:27:09.519Z"
+          "updatedAt": "2026-06-11T15:35:27.393Z"
         },
         {
           "id": "ann-mpsog639-pi0ibl",
@@ -129464,12 +129474,12 @@
           "note": "本地电柜 | 大件行李值机控制箱",
           "points": [
             {
-              "x": 0.6213868998507348,
-              "y": 0.07360811884463526
+              "x": 0.6260920924637359,
+              "y": 0.06030722099869581
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -129481,12 +129491,12 @@
           "note": "本地电柜 | 大件行李值机控制箱",
           "points": [
             {
-              "x": 0.3769332656595659,
+              "x": 0.38654579276348405,
               "y": 0.2814054920509371
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -129498,12 +129508,12 @@
           "note": "本地电柜 | 大件行李值机控制箱",
           "points": [
             {
-              "x": 0.37675742497676296,
-              "y": 0.2754406416352088
+              "x": 0.3866044048338136,
+              "y": 0.2750264157363225
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -129838,12 +129848,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.4624582927101,
-              "y": 0.6540487122895128
+              "x": 0.5222999478105453,
+              "y": 0.6858779852174736
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -129855,12 +129865,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.4624582927101,
-              "y": 0.6540487122895128
+              "x": 0.5285072542703583,
+              "y": 0.6787740248918389
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -129872,12 +129882,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.4624582927101,
-              "y": 0.6540487122895128
+              "x": 0.5561695619382326,
+              "y": 0.6716293442600586
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:49:32.510Z",
           "special": true
         },
         {
@@ -129889,12 +129899,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.4624582927101,
-              "y": 0.6540487122895128
+              "x": 0.5473588480037925,
+              "y": 0.6497336302519247
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130110,12 +130120,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.5828351992095065,
-              "y": 0.5367085478320097
+              "x": 0.5834954775997698,
+              "y": 0.5483899539441973
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130161,12 +130171,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.8662867878689489,
-              "y": 0.7126261411409796
+              "x": 0.8718967939414153,
+              "y": 0.7130226064132037
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130178,12 +130188,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.6113910853018512,
-              "y": 0.6862741287640353
+              "x": 0.6056765766014672,
+              "y": 0.6864954171231059
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130195,12 +130205,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.8417453707864557,
-              "y": 0.6631912741438972
+              "x": 0.8390787250405105,
+              "y": 0.6415728842779159
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130348,12 +130358,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.7233901034418442,
-              "y": 0.7310085078923408
+              "x": 0.7337232033084058,
+              "y": 0.7311045904393004
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130484,12 +130494,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.5825951855178504,
-              "y": 0.40408149972955654
+              "x": 0.5824121743777572,
+              "y": 0.4202054494103253
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130518,12 +130528,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.6193105672683972,
+              "x": 0.6119593875965718,
               "y": 0.37820509238648936
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130535,12 +130545,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.8578503944616273,
-              "y": 0.3895342638440557
+              "x": 0.8692911532831329,
+              "y": 0.38916675604473133
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130552,12 +130562,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.6562371358055344,
-              "y": 0.364014060969709
+              "x": 0.6630471151313538,
+              "y": 0.38683590115201205
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130586,12 +130596,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.6851579192268474,
-              "y": 0.344789166976721
+              "x": 0.6804264770415108,
+              "y": 0.3448833542803344
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130603,12 +130613,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.7999488298050343,
-              "y": 0.29062039147175195
+              "x": 0.7884387267167056,
+              "y": 0.29023345945190987
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130620,29 +130630,29 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.7999488298050343,
-              "y": 0.29062039147175195
+              "x": 0.7843038513782622,
+              "y": 0.2904708766419917
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
           "id": "ann-mq5dy3l0-rf4frr",
-          "drawingId": "f2",
+          "drawingId": "f1",
           "type": "point",
-          "groupId": "auto-f2-3223",
+          "groupId": "auto-f1-3223",
           "code": "3223.00.99",
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.70408587225633,
-              "y": 0.4416139811627286
+              "x": 0.5888271736119736,
+              "y": 0.410566340521387
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130790,12 +130800,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.5655456217761633,
-              "y": 0.6648622170533983
+              "x": 0.5784274374322289,
+              "y": 0.6639189509588113
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130926,12 +130936,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.3451942126877239,
-              "y": 0.7126540543673436
+              "x": 0.34114897002486466,
+              "y": 0.6922091243776358
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130953,19 +130963,19 @@
         },
         {
           "id": "ann-mq5dy3l2-9rk32k",
-          "drawingId": "f2",
+          "drawingId": "f3",
           "type": "point",
-          "groupId": "auto-f2-3131",
+          "groupId": "auto-f3-3131",
           "code": "3131.00.99",
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.419157804928093,
-              "y": 0.31997732771869086
+              "x": 0.5318588124149655,
+              "y": 0.3158354688636196
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -130977,29 +130987,29 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.6030268479077606,
-              "y": 0.285004874487451
+              "x": 0.5861478460479416,
+              "y": 0.2987417410125546
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
           "id": "ann-mq5dy3l2-20anko",
-          "drawingId": "f4",
+          "drawingId": "f3",
           "type": "point",
-          "groupId": "auto-f4-3105",
+          "groupId": "auto-f3-3105",
           "code": "3105.00.99",
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.32091396368961844,
-              "y": 0.3483645159474031
+              "x": 0.2930625052539196,
+              "y": 0.29636128791932
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -131062,12 +131072,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.11340297204723522,
+              "x": 0.1161498889241341,
               "y": 0.49658559829899723
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -131096,12 +131106,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.3320390736492474,
-              "y": 0.3970472712286458
+              "x": 0.33731643107485937,
+              "y": 0.39641930198083003
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -131130,12 +131140,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.32963663623702966,
-              "y": 0.38887304127511
+              "x": 0.33788609453443813,
+              "y": 0.38850741459602534
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -131147,12 +131157,12 @@
           "note": "中央控制副柜",
           "points": [
             {
-              "x": 0.4399750876666429,
-              "y": 0.4071515755817222
+              "x": 0.4488476773875811,
+              "y": 0.41484167359974167
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -131210,17 +131220,17 @@
           "id": "ann-mq5dy3l3-jlm6uj",
           "drawingId": "overview-2d",
           "type": "point",
-          "groupId": "auto-overview-2d-3004",
+          "groupId": "auto-overview-2d-3001",
           "code": "3004.00.99",
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.06344465644137923,
-              "y": 0.5006210921559671
+              "x": 0.05822002628305437,
+              "y": 0.47356146220966794
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -131232,12 +131242,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.05448325643804078,
-              "y": 0.4702137750849834
+              "x": 0.057744140225305225,
+              "y": 0.4681932818293212
             }
           ],
           "createdAt": "2026-06-08T15:48:27.332Z",
-          "updatedAt": "2026-06-08T15:48:27.332Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -131266,12 +131276,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.4497606947971701,
-              "y": 0.8553942191832288
+              "x": 0.4324448052300875,
+              "y": 0.7644978077726549
             }
           ],
           "createdAt": "2026-06-08T15:50:03.262Z",
-          "updatedAt": "2026-06-08T15:50:03.262Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -131283,12 +131293,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.4497606947971701,
-              "y": 0.8553942191832288
+              "x": 0.4405842562229939,
+              "y": 0.7432755180992332
             }
           ],
           "createdAt": "2026-06-08T15:50:03.262Z",
-          "updatedAt": "2026-06-08T15:50:03.262Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -131300,12 +131310,12 @@
           "note": "中央控制主柜",
           "points": [
             {
-              "x": 0.4497606947971701,
-              "y": 0.8553942191832288
+              "x": 0.42148360388208217,
+              "y": 0.8165202367398146
             }
           ],
           "createdAt": "2026-06-08T15:50:03.262Z",
-          "updatedAt": "2026-06-08T15:50:03.262Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -134955,12 +134965,12 @@
           "note": "到达-急停信号柜（含隶属急停点） | 位于3454.19.2内",
           "points": [
             {
-              "x": 0.5285072542703583,
-              "y": 0.6787740248918389
+              "x": 0.5090380326756588,
+              "y": 0.6780824881884419
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -134989,12 +134999,12 @@
           "note": "PN 交换机柜 | 位于3453.15.4内",
           "points": [
             {
-              "x": 0.5641358416344164,
+              "x": 0.5639941650368244,
               "y": 0.6719336620786504
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:49:20.407Z",
           "special": true
         },
         {
@@ -135108,12 +135118,12 @@
           "note": "PN 交换机柜 | 位于3452.19.1内",
           "points": [
             {
-              "x": 0.4624582927101,
-              "y": 0.6540487122895128
+              "x": 0.43758792460029106,
+              "y": 0.6544936794268619
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -136315,12 +136325,12 @@
           "note": "ASI 网关柜 | 位于3382.19.1内",
           "points": [
             {
-              "x": 0.6199294258325988,
-              "y": 0.5682188429907694
+              "x": 0.625830999194366,
+              "y": 0.5322634944338248
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -136417,12 +136427,12 @@
           "note": "PN 交换机柜 | 位于3382.1.10内",
           "points": [
             {
-              "x": 0.6078691115993842,
-              "y": 0.6699907813744119
+              "x": 0.6341254459716934,
+              "y": 0.6707242109288236
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -136689,12 +136699,12 @@
           "note": "PN 交换机柜 | 位于3372.51.5内",
           "points": [
             {
-              "x": 0.625386820742467,
-              "y": 0.6445686787109868
+              "x": 0.6252171036023655,
+              "y": 0.6570422015875703
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -137029,12 +137039,12 @@
           "note": "PN 交换机柜 | 位于3344.31.1内",
           "points": [
             {
-              "x": 0.7974732058421433,
-              "y": 0.6864022176746405
+              "x": 0.8159319455049756,
+              "y": 0.6869020293799446
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -137335,12 +137345,12 @@
           "note": "ASI 网关柜 | 位于3342.35.2内",
           "points": [
             {
-              "x": 0.8171218798656343,
-              "y": 0.6698760381349359
+              "x": 0.8209799036150918,
+              "y": 0.670268656902113
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -137386,12 +137396,12 @@
           "note": "ASI 网关柜 | 位于3342.59.2内",
           "points": [
             {
-              "x": 0.8659523298306694,
-              "y": 0.6698188386851964
+              "x": 0.874392740499432,
+              "y": 0.6694054246302237
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -137420,12 +137430,12 @@
           "note": "PN 交换机柜 | 位于3342.3.1内",
           "points": [
             {
-              "x": 0.9022233582005775,
-              "y": 0.6630563061525035
+              "x": 0.9003473958896309,
+              "y": 0.6679944621192043
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -137641,12 +137651,12 @@
           "note": "ASI 网关柜 | 位于3341.7.3内",
           "points": [
             {
-              "x": 0.6179919252619052,
-              "y": 0.6671659977221918
+              "x": 0.6261228651080408,
+              "y": 0.6669282202102439
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -137760,12 +137770,12 @@
           "note": "PN 交换机柜 | 位于3341.35.2内",
           "points": [
             {
-              "x": 0.7671227179382185,
-              "y": 0.6584640654414293
+              "x": 0.7663459960295868,
+              "y": 0.663446577890496
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -137981,12 +137991,12 @@
           "note": "PN 交换机柜 | 位于3323.3.2内",
           "points": [
             {
-              "x": 0.7778083655701539,
-              "y": 0.6240460983558839
+              "x": 0.7734565080668987,
+              "y": 0.6238279761529092
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -138151,12 +138161,12 @@
           "note": "ASI 网关柜 | 位于3321.67.1内",
           "points": [
             {
-              "x": 0.2724689534019407,
-              "y": 0.6575105567168776
+              "x": 0.2755245089574963,
+              "y": 0.661654866591623
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -138219,12 +138229,12 @@
           "note": "PN 交换机柜 | 位于3321.77.6内",
           "points": [
             {
-              "x": 0.29611064389369035,
-              "y": 0.6275641195465886
+              "x": 0.2998215675350237,
+              "y": 0.6276649850083593
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -138695,12 +138705,12 @@
           "note": "ASI 网关柜 | 位于3313.35.17内",
           "points": [
             {
-              "x": 0.5619683951766089,
-              "y": 0.7139002801851452
+              "x": 0.5703034005032697,
+              "y": 0.7132206101659947
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -138746,12 +138756,12 @@
           "note": "ASI 网关柜 | 位于3313.1.12内",
           "points": [
             {
-              "x": 0.8989544381072092,
+              "x": 0.9053404683291699,
               "y": 0.6302182724792057
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -138865,12 +138875,12 @@
           "note": "PN 交换机柜 | 位于3313.19.1内",
           "points": [
             {
-              "x": 0.6292021350504818,
-              "y": 0.6304216395561829
+              "x": 0.6560383431944132,
+              "y": 0.6303001063046332
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -139222,12 +139232,12 @@
           "note": "PN 交换机柜 | 位于3311.7.18内",
           "points": [
             {
-              "x": 0.667556385207193,
-              "y": 0.7307800613087498
+              "x": 0.70363479638357,
+              "y": 0.7305603450870132
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -139341,12 +139351,12 @@
           "note": "PN 交换机柜 | 位于3310.9.17内",
           "points": [
             {
-              "x": 0.7940120586107984,
-              "y": 0.7405005426677849
+              "x": 0.7995505069336798,
+              "y": 0.7402424687954282
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -139613,12 +139623,12 @@
           "note": "PN 交换机柜 | 位于3303.7.1内",
           "points": [
             {
-              "x": 0.3320219052592668,
-              "y": 0.6396755591293608
+              "x": 0.36168249680319836,
+              "y": 0.6394514067813392
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -139732,12 +139742,12 @@
           "note": "PN 交换机柜 | 位于3302.35.1内",
           "points": [
             {
-              "x": 0.35793694689199385,
-              "y": 0.5767770830165291
+              "x": 0.34471581740345403,
+              "y": 0.5780204175227127
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -139834,12 +139844,12 @@
           "note": "ASI 网关柜 | 位于3301.35.2内",
           "points": [
             {
-              "x": 0.39713193167603317,
-              "y": 0.6333818738202868
+              "x": 0.39525693167603315,
+              "y": 0.6354431223479664
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:36:51.617Z",
           "special": true
         },
         {
@@ -140582,12 +140592,12 @@
           "note": "ASI 网关柜 | 位于3283.59.2内",
           "points": [
             {
-              "x": 0.8485069750678484,
-              "y": 0.25927498270801386
+              "x": 0.8575654688568074,
+              "y": 0.25868632139853703
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -140837,12 +140847,12 @@
           "note": "ASI 网关柜 | 位于3281.71.1内",
           "points": [
             {
-              "x": 0.5875148455332394,
-              "y": 0.4315491192331723
+              "x": 0.5862806133822183,
+              "y": 0.43113864917671124
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -141041,12 +141051,12 @@
           "note": "ASI 网关柜 | 位于3272.57.1内",
           "points": [
             {
-              "x": 0.5241182868434069,
-              "y": 0.3786894107698371
+              "x": 0.5234816630849698,
+              "y": 0.38816497253344495
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -141075,12 +141085,12 @@
           "note": "PN 交换机柜 | 位于3272.77.6内",
           "points": [
             {
-              "x": 0.6225683638871548,
-              "y": 0.3621019422870854
+              "x": 0.6226499863710098,
+              "y": 0.3598858566194632
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -141092,12 +141102,12 @@
           "note": "PN 交换机柜 | 位于3272.73.4内",
           "points": [
             {
-              "x": 0.6008694398813205,
-              "y": 0.4055789999675614
+              "x": 0.6003925367342003,
+              "y": 0.40007415458529766
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -141143,12 +141153,12 @@
           "note": "ASI 网关柜 | 位于3271.13.1内",
           "points": [
             {
-              "x": 0.3296807086192837,
-              "y": 0.356793977625237
+              "x": 0.3443605039680593,
+              "y": 0.356864213229513
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -141330,12 +141340,12 @@
           "note": "ASI 网关柜 | 位于3244.69.1内",
           "points": [
             {
-              "x": 0.886706772466075,
-              "y": 0.36157326809918416
+              "x": 0.8822823408584816,
+              "y": 0.3616505713977854
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -141381,12 +141391,12 @@
           "note": "PN 交换机柜 | 位于3244.65.1内",
           "points": [
             {
-              "x": 0.8613686865539602,
-              "y": 0.36143039029759283
+              "x": 0.8732859687582564,
+              "y": 0.3616505713977854
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -141874,12 +141884,12 @@
           "note": "ASI 网关柜 | 位于3242.85.1内",
           "points": [
             {
-              "x": 0.8171998942881344,
-              "y": 0.32491913356389324
+              "x": 0.8247707315520356,
+              "y": 0.32277466693560003
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -141959,12 +141969,12 @@
           "note": "PN 交换机柜 | 位于3242.71.2内",
           "points": [
             {
-              "x": 0.8808097397491226,
-              "y": 0.34238832686129844
+              "x": 0.8828900754678515,
+              "y": 0.34805077710275323
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:36:51.617Z",
           "special": true
         },
         {
@@ -142112,12 +142122,12 @@
           "note": "ASI 网关柜 | 位于3241.61.1内",
           "points": [
             {
-              "x": 0.6108145309561346,
-              "y": 0.31857581060180956
+              "x": 0.6147599389347083,
+              "y": 0.3179478357185388
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -142180,12 +142190,12 @@
           "note": "ASI 网关柜 | 位于3241.19.1内",
           "points": [
             {
-              "x": 0.7069381179759975,
-              "y": 0.34499389682163
+              "x": 0.7164799196072104,
+              "y": 0.34536087908468993
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -142469,12 +142479,12 @@
           "note": "ASI 网关柜 | 位于3232.9.2内",
           "points": [
             {
-              "x": 0.616174284853186,
-              "y": 0.307210725231588
+              "x": 0.620989106732255,
+              "y": 0.3070798543061579
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -142588,12 +142598,12 @@
           "note": "PN 交换机柜 | 位于3232.41.4内",
           "points": [
             {
-              "x": 0.7837091809924452,
-              "y": 0.2874530268236901
+              "x": 0.7834662381127963,
+              "y": 0.2924900071394997
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:36:51.617Z",
           "special": true
         },
         {
@@ -142690,12 +142700,12 @@
           "note": "ASI 网关柜 | 位于3231.19.10内",
           "points": [
             {
-              "x": 0.6749641708955383,
-              "y": 0.29834667672463505
+              "x": 0.6833993434075093,
+              "y": 0.2993190679752322
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -143098,12 +143108,12 @@
           "note": "PN 交换机柜 | 位于3222.15.1内",
           "points": [
             {
-              "x": 0.7655882928934645,
-              "y": 0.41375298449866954
+              "x": 0.7618827077406592,
+              "y": 0.41368023816497723
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -143268,12 +143278,12 @@
           "note": "PN 交换机柜 | 位于3221.65.1内",
           "points": [
             {
-              "x": 0.28102562003432235,
-              "y": 0.32187350375246965
+              "x": 0.28459844185743993,
+              "y": 0.32387605366003475
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -143319,12 +143329,12 @@
           "note": "PN 交换机柜 | 位于3221.39.1内",
           "points": [
             {
-              "x": 0.5592901598712928,
-              "y": 0.26598090327993446
+              "x": 0.5637920878320962,
+              "y": 0.26568901453152105
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -143404,12 +143414,12 @@
           "note": "ASI 网关柜 | 位于3220.87.1内",
           "points": [
             {
-              "x": 0.3087393631975597,
-              "y": 0.34766861762268997
+              "x": 0.30125426799888916,
+              "y": 0.34786862567932914
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -143693,12 +143703,12 @@
           "note": "PN 交换机柜 | 位于3220.7.2内",
           "points": [
             {
-              "x": 0.5897430660167176,
+              "x": 0.5942851762851504,
               "y": 0.2585683135666917
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -143744,12 +143754,12 @@
           "note": "ASI 网关柜 | 位于3213.23.5内",
           "points": [
             {
-              "x": 0.6946011303431536,
-              "y": 0.40075569927869287
+              "x": 0.7072683783972015,
+              "y": 0.4008944961025673
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -144407,12 +144417,12 @@
           "note": "PN 交换机柜 | 位于3203.35.19内",
           "points": [
             {
-              "x": 0.5998245221505585,
-              "y": 0.3135364807766695
+              "x": 0.6044076572335112,
+              "y": 0.31319190895398386
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -144424,12 +144434,12 @@
           "note": "PN 交换机柜 | 位于3203.35.1内",
           "points": [
             {
-              "x": 0.44823842188263247,
-              "y": 0.26693873481356145
+              "x": 0.4517570273350093,
+              "y": 0.26685299181799527
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -144509,12 +144519,12 @@
           "note": "ASI 网关柜 | 位于3202.59.1内",
           "points": [
             {
-              "x": 0.32059285386821906,
-              "y": 0.44456188438585253
+              "x": 0.3265709931275852,
+              "y": 0.4448272126240117
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -144543,12 +144553,12 @@
           "note": "ASI 网关柜 | 位于3202.33.2内",
           "points": [
             {
-              "x": 0.3311638387529092,
-              "y": 0.4324122466150383
+              "x": 0.34503461799167834,
+              "y": 0.43327206357048925
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -144662,12 +144672,12 @@
           "note": "ASI 网关柜 | 位于3201.55.6内",
           "points": [
             {
-              "x": 0.5525720846261487,
-              "y": 0.3460059168015738
+              "x": 0.5427738918524724,
+              "y": 0.344861723112977
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -144832,12 +144842,12 @@
           "note": "PN 交换机柜 | 位于3201.61.1内",
           "points": [
             {
-              "x": 0.5770288623182185,
-              "y": 0.3449141387283156
+              "x": 0.5730252378961462,
+              "y": 0.3446532179631706
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -146362,12 +146372,12 @@
           "note": "PN 交换机柜 | 位于3131.47.2内",
           "points": [
             {
-              "x": 0.5544294154401755,
-              "y": 0.34807766040683114
+              "x": 0.5318588124149655,
+              "y": 0.3158354688636196
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -147705,12 +147715,12 @@
           "note": "ASI 网关柜 | 位于3071.7.10内",
           "points": [
             {
-              "x": 0.21953370649266032,
+              "x": 0.22591765611504833,
               "y": 0.3884329344164511
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -147790,12 +147800,12 @@
           "note": "PN 交换机柜 | 位于3071.21.21内",
           "points": [
             {
-              "x": 0.7607043371172187,
-              "y": 0.4867196764025718
+              "x": 0.751762223580168,
+              "y": 0.4856905117085102
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148045,12 +148055,12 @@
           "note": "PN 交换机柜 | 位于3062.37.1内",
           "points": [
             {
-              "x": 0.15554311270099122,
-              "y": 0.4711634300537684
+              "x": 0.15039934888158732,
+              "y": 0.4707713760062864
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148062,12 +148072,12 @@
           "note": "PN 交换机柜 | 位于3062.27.17内",
           "points": [
             {
-              "x": 0.22511033259864902,
-              "y": 0.33394723301200846
+              "x": 0.23189778711222114,
+              "y": 0.33591139645101503
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148079,12 +148089,12 @@
           "note": "PN 交换机柜 | 位于3062.25.8内",
           "points": [
             {
-              "x": 0.32688536325117695,
-              "y": 0.3551576955837158
+              "x": 0.31899966785167116,
+              "y": 0.35314489407009725
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148130,12 +148140,12 @@
           "note": "PN 交换机柜 | 位于3062.19.13内",
           "points": [
             {
-              "x": 0.48793731431918747,
-              "y": 0.41779939923240195
+              "x": 0.48241287231341223,
+              "y": 0.41708954296841577
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148368,12 +148378,12 @@
           "note": "PN 交换机柜 | 位于3061.25.19内",
           "points": [
             {
-              "x": 0.21763193708761172,
-              "y": 0.3505308483623184
+              "x": 0.223008619980647,
+              "y": 0.3512874147521345
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148623,12 +148633,12 @@
           "note": "PN 交换机柜 | 位于3004.9.1内",
           "points": [
             {
-              "x": 0.07927079386924218,
-              "y": 0.5101109705082824
+              "x": 0.08441529787271397,
+              "y": 0.5122642631988333
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148674,12 +148684,12 @@
           "note": "ASI 网关柜 | 位于3001.17.1内",
           "points": [
             {
-              "x": 0.08912977111877088,
-              "y": 0.46450823570467564
+              "x": 0.0854489743459473,
+              "y": 0.4638685816206088
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148725,12 +148735,12 @@
           "note": "PN 交换机柜 | 位于3001.61.5内",
           "points": [
             {
-              "x": 0.05575138829597258,
-              "y": 0.4611004463778507
+              "x": 0.054890872359774766,
+              "y": 0.46549141731079957
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148742,12 +148752,12 @@
           "note": "PN 交换机柜 | 位于3001.33.1内",
           "points": [
             {
-              "x": 0.10169150139763372,
-              "y": 0.46416948360938337
+              "x": 0.09857421556321533,
+              "y": 0.46411302298847223
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148776,12 +148786,12 @@
           "note": "PN 交换机柜 | 位于3001.21.1内",
           "points": [
             {
-              "x": 0.09258656077127739,
-              "y": 0.46394364887918854
+              "x": 0.08912977111877088,
+              "y": 0.46450823570467564
             }
           ],
           "createdAt": "2026-06-08T15:59:06.781Z",
-          "updatedAt": "2026-06-08T15:59:06.781Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148844,12 +148854,12 @@
           "note": "到达-急停信号柜（含隶属急停点） | 位于3456.15.1内",
           "points": [
             {
-              "x": 0.5030950175823578,
-              "y": 0.7432755180992332
+              "x": 0.4896794660577454,
+              "y": 0.7440824078984731
             }
           ],
           "createdAt": "2026-06-11T02:53:43.716Z",
-          "updatedAt": "2026-06-11T02:53:43.716Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148861,12 +148871,12 @@
           "note": "PN 交换机柜 | 位于3455.13.1内",
           "points": [
             {
-              "x": 0.5231745744816869,
-              "y": 0.7229646285167631
+              "x": 0.5131844048040602,
+              "y": 0.6851637090675481
             }
           ],
           "createdAt": "2026-06-11T02:53:43.716Z",
-          "updatedAt": "2026-06-11T02:53:43.716Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148888,19 +148898,19 @@
         },
         {
           "id": "ann-mq8wlcbr-nmnqzf",
-          "drawingId": "f1",
+          "drawingId": "b1",
           "type": "point",
-          "groupId": "auto-f1-3454",
+          "groupId": "grp-mpmfr9pp-on92nt",
           "code": "3454.00.69",
           "note": "ASI 网关柜 | 位于3454.13.1内",
           "points": [
             {
-              "x": 0.36583578785382687,
-              "y": 0.7424890465631742
+              "x": 0.5489830141765769,
+              "y": 0.736176279485896
             }
           ],
           "createdAt": "2026-06-11T02:53:43.716Z",
-          "updatedAt": "2026-06-11T02:53:43.716Z",
+          "updatedAt": "2026-06-11T15:35:27.393Z",
           "special": true
         },
         {
@@ -148956,31 +148966,64 @@
         }
       ],
       "batchCodes": [
-        "IT 923.00.99",
-        "IT 922.00.99",
-        "IT 921.00.99",
-        "IT 920.00.99",
-        "IT 919.00.99",
-        "IT 918.00.99",
-        "IT 917.00.99",
-        "IT 916.00.99(EBS)",
-        "IT 915.00.99",
-        "IT 914.00.99",
-        "IT 913.00.99",
-        "IT 912.00.99",
-        "IT 911.00.99",
-        "IT 910.00.99",
-        "IT 909.00.99",
-        "IT 908.00.99",
-        "IT 907.00.99",
-        "IT 906.00.99",
-        "IT 905.00.99",
-        "IT 904.00.99",
-        "IT 903.00.99",
-        "IT 902.00.99",
-        "IT 901.00.99"
+        "3510.99.1",
+        "3510.99.2",
+        "3510.99.3",
+        "3510.99.4",
+        "3510.99.5",
+        "3510.99.6",
+        "3510.99.7",
+        "3510.99.8",
+        "3510.99.9",
+        "3510.99.10",
+        "3510.99.11",
+        "3510.99.12",
+        "3510.99.13",
+        "3510.99.14",
+        "3510.99.15",
+        "3510.99.16",
+        "3510.99.17",
+        "3510.99.18",
+        "3510.99.19",
+        "3510.99.20",
+        "3511.1.0",
+        "3511.2.0",
+        "3511.10.0",
+        "3511.40.0",
+        "3511.50.0",
+        "3511.51.0",
+        "3512.1.0",
+        "3512.2.0",
+        "3512.10.0",
+        "3512.40.0",
+        "3512.50.0",
+        "3512.51.0",
+        "3513.1.0",
+        "3513.2.0",
+        "3513.10.0",
+        "3513.40.0",
+        "3513.50.0",
+        "3513.51.0",
+        "3514.1.0",
+        "3514.2.0",
+        "3514.10.0",
+        "3514.40.0",
+        "3514.50.0",
+        "3514.51.0",
+        "3515.1.0",
+        "3515.2.0",
+        "3515.10.0",
+        "3515.40.0",
+        "3515.50.0",
+        "3515.51.0",
+        "3516.1.0",
+        "3516.2.0",
+        "3516.10.0",
+        "3516.40.0",
+        "3516.50.0",
+        "3516.51.0"
       ],
-      "batchCodeIndex": 23,
+      "batchCodeIndex": 56,
       "batchCodeActive": false
     },
     "docs": {

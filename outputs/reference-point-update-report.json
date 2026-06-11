@@ -1,0 +1,2724 @@
+﻿{
+  "sourceRowsMatched": 1013,
+  "existingCodes": 963,
+  "updatedCodes": 314,
+  "unchangedCodes": 632,
+  "legacyCodes": 17,
+  "updated": [
+    {
+      "code": "3001.00.99",
+      "references": [
+        "3001.01.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3001.00.88",
+      "references": [
+        "3001.17.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3001.00.86",
+      "references": [
+        "3001.29.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3001.00.85",
+      "references": [
+        "3001.61.06"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3001.00.69",
+      "references": [
+        "3001.13.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3004.00.99",
+      "references": [
+        "3001.01.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3004.00.89",
+      "references": [
+        "3004.09.01",
+        "3004.17.01",
+        "3004.25.01",
+        "3004.35.02",
+        "3004.59.01"
+      ],
+      "pointCount": 5,
+      "annotationCount": 1
+    },
+    {
+      "code": "3061.00.84",
+      "references": [
+        "3061.25.17"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3061.39.02",
+      "references": [
+        "3061.39.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3061.39.04",
+      "references": [
+        "3061.39.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3061.15.02",
+      "references": [
+        "3061.15.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3062.00.98",
+      "references": [
+        "3062.21.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3062.00.88",
+      "references": [
+        "3062.19.14"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3062.00.85",
+      "references": [
+        "3062.25.10"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3062.00.84",
+      "references": [
+        "3062.27.16"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3062.00.83",
+      "references": [
+        "3062.37.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3062.17.02",
+      "references": [
+        "3062.17.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3062.41.02",
+      "references": [
+        "3062.41.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3062.41.04",
+      "references": [
+        "3062.41.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3071.00.99",
+      "references": [
+        "3071.11.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3071.00.84",
+      "references": [
+        "3071.21.19"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3071.00.68",
+      "references": [
+        "3071.07.11"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3071.17.04",
+      "references": [
+        "3071.17.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3072.00.99",
+      "references": [
+        "3072.11.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3072.17.04",
+      "references": [
+        "3072.17.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3081.00.99",
+      "references": [
+        "3081.19.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3081.03.04",
+      "references": [
+        "3081.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3081.17.02",
+      "references": [
+        "3081.17.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3101.57.97",
+      "references": [
+        "3101.57.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3101.59.97",
+      "references": [
+        "3101.59.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3101.61.97",
+      "references": [
+        "3101.61.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3103.35.99",
+      "references": [
+        "3103.35.01",
+        "3103.35.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3104.37.99",
+      "references": [
+        "3104.37.01",
+        "3104.37.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3105.00.99",
+      "references": [
+        "3105.55.09"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3105.39.99",
+      "references": [
+        "3105.39.01",
+        "3105.39.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3130.00.99",
+      "references": [
+        "3130.31.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3130.41.99",
+      "references": [
+        "3130.41.01",
+        "3130.41.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3131.00.99",
+      "references": [
+        "3131.35.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3131.00.87",
+      "references": [
+        "3131.35.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3131.57.99",
+      "references": [
+        "3131.57.01",
+        "3131.57.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3161.39.99",
+      "references": [
+        "3161.39.01",
+        "3161.39.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3162.00.99",
+      "references": [
+        "3162.51.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3162.37.99",
+      "references": [
+        "3162.37.01",
+        "3162.37.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3163.37.99",
+      "references": [
+        "3163.37.01",
+        "3163.37.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3164.39.99",
+      "references": [
+        "3164.39.01",
+        "3164.39.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3190.27.99",
+      "references": [
+        "3190.27.01",
+        "3190.27.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3190.51.99",
+      "references": [
+        "3190.51.01",
+        "3190.51.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3191.00.99",
+      "references": [
+        "3191.47.06"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3191.39.99",
+      "references": [
+        "3191.39.01",
+        "3191.39.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3191.63.99",
+      "references": [
+        "3191.63.01",
+        "3191.63.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3201.00.84",
+      "references": [
+        "3201.57.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3201.00.66",
+      "references": [
+        "3201.55.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3201.15.99",
+      "references": [
+        "3201.15.01",
+        "3201.15.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3201.27.04",
+      "references": [
+        "3201.27.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3201.35.02",
+      "references": [
+        "3201.35.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3201.41.04",
+      "references": [
+        "3201.41.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3201.49.04",
+      "references": [
+        "3201.49.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3201.59.02",
+      "references": [
+        "3201.59.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3202.00.69",
+      "references": [
+        "3202.33.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3202.00.67",
+      "references": [
+        "3202.69.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3202.37.99",
+      "references": [
+        "3202.37.01",
+        "3202.37.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3202.87.99",
+      "references": [
+        "3202.87.01",
+        "3202.87.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3202.95.02",
+      "references": [
+        "3202.95.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3203.00.86",
+      "references": [
+        "3203.35.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3203.00.85",
+      "references": [
+        "3203.35.20"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3203.49.02",
+      "references": [
+        "3203.49.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3203.39.04",
+      "references": [
+        "3203.39.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3203.31.04",
+      "references": [
+        "3203.31.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3203.23.02",
+      "references": [
+        "3203.23.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3203.15.04",
+      "references": [
+        "3203.15.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3203.03.99",
+      "references": [
+        "3203.03.01",
+        "3203.03.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3212.05.02",
+      "references": [
+        "3212.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3212.13.04",
+      "references": [
+        "3212.13.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3212.21.02",
+      "references": [
+        "3212.21.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3212.27.04",
+      "references": [
+        "3212.27.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3213.00.68",
+      "references": [
+        "3213.23.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3213.05.02",
+      "references": [
+        "3213.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3213.11.02",
+      "references": [
+        "3213.11.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3213.19.04",
+      "references": [
+        "3213.19.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3213.27.02",
+      "references": [
+        "3213.27.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3213.37.04",
+      "references": [
+        "3213.37.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3220.00.89",
+      "references": [
+        "3220.07.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3220.00.64",
+      "references": [
+        "3220.83.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3220.05.02",
+      "references": [
+        "3220.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.00.85",
+      "references": [
+        "3221.37.06"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.00.82",
+      "references": [
+        "3221.63.06"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.31.04",
+      "references": [
+        "3221.31.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.15.02",
+      "references": [
+        "3221.15.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.05.02",
+      "references": [
+        "3221.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.09.02",
+      "references": [
+        "3321.09.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.09.03",
+      "references": [
+        "3321.09.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.09.04",
+      "references": [
+        "3321.09.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.09.05",
+      "references": [
+        "3321.09.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.37.02",
+      "references": [
+        "3321.37.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.63.02",
+      "references": [
+        "3321.63.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.63.03",
+      "references": [
+        "3321.63.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.63.04",
+      "references": [
+        "3321.63.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3221.63.05",
+      "references": [
+        "3321.63.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3222.00.87",
+      "references": [
+        "3222.21.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3222.05.02",
+      "references": [
+        "3222.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3222.19.04",
+      "references": [
+        "3222.19.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3223.00.99",
+      "references": [
+        "3223.19.08"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3231.00.99",
+      "references": [
+        "3231.41.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3231.00.68",
+      "references": [
+        "3231.23.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3231.03.04",
+      "references": [
+        "3231.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3231.11.02",
+      "references": [
+        "3231.11.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3231.39.04",
+      "references": [
+        "3231.39.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3231.47.02",
+      "references": [
+        "3231.47.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3232.00.99",
+      "references": [
+        "3232.45.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3232.00.69",
+      "references": [
+        "3232.13.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3232.03.04",
+      "references": [
+        "3232.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3232.11.02",
+      "references": [
+        "3232.11.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3232.41.04",
+      "references": [
+        "3232.41.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3232.47.04",
+      "references": [
+        "3232.47.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3232.53.02",
+      "references": [
+        "3232.53.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3241.00.99",
+      "references": [
+        "3241.15.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3241.00.68",
+      "references": [
+        "3241.21.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3241.00.64",
+      "references": [
+        "3241.59.10"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3241.03.04",
+      "references": [
+        "3241.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3241.25.02",
+      "references": [
+        "3241.25.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3241.31.02",
+      "references": [
+        "3241.31.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3241.37.04",
+      "references": [
+        "3241.37.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3241.47.02",
+      "references": [
+        "3241.47.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3241.63.02",
+      "references": [
+        "3241.63.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3242.00.68",
+      "references": [
+        "3242.31.12"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3242.03.04",
+      "references": [
+        "3242.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3242.13.02",
+      "references": [
+        "3242.13.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3242.25.04",
+      "references": [
+        "3242.25.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3242.39.02",
+      "references": [
+        "3242.39.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3242.45.04",
+      "references": [
+        "3242.45.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3242.57.04",
+      "references": [
+        "3242.57.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3242.71.02",
+      "references": [
+        "3242.71.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3243.00.99",
+      "references": [
+        "3243.57.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3243.03.04",
+      "references": [
+        "3243.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3243.29.04",
+      "references": [
+        "3243.29.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3243.35.02",
+      "references": [
+        "3243.35.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3243.41.04",
+      "references": [
+        "3243.41.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3243.51.02",
+      "references": [
+        "3243.51.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3243.67.02",
+      "references": [
+        "3243.67.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3244.00.99",
+      "references": [
+        "3244.13.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3244.00.82",
+      "references": [
+        "3244.67.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3244.00.69",
+      "references": [
+        "3244.67.10"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3244.05.04",
+      "references": [
+        "3244.05.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3244.23.02",
+      "references": [
+        "3244.23.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3244.29.04",
+      "references": [
+        "3244.29.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3244.37.02",
+      "references": [
+        "3244.37.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3244.43.02",
+      "references": [
+        "3244.43.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3244.61.04",
+      "references": [
+        "3244.61.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3244.71.02",
+      "references": [
+        "3244.71.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3271.00.99",
+      "references": [
+        "3271.35.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3271.00.69",
+      "references": [
+        "3271.19.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3271.35.99",
+      "references": [
+        "3271.35.01",
+        "3271.35.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3271.05.99",
+      "references": [
+        "3271.05.01",
+        "3271.05.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3271.41.05",
+      "references": [
+        "3271.41.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3272.00.88",
+      "references": [
+        "3272.75.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3272.00.87",
+      "references": [
+        "3272.71.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3272.00.69",
+      "references": [
+        "3272.19.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3272.05.99",
+      "references": [
+        "3272.05.01",
+        "3272.05.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3272.69.99",
+      "references": [
+        "3272.69.01",
+        "3272.69.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3281.00.99",
+      "references": [
+        "3281.53.06"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3281.00.66",
+      "references": [
+        "3281.69.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3281.45.99",
+      "references": [
+        "3281.45.01",
+        "3281.45.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3281.67.99",
+      "references": [
+        "3281.67.01",
+        "3281.67.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3281.51.02",
+      "references": [
+        "3281.51.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3282.51.02",
+      "references": [
+        "3282.51.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3282.11.99",
+      "references": [
+        "3282.11.01",
+        "3282.11.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3282.37.99",
+      "references": [
+        "3282.37.01",
+        "3282.37.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3283.00.66",
+      "references": [
+        "3283.57.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3283.09.99",
+      "references": [
+        "3283.09.01",
+        "3283.09.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3283.37.99",
+      "references": [
+        "3283.37.01",
+        "3283.37.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3291.11.04",
+      "references": [
+        "3291.11.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3291.19.02",
+      "references": [
+        "3291.19.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3291.25.04",
+      "references": [
+        "3291.25.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3291.37.04",
+      "references": [
+        "3291.37.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3292.11.04",
+      "references": [
+        "3292.11.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3292.19.04",
+      "references": [
+        "3292.19.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3292.25.02",
+      "references": [
+        "3292.25.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3292.31.04",
+      "references": [
+        "3292.31.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3292.43.04",
+      "references": [
+        "3292.43.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3301.15.99",
+      "references": [
+        "3301.15.01",
+        "3301.15.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3301.27.04",
+      "references": [
+        "3301.27.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3301.35.02",
+      "references": [
+        "3301.35.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3301.43.04",
+      "references": [
+        "3301.43.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3301.53.04",
+      "references": [
+        "3301.53.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3301.63.02",
+      "references": [
+        "3301.63.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3302.00.86",
+      "references": [
+        "3302.33.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3302.37.99",
+      "references": [
+        "3302.37.01",
+        "3302.37.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3302.87.99",
+      "references": [
+        "3302.87.01",
+        "3302.87.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3302.95.02",
+      "references": [
+        "3302.95.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3303.00.89",
+      "references": [
+        "3303.17.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3303.03.99",
+      "references": [
+        "3303.01.01",
+        "3303.01.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3303.15.04",
+      "references": [
+        "3303.15.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3303.21.02",
+      "references": [
+        "3303.21.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3303.29.04",
+      "references": [
+        "3303.29.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3303.39.04",
+      "references": [
+        "3303.39.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3303.49.02",
+      "references": [
+        "3303.49.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3310.00.99",
+      "references": [
+        "3310.09.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3310.00.87",
+      "references": [
+        "3310.11.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3310.03.04",
+      "references": [
+        "3310.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3310.13.02",
+      "references": [
+        "3310.13.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3311.00.88",
+      "references": [
+        "3311.09.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3311.03.04",
+      "references": [
+        "3311.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3311.13.02",
+      "references": [
+        "3311.13.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3312.05.02",
+      "references": [
+        "3312.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3312.13.04",
+      "references": [
+        "3312.13.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3312.21.02",
+      "references": [
+        "3312.21.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3312.27.04",
+      "references": [
+        "3312.27.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3313.00.87",
+      "references": [
+        "3313.17.09"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3313.00.69",
+      "references": [
+        "3313.01.11"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3313.00.66",
+      "references": [
+        "3313.35.16"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3313.05.02",
+      "references": [
+        "3313.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3313.13.04",
+      "references": [
+        "3313.13.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3313.21.02",
+      "references": [
+        "3313.21.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3313.31.04",
+      "references": [
+        "3313.31.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.05.02",
+      "references": [
+        "3320.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.09.03",
+      "references": [
+        "3320.09.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.09.04",
+      "references": [
+        "3320.09.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.09.05",
+      "references": [
+        "3320.09.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.13.02",
+      "references": [
+        "3320.13.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.29.04",
+      "references": [
+        "3320.29.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.35.03",
+      "references": [
+        "3320.35.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.35.04",
+      "references": [
+        "3320.35.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.35.05",
+      "references": [
+        "3320.35.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.49.02",
+      "references": [
+        "3320.49.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.61.03",
+      "references": [
+        "3320.61.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.61.04",
+      "references": [
+        "3320.61.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.61.05",
+      "references": [
+        "3320.61.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3320.87.03",
+      "references": [
+        "3320.87.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.00.80",
+      "references": [
+        "3321.79.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.00.66",
+      "references": [
+        "3321.65.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.05.02",
+      "references": [
+        "3321.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.09.02",
+      "references": [
+        "3321.09.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.09.04",
+      "references": [
+        "3321.09.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.09.05",
+      "references": [
+        "3321.09.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.31.03",
+      "references": [
+        "3321.31.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.31.04",
+      "references": [
+        "3321.31.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.31.05",
+      "references": [
+        "3321.31.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.63.03",
+      "references": [
+        "3321.63.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.63.04",
+      "references": [
+        "3321.63.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3321.63.05",
+      "references": [
+        "3321.63.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3322.05.02",
+      "references": [
+        "3322.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3322.09.03",
+      "references": [
+        "3322.09.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3322.09.04",
+      "references": [
+        "3322.09.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3322.09.05",
+      "references": [
+        "3322.09.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3323.00.89",
+      "references": [
+        "3323.07.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3323.05.02",
+      "references": [
+        "3323.05.03",
+        "3323.05.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3341.00.86",
+      "references": [
+        "3341.35.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3341.00.69",
+      "references": [
+        "3341.07.04",
+        "3341.07.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3341.03.04",
+      "references": [
+        "3341.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3341.31.02",
+      "references": [
+        "3341.31.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3341.37.04",
+      "references": [
+        "3341.37.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3341.47.02",
+      "references": [
+        "3341.47.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3341.63.02",
+      "references": [
+        "3341.63.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.00.99",
+      "references": [
+        "3342.09.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.00.81",
+      "references": [
+        "3342.65.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.03.04",
+      "references": [
+        "3342.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.17.02",
+      "references": [
+        "3342.17.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.23.04",
+      "references": [
+        "3342.23.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.31.02",
+      "references": [
+        "3342.31.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.00.66",
+      "references": [
+        "3342.39.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.37.02",
+      "references": [
+        "3342.37.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.00.69",
+      "references": [
+        "3342.59.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.55.04",
+      "references": [
+        "3342.55.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3342.63.02",
+      "references": [
+        "3342.63.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3343.00.99",
+      "references": [
+        "3343.05.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3343.03.04",
+      "references": [
+        "3343.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3343.21.02",
+      "references": [
+        "3343.21.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3343.27.02",
+      "references": [
+        "3343.27.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3343.33.04",
+      "references": [
+        "3343.33.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3343.43.02",
+      "references": [
+        "3343.43.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3343.59.02",
+      "references": [
+        "3343.59.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3344.00.99",
+      "references": [
+        "3344.55.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3344.00.86",
+      "references": [
+        "3344.39.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3344.03.04",
+      "references": [
+        "3344.03.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3344.17.02",
+      "references": [
+        "3344.17.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3344.23.04",
+      "references": [
+        "3344.23.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3344.35.04",
+      "references": [
+        "3344.35.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3344.47.02",
+      "references": [
+        "3344.47.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3344.53.02",
+      "references": [
+        "3344.53.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3344.65.04",
+      "references": [
+        "3344.65.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3371.51.02",
+      "references": [
+        "3371.51.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3371.51.03",
+      "references": [
+        "3371.51.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3371.51.04",
+      "references": [
+        "3371.51.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3371.51.05",
+      "references": [
+        "3371.51.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3371.33.99",
+      "references": [
+        "3371.33.01",
+        "3371.33.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3372.00.86",
+      "references": [
+        "3372.53.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3372.35.99",
+      "references": [
+        "3372.35.01",
+        "3372.35.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3372.53.03",
+      "references": [
+        "3372.53.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3372.53.05",
+      "references": [
+        "3372.53.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3372.63.04",
+      "references": [
+        "3372.63.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3381.00.99",
+      "references": [
+        "3381.79.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3381.49.99",
+      "references": [
+        "3381.49.01",
+        "3381.49.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3381.65.99",
+      "references": [
+        "3381.65.01",
+        "3381.65.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3382.00.89",
+      "references": [
+        "3382.01.11"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3382.00.68",
+      "references": [
+        "3382.29.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3382.37.99",
+      "references": [
+        "3382.37.99",
+        "3382.37.01"
+      ],
+      "pointCount": 2,
+      "annotationCount": 1
+    },
+    {
+      "code": "3451.00.99",
+      "references": [
+        "3451.07.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3452.00.99",
+      "references": [
+        "3452.15.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3452.00.88",
+      "references": [
+        "3452.19.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3452.05.99",
+      "references": [
+        "3452.03.01",
+        "3452.03.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3453.00.99",
+      "references": [
+        "3453.15.05"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3453.05.99",
+      "references": [
+        "3453.03.01",
+        "3453.03.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3454.00.99",
+      "references": [
+        "3454.19.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3454.79.99",
+      "references": [
+        "3454.19.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3454.00.69",
+      "references": [
+        "3454.15.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3454.05.99",
+      "references": [
+        "3454.03.01",
+        "3454.03.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3455.00.99",
+      "references": [
+        "3455.13.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3455.00.89",
+      "references": [
+        "3455.13.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3455.05.99",
+      "references": [
+        "3455.03.04",
+        "3455.03.04"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3456.00.99",
+      "references": [
+        "3456.19.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3456.79.99",
+      "references": [
+        "3456.15.02"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3456.05.99",
+      "references": [
+        "3456.03.01",
+        "3456.03.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3457.00.99",
+      "references": [
+        "3457.15.03"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    },
+    {
+      "code": "3457.05.99",
+      "references": [
+        "3457.03.01",
+        "3457.03.01"
+      ],
+      "pointCount": 1,
+      "annotationCount": 1
+    }
+  ],
+  "legacy": [
+    {
+      "code": "3001.00.87",
+      "rows": [
+        "PLC分区非急停部分!6"
+      ],
+      "missingReferences": [
+        "3001.12.01"
+      ]
+    },
+    {
+      "code": "3101.63.97",
+      "rows": [
+        "PLC分区非急停部分!211"
+      ],
+      "missingReferences": [
+        "3101.63.03"
+      ]
+    },
+    {
+      "code": "3103.00.68",
+      "rows": [
+        "PLC分区非急停部分!220"
+      ],
+      "missingReferences": [
+        "3103.57.04"
+      ]
+    },
+    {
+      "code": "3130.00.86",
+      "rows": [
+        "PLC分区非急停部分!262"
+      ],
+      "missingReferences": [
+        "3130.35.07"
+      ]
+    },
+    {
+      "code": "3221.37.03",
+      "rows": [
+        "PLC分区非急停部分!672"
+      ],
+      "missingReferences": [
+        "3321.37.03"
+      ]
+    },
+    {
+      "code": "3221.37.04",
+      "rows": [
+        "PLC分区非急停部分!673"
+      ],
+      "missingReferences": [
+        "3321.37.04"
+      ]
+    },
+    {
+      "code": "3221.37.05",
+      "rows": [
+        "PLC分区非急停部分!674"
+      ],
+      "missingReferences": [
+        "3321.37.05"
+      ]
+    },
+    {
+      "code": "3311.00.89",
+      "rows": [
+        "PLC分区非急停部分!1338"
+      ],
+      "missingReferences": [
+        "3011.07.01"
+      ]
+    },
+    {
+      "code": "3371.00.84",
+      "rows": [
+        "PLC分区非急停部分!1784"
+      ],
+      "missingReferences": [
+        "3371.25.02"
+      ]
+    },
+    {
+      "code": "3372.00.89",
+      "rows": [
+        "PLC分区非急停部分!1812"
+      ],
+      "missingReferences": [
+        "3372.25.02"
+      ]
+    },
+    {
+      "code": "3382.05.01",
+      "rows": [
+        "PLC分区非急停部分!1876"
+      ],
+      "missingReferences": [
+        "参考点跨图纸: "
+      ]
+    },
+    {
+      "code": "3382.15.01",
+      "rows": [
+        "PLC分区非急停部分!1878"
+      ],
+      "missingReferences": [
+        "参考点跨图纸: "
+      ]
+    },
+    {
+      "code": "3382.33.01",
+      "rows": [
+        "PLC分区非急停部分!1881"
+      ],
+      "missingReferences": [
+        "参考点跨图纸: "
+      ]
+    },
+    {
+      "code": "3382.51.02",
+      "rows": [
+        "PLC分区非急停部分!1890"
+      ],
+      "missingReferences": [
+        "参考点跨图纸: "
+      ]
+    },
+    {
+      "code": "3382.51.03",
+      "rows": [
+        "PLC分区非急停部分!1891"
+      ],
+      "missingReferences": [
+        "参考点跨图纸: "
+      ]
+    },
+    {
+      "code": "3454.00.89",
+      "rows": [
+        "PLC分区非急停部分!1922"
+      ],
+      "missingReferences": [
+        "3454.17.02"
+      ]
+    },
+    {
+      "code": "3454.00.68",
+      "rows": [
+        "PLC分区非急停部分!1927"
+      ],
+      "missingReferences": [
+        "3454.15.07"
+      ]
+    }
+  ]
+}

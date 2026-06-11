@@ -6,18 +6,26 @@
   "scripts": {
     "start": "node server.mjs",
     "dev": "node server.mjs",
+    "build:android-web": "node scripts/build-android-web.mjs",
+    "android:sync": "npm run build:android-web && cap sync android",
+    "android:open": "npm run android:sync && cap open android",
+    "android:apk": "npm run android:sync && cd android && gradlew.bat assembleDebug",
     "render:pdfs": "node scripts/render-pdfs.mjs",
     "build:points": "node scripts/build-point-shards.mjs",
+    "build:references": "node scripts/build-reference-points.mjs",
     "build:responsibility": "node scripts/build-responsibility-zones.mjs",
     "scan:docs": "node scripts/scan-training-docs.mjs"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
     "@napi-rs/canvas": "^0.1.82",
     "jszip": "^3.10.1",
     "pdfjs-dist": "^4.10.38",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.0",
     "live-server": "^1.2.2"
   }
 }
