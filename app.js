@@ -4,11 +4,12 @@
   const ACCESS_KEY = STORAGE_KEY + "-access";
   const ACCESS_PASSPHRASE = "GBIAFMOBHS";
   const DEVICE_INFO_URL = "data/device-info.json";
+  const REFERENCE_POINTS_URL = "data/reference-points.json";
   const RESPONSIBILITY_URL = "data/responsibility-zones.json";
   const SVG_NS = "http://www.w3.org/2000/svg";
   const RENDER_LIMIT = 200;
   const VIEW_ONLY = false;
-  const APP_VERSION = "20260611-v4";
+  const APP_VERSION = "20260612-v6";
   const FIXED_DRAWING_ORDER = ["f4", "f3", "f2", "f1", "b1", "f3-transfer", "overview-2d", "overview-3d"];
 
   const defaultDrawings = [
@@ -115,6 +116,12 @@
     items: {},
     teams: {}
   };
+  const referencePoints = {
+    loaded: false,
+    loading: false,
+    promise: null,
+    items: {}
+  };
 
   const el = {
     drawingList: document.getElementById("drawingList"),
@@ -126,6 +133,7 @@
     bulkHighlightButton: document.getElementById("bulkHighlightButton"),
     bulkHighlightLabels: document.getElementById("bulkHighlightLabels"),
     bulkHighlightResults: document.getElementById("bulkHighlightResults"),
+    mobileUiToggle: document.getElementById("mobileUiToggle"),
     showAnnotations: document.getElementById("showAnnotations"),
     showLabels: document.getElementById("showLabels"),
     annotationForm: document.getElementById("annotationForm"),
@@ -191,13 +199,19 @@
   var trainingManifestSignature = "";
   var AUTONAME_KEY = "baggage-autoname";
   var CURRENT_DRAWING_KEY = STORAGE_KEY + "-current-drawing";
+  var MOBILE_UI_HIDDEN_KEY = STORAGE_KEY + "-mobile-ui-hidden";
   var SYNC_META_KEY = STORAGE_KEY + "-sync-meta";
   var SYNC_ENDPOINT = "/api/data";
   var MAX_UNDO_STEPS = 50;
   var customDrawingOrder = [];
   var drawingPointerDrag = null;
   var suppressDrawingClick = false;
-  var IS_STATIC_HOST = location.hostname.endsWith("github.io");
+  var IS_NATIVE_APP = Boolean(
+    window.Capacitor &&
+    typeof window.Capacitor.isNativePlatform === "function" &&
+    window.Capacitor.isNativePlatform()
+  );
+  var IS_STATIC_HOST = location.hostname.endsWith("github.io") || IS_NATIVE_APP;
   var syncState = {
     enabled: !VIEW_ONLY && (location.protocol === "http:" || location.protocol === "https:"),
     applyingRemote: false,
@@ -507,6 +521,40 @@
       lazyPoints.searchItems = [];
       return lazyPoints.searchItems;
     }
+  }
+
+  function normalizeReferenceCode(value) {
+    return String(value == null ? "" : value)
+      .trim()
+      .split(".")
+      .map(function(segment) {
+        return /^\d+$/.test(segment) ? String(Number(segment)) : segment.toUpperCase();
+      })
+      .join(".");
+  }
+
+  async function loadReferencePoints() {
+    if (referencePoints.loaded) return referencePoints.items;
+    if (referencePoints.loading && referencePoints.promise) return referencePoints.promise;
+    referencePoints.loading = true;
+    referencePoints.promise = (async function() {
+      try {
+        var response = await fetch(REFERENCE_POINTS_URL);
+        if (!response.ok) return {};
+        var payload = await response.json();
+        referencePoints.items = payload && payload.items && typeof payload.items === "object"
+          ? payload.items
+          : {};
+        referencePoints.loaded = true;
+        return referencePoints.items;
+      } catch (error) {
+        console.warn("Reference point load failed:", error.message);
+        return {};
+      } finally {
+        referencePoints.loading = false;
+      }
+    })();
+    return referencePoints.promise;
   }
 
   function startLazyBackgroundLoad() {
@@ -4396,11 +4444,33 @@
         if (!seenIds.has(item.id)) searchableAnnotations.push(item);
       });
     }
+    var referenceItems = await loadReferencePoints();
+    var referenceMapping = referenceItems[normalizeReferenceCode(query)];
+    if (referenceMapping && Array.isArray(referenceMapping.references)) {
+      var referenceMatches = [];
+      referenceMapping.references.forEach(function(referenceCode) {
+        var normalizedReference = normalizeReferenceCode(referenceCode);
+        searchableAnnotations.forEach(function(annotation) {
+          if (normalizeReferenceCode(annotation.code) !== normalizedReference) return;
+          referenceMatches.push({
+            ...annotation,
+            displayCode: referenceCode,
+            sourceCode: referenceMapping.cabinetCode || el.searchInput.value.trim(),
+            referenceResolved: true
+          });
+        });
+      });
+      if (referenceMatches.length) {
+        renderSearchMatches(referenceMatches);
+        if (referenceMatches.length === 1) focusSearchMatch(referenceMatches[0]);
+        return;
+      }
+    }
     for (const annotation of searchableAnnotations) {
       const code = (annotation.code || "").toLowerCase();
       const note = (annotation.note || "").toLowerCase();
       const haystack = `${code} ${note}`;
-      if (code.startsWith(query)) {
+      if (normalizeReferenceCode(code) === normalizeReferenceCode(query) || code.startsWith(query)) {
         startsWithMatches.push(annotation);
       } else if (haystack.includes(query)) {
         includesMatches.push(annotation);
@@ -4413,17 +4483,26 @@
       return;
     }
 
+    renderSearchMatches(matches);
+
+    if (matches.length === 1) focusSearchMatch(matches[0]);
+  }
+
+  function renderSearchMatches(matches) {
+    el.searchResults.innerHTML = "";
     for (const match of matches.slice(0, 50)) {
       const drawing = drawings.find((item) => item.id === match.drawingId);
       const button = document.createElement("button");
       button.type = "button";
       button.className = "result-item";
-      button.innerHTML = `${escapeHtml(match.code || "未命名")}<small>${escapeHtml(drawing ? drawing.title : "")} ${escapeHtml(match.note || "")}</small>`;
+      var resultCode = match.displayCode || match.code || "未命名";
+      var resultNote = match.referenceResolved
+        ? "电柜 " + match.sourceCode + " 对应输送机"
+        : match.note || "";
+      button.innerHTML = `${escapeHtml(resultCode)}<small>${escapeHtml(drawing ? drawing.title : "")} ${escapeHtml(resultNote)}</small>`;
       button.addEventListener("click", () => focusSearchMatch(match));
       el.searchResults.appendChild(button);
     }
-
-    if (matches.length === 1) focusSearchMatch(matches[0]);
   }
 
   async function focusSearchMatch(match) {
@@ -5456,6 +5535,33 @@
     renderDocsModule();
   }
 
+  function setMobileUiHidden(hidden, persist) {
+    hidden = Boolean(hidden);
+    document.body.classList.toggle("mobile-ui-hidden", hidden);
+    if (el.mobileUiToggle) {
+      el.mobileUiToggle.textContent = hidden ? "显示界面" : "隐藏界面";
+      el.mobileUiToggle.setAttribute("aria-pressed", hidden ? "true" : "false");
+      el.mobileUiToggle.setAttribute("aria-label", hidden ? "显示手机界面" : "隐藏手机界面");
+    }
+    if (persist !== false) {
+      try {
+        localStorage.setItem(MOBILE_UI_HIDDEN_KEY, hidden ? "1" : "0");
+      } catch (error) {}
+    }
+    window.requestAnimationFrame(function() {
+      fitToViewport();
+      renderOverlay();
+    });
+  }
+
+  function restoreMobileUiState() {
+    var hidden = false;
+    try {
+      hidden = localStorage.getItem(MOBILE_UI_HIDDEN_KEY) === "1";
+    } catch (error) {}
+    setMobileUiHidden(hidden, false);
+  }
+
   function bindEvents() {
     const preventPageZoom = (event) => {
       event.preventDefault();
@@ -5502,6 +5608,11 @@
     }
     if (el.deleteDocButton && !VIEW_ONLY) el.deleteDocButton.addEventListener("click", deleteSelectedDoc);
     if (el.fitButton) el.fitButton.addEventListener("click", fitToViewport);
+    if (el.mobileUiToggle) {
+      el.mobileUiToggle.addEventListener("click", function() {
+        setMobileUiHidden(!document.body.classList.contains("mobile-ui-hidden"));
+      });
+    }
     if (el.clearPlcFilterButton) {
       el.clearPlcFilterButton.addEventListener("click", clearPlcFilter);
     }
@@ -5726,6 +5837,7 @@
   await loadDrawingManifest();
   loadData();
   restoreCurrentDrawingLocal();
+  restoreMobileUiState();
   bindEvents();
   startManifestSync();
   renderDrawingList();

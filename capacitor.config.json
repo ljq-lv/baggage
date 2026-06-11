@@ -1,0 +1,12 @@
+{
+  "appId": "com.gbiam.baggagesmart",
+  "appName": "行李智查",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#eef2f5"
+  }
+}

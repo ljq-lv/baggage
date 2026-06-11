@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>行李智查</title>
-    <link rel="stylesheet" href="styles.css?v=20260611-v4">
+    <link rel="stylesheet" href="styles.css?v=20260612-search-only-mode">
     <script>
       // Preload first drawing image so it downloads in parallel with JS
       (function(){
@@ -51,6 +51,7 @@
     </header>
 
     <main id="pointModule" class="app-shell module-panel active">
+      <button id="mobileUiToggle" class="mobile-ui-toggle" type="button" aria-pressed="false">隐藏界面</button>
       <aside class="sidebar" aria-label="图纸与搜索">
         <header class="brand">
           <h1>行李智查</h1>
@@ -237,6 +238,6 @@
       </main>
     </section>
 
-    <script src="app.js?v=20260611-v5"></script>
+    <script src="app.js?v=20260612-search-only-mode"></script>
   </body>
 </html>
