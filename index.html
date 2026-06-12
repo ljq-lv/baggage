@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>行李智查</title>
     <link rel="stylesheet" href="styles.css?v=20260612-search-results-top">
-    <link rel="preload" href="app.js?v=20260612-native-hd-images" as="script">
+    <link rel="preload" href="app.js?v=20260612-hd-web-images" as="script">
     <script>
       // Preload first drawing image so it downloads in parallel with JS
       (function(){
@@ -19,7 +19,6 @@
               drawingId = data.currentDrawingId;
             }
           }
-          var isMobile = window.matchMedia("(max-width: 900px)").matches;
           var isNative = Boolean(
             window.Capacitor &&
             typeof window.Capacitor.isNativePlatform === "function" &&
@@ -27,7 +26,7 @@
           );
           var imgPath = isNative
             ? "assets/floors/" + drawingId + ".png"
-            : (isMobile ? "assets/floors/mobile/" + drawingId + ".jpg" : "assets/floors/" + drawingId + ".jpg");
+            : "assets/floors/" + drawingId + ".jpg";
           var link = document.createElement("link");
           link.rel = "preload";
           link.as = "image";
@@ -261,6 +260,6 @@
       </main>
     </section>
 
-    <script src="app.js?v=20260612-native-hd-images"></script>
+    <script src="app.js?v=20260612-hd-web-images"></script>
   </body>
 </html>
