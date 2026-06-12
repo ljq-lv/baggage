@@ -9,7 +9,7 @@
   const SVG_NS = "http://www.w3.org/2000/svg";
   const RENDER_LIMIT = 200;
   const VIEW_ONLY = false;
-  const APP_VERSION = "20260612-v10";
+  const APP_VERSION = "20260612-v11";
   const FIXED_DRAWING_ORDER = ["f4", "f3", "f2", "f1", "b1", "f3-transfer", "overview-2d", "overview-3d"];
 
   const defaultDrawings = [
@@ -793,6 +793,9 @@
         image: item.image && item.image.includes("/")
           ? item.image
           : `assets/floors/${item.image}`,
+        nativeImage: item.image
+          ? `assets/floors/${item.image.replace(/\.[^.]+$/, ".png")}`
+          : "",
         mobileImage: item.mobileImage
           ? (item.mobileImage.includes("/") ? item.mobileImage : `assets/floors/mobile/${item.mobileImage}`)
           : (item.image && item.image.includes("/")
@@ -3170,7 +3173,9 @@
     }
     const drawing = currentDrawing();
     if (!drawing) return;
-    var imageSrc = isCompactViewport() && drawing.mobileImage ? drawing.mobileImage : drawing.image;
+    var imageSrc = IS_NATIVE_APP && drawing.nativeImage
+      ? drawing.nativeImage
+      : (isCompactViewport() && drawing.mobileImage ? drawing.mobileImage : drawing.image);
     var prevSrc = el.image.getAttribute("src") || "";
     var srcChanged = prevSrc !== imageSrc;
     if (srcChanged) {
